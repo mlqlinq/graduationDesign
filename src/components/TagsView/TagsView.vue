@@ -22,7 +22,6 @@
     </div>
   </el-scrollbar>
 </template>
-
 <script lang="ts" setup>
 const userStore = useUserStore();
 const layoutStore = useLayoutStore();
