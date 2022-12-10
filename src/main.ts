@@ -1,5 +1,7 @@
 import { createApp } from "vue";
+
 import { createPinia } from "pinia";
+import piniaPluginPersist from "pinia-plugin-persist"; // 持久化工具 用户数据缓存，刷新数据不丢失
 
 import App from "./App.vue";
 import router from "./router";
@@ -20,7 +22,10 @@ import components from "./assets/icon/index";
 const app = createApp(App);
 
 // 注册pinia
-app.use(createPinia());
+const store = createPinia();
+store.use(piniaPluginPersist);
+// app.use(createPinia());
+app.use(store);
 
 // 注册路由
 app.use(router);

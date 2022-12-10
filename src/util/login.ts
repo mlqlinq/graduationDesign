@@ -1,7 +1,9 @@
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/modules/userToken";
 import { debounce } from "lodash";
 import { Base64 } from "js-base64";
+// import CryptoJS from "crypto-js";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { getCaptcha, loginAsync } from "@/http/api/login";
 
@@ -86,6 +88,9 @@ export default () => {
     }, 2000);
   };
 
+  // 状态管理
+  const store = useAuthStore();
+
   // 登录按钮
   const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return alert("验证失败!");
@@ -94,12 +99,21 @@ export default () => {
         showLoading.value = true;
         isdisabled.value = true;
 
-        const code = compileStr(ruleForm.verificationCode.toLowerCase());
+        const newData: any = {};
+        for (let key in ruleForm) {
+          if (ruleForm.hasOwnProperty(key)) {
+            newData[key] = ruleForm[key];
+          }
+        }
+        // console.log(newData);
 
-        ruleForm.verificationCode = code;
-        await loginAsync(ruleForm)
+        newData.verificationCode = compileStr(
+          newData.verificationCode.toLowerCase()
+        );
+        // newData.password = CryptoJS.MD5(newData.password).toString();
+
+        await loginAsync(newData)
           .then((res) => {
-            console.log("res", res.type);
             if (res.type === "error") {
               setTime();
               getOnCode();
@@ -112,13 +126,15 @@ export default () => {
               }, 2000);
 
               sessionStorage.setItem("token", res.token);
-              // getOnCode();
+
+              //存储token解析的内容 以及修改登录的状态
+              store.setAuth(!!res.token); //由于decode是对象，所以对他取反再取反，双非就变成了布尔类型
+              store.setUser(res.token);
               return ElMessage.success(res.message);
             }
           })
           .catch((error) => {
             setTime();
-
             console.log(error);
           });
       } else {
