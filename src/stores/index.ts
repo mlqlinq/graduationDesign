@@ -1,7 +1,14 @@
-import useTagsViewStore from "./moduls/tagsView";
+// store/index.ts
 
-const useStore = () => ({
-  tagsView: useTagsViewStore(),
-});
+import type { App } from "vue";
+import { createPinia } from "pinia";
 
-export default useStore;
+const pinia = createPinia();
+
+export function setupStore(app: App) {
+  app.use(pinia);
+}
+
+export * from "./modules/layout";
+export * from "./modules/userToken";
+export * from "./modules/menu";

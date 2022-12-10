@@ -1,13 +1,16 @@
 import { onMounted, ref, watch } from "vue";
-import { Menu as IconMenu } from "@element-plus/icons-vue";
 import screenfull from "screenfull";
 import { getMenu } from "@/http/api/indexMenu";
 import { ElMessage } from "element-plus";
-import { useRouter, useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useLayoutStore, useMenuStore } from "@/stores/index";
+import { useRoute, useRouter } from "vue-router";
 
 export default () => {
   // 控制菜单展开与收起
-  const isCollapse = ref<boolean>(false);
+  // const isCollapse = ref<boolean>(false);
+  const layoutStore = useLayoutStore();
+  const { isCollapse } = storeToRefs(layoutStore);
 
   // 搜索框内容
   const searchctx = ref("");
@@ -54,27 +57,25 @@ export default () => {
   const route = useRoute();
   const breadcrumbList = ref([]);
 
-  // 选中菜单时的图标颜色
-  const isActMenuCol = ref<string>();
-
   onMounted(() => {
     document.querySelector("body").setAttribute("style", "margin:0;");
 
     const rou = sessionStorage.getItem("activePath");
     if (rou === null) {
       activePath.value = "/index";
-      console.log(111, activePath.value);
+      // console.log(111, activePath.value);
       saveNavSate(activePath.value);
     } else {
       activePath.value = rou;
-      console.log(222, rou);
+      // console.log(222, rou);
       saveNavSate(activePath.value);
     }
+    initBreadcrumbList();
   });
 
   // 控制菜单展开与收起
   const openMenu = () => {
-    isCollapse.value = !isCollapse.value;
+    layoutStore.collapse();
   };
 
   const getSearch = () => {
@@ -94,7 +95,7 @@ export default () => {
     icon.style.display = "none";
   };
 
-  // 控制 展开和收起全屏
+  // 控制 全屏
   const toggleScreen = () => {
     full.value = !full.value;
     screenfull.toggle();
@@ -125,12 +126,12 @@ export default () => {
       type: "warning",
     })
       .then(() => {
+        router.push("/");
         ElMessage({
           type: "success",
           message: "退出成功",
         });
         sessionStorage.clear();
-        router.push("/");
       })
       .catch(() => {
         ElMessage({
@@ -157,10 +158,9 @@ export default () => {
     route,
     () => {
       initBreadcrumbList();
-    },
-    { deep: true, immediate: true }
+    }
+    // { deep: true, immediate: true }
   );
-
   getAllMenu();
 
   return {

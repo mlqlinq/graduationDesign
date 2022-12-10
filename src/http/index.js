@@ -2,8 +2,11 @@
 import axios from "axios";
 import serverConfig from "./config";
 import qs from "qs";
-import { ElMessage } from "element-plus";
-
+import { useAuthStore } from "@/stores/modules/userToken.ts";
+import { storeToRefs } from "pinia";
+import router from "@/router/index.ts";
+const useAuth = useAuthStore();
+const { user: token } = storeToRefs(useAuth);
 // 创建axios 请求实例
 const serverAxios = axios.create({
   baseURL: serverConfig.baseURL, // 基础请求地址
@@ -11,18 +14,23 @@ const serverAxios = axios.create({
   withCredentials: true, // 跨域请求是否携带cookie凭证
 });
 
-// 创建请求拦截
+// 创建 请求 拦截
 serverAxios.interceptors.request.use(
   (config) => {
     // 如果开启 token认证
     if (serverConfig.useTokenAuthorization) {
-      config.headers.Authorization = sessionStorage.getItem("token"); // 请求头携带 token
+      if (token) {
+        console.log("🚀 ~ file: index.js:24 ~ token", token.value);
+        config.headers.authorization = `Bearer ${token.value}`; // 请求头携带 token
+      }
+      // config.headers.Authorization = sessionStorage.getItem("token");
     }
     // 设置请求头
     if (!config.headers["Content-type"]) {
       // 如果没有设置请求头
       if (config.method === "post") {
         // config.headers["Content-type"] = "application/x-www-form-urlencoded"; // post 请求
+
         config.data = qs.stringify(config.data); // 序列化,比如表单数据
         console.log("请求配置", config.data);
       } else {
@@ -30,20 +38,22 @@ serverAxios.interceptors.request.use(
       }
     }
 
+    console.log("🚀 ~ file: index.js:35 ~ config", config);
     return config;
   },
   (error) => {
-    Promise.reject(error);
+    return Promise.reject(error);
   }
 );
 
-// 创建响应拦截
+// 创建 响应 拦截
 serverAxios.interceptors.response.use(
   (res) => {
-    const data = res.data;
+    // const data = res.data;
     // 处理自己的业务逻辑，比如判断 token 是否过期等等
     // 代码块
-    return data;
+    // 获取更新的token
+    return Promise.resolve(res.data);
   },
   (error) => {
     let message = "";
@@ -56,7 +66,13 @@ serverAxios.interceptors.response.use(
           message = "参数不正确！";
           break;
         case 401:
-          message = "您未登录，或者登录已经超时，请先登录！";
+          message = "您未登录，或者登录已经超时，请重新登录！";
+          setTimeout(() => {
+            router.replace({
+              path: "/",
+            });
+            sessionStorage.clear();
+          }, 500);
           break;
         case 403:
           message = "您没有权限操作！";
@@ -93,7 +109,6 @@ serverAxios.interceptors.response.use(
           break;
       }
     }
-    ElMessage.error(message);
     return Promise.reject(message);
   }
 );

@@ -5,9 +5,12 @@
  * RouteRecordRaw 这个为要添加的路由记录，也可以说是routes的ts类型
  * */
 
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from "vue-router";
 
-import type { RouteRecordRaw } from "vue-router";
 import { ElMessage } from "element-plus";
 
 // 公共路由
@@ -19,7 +22,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   },
   {
     path: "/home",
-    name: "home",
+    name: "Layout",
     redirect: "/index",
     component: () => import("@/views/index.vue"),
     children: [
