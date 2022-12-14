@@ -4,14 +4,14 @@
   </svg>
 </template>
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from "vue"
 interface IProps {
   // svg 的图标的名称
-  iconName: string;
+  iconName: string
   // 大小
-  size: number;
+  size: number
 }
-const props = defineProps<IProps>();
+const props = defineProps<IProps>()
 
-const symbolId = computed(() => `#icon-${props.iconName}`);
+const symbolId = computed(() => `#icon-${props.iconName}`)
 </script>

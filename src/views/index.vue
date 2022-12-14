@@ -31,6 +31,7 @@
                 :size="22"
                 :icon-name="item.meta.icon"
               />
+
               <span>{{ item.meta.title }}</span>
             </template>
             <el-menu-item-group>
@@ -39,12 +40,14 @@
                 :key="item2.menu_id"
                 :index="item2.path"
                 @click="saveNavSate(item2.path)"
-                ><SvgIcon
+              >
+                <SvgIcon
                   class="menu_icon meni"
                   :size="22"
                   :icon-name="item2.meta.icon"
-                />{{ item2.meta.title }}</el-menu-item
-              >
+                />
+                {{ item2.meta.title }}
+              </el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
         </el-menu>
@@ -71,8 +74,9 @@
             <el-breadcrumb-item
               v-for="(item, index) in breadcrumbList"
               :key="index"
-              >{{ item }}</el-breadcrumb-item
             >
+              {{ item }}
+            </el-breadcrumb-item>
           </el-breadcrumb>
         </span>
         <!-- <span class="header_title">家庭经济困难学生奖助学金综合管理系统</span> -->
@@ -109,7 +113,7 @@
           <span class="full_user mag">
             <el-dropdown trigger="click">
               <span class="el-dropdown-link">
-                <el-avatar shape="square"> user </el-avatar>
+                <el-avatar icon="UserFilled"></el-avatar>
                 <SvgIcon
                   style="color: #c0c4cc"
                   :size="18"
@@ -119,9 +123,9 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="loginOut"
-                    >退出登录</el-dropdown-item
-                  >
+                  <el-dropdown-item @click="loginOut">
+                    退出登录
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -138,7 +142,7 @@
 </template>
 
 <script lang="ts" setup>
-import index from "@/util/index";
+import index from "@/util/index"
 const {
   isCollapse,
   searchctx,
@@ -152,7 +156,7 @@ const {
   saveNavSate,
   loginOut,
   breadcrumbList,
-} = index();
+} = index()
 </script>
 
 <style lang="scss" src="../assets/css/layout.scss" scoped></style>
