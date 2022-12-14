@@ -5,13 +5,9 @@
  * RouteRecordRaw 这个为要添加的路由记录，也可以说是routes的ts类型
  * */
 
-import {
-  createRouter,
-  createWebHistory,
-  type RouteRecordRaw,
-} from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 
-import { ElMessage } from "element-plus";
+import { ElMessage } from "element-plus"
 
 // 公共路由
 export const constantRoutes: Array<RouteRecordRaw> = [
@@ -23,7 +19,7 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: "/home",
     name: "Layout",
-    redirect: "/index",
+    redirect: "/index", // 重定向
     component: () => import("@/views/index.vue"),
     children: [
       {
@@ -76,22 +72,22 @@ export const constantRoutes: Array<RouteRecordRaw> = [
       },
     ],
   },
-];
+]
 const router = createRouter({
   history: createWebHistory(),
   routes: constantRoutes,
-});
+})
 
 // 挂载路由导航守卫
 router.beforeEach((to, from, next) => {
-  if (to.path === "/") return next();
+  if (to.path === "/") return next()
   // 获取token
-  const tokenStr = sessionStorage.getItem("token");
+  const tokenStr = sessionStorage.getItem("token")
   if (!tokenStr) {
-    ElMessage.error("登录已过期，请重新登录！");
-    return next("/");
+    ElMessage.error("登录已过期，请重新登录！")
+    return next("/")
   }
-  next();
-});
+  next()
+})
 
-export default router;
+export default router

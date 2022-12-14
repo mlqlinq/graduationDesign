@@ -1,12 +1,12 @@
-import serviceAxios from "../index";
+import serviceAxios from "../index"
 
 // 获取图形验证码
 export const getCaptcha = () => {
   return serviceAxios({
     url: "/api/captcha",
     method: "get",
-  });
-};
+  })
+}
 
 // 登录接口
 export const loginAsync = (data) => {
@@ -14,5 +14,5 @@ export const loginAsync = (data) => {
     url: "/api/login",
     method: "post",
     data,
-  });
-};
+  })
+}

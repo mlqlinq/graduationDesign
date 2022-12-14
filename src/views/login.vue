@@ -63,16 +63,16 @@
                   prop="verificationCode"
                 >
                   <el-row :gutter="20">
-                    <el-col :span="13"
-                      ><el-input v-model="ruleForm.verificationCode" clearable
-                    /></el-col>
-                    <el-col :span="6"
-                      ><div
+                    <el-col :span="13"></el-col>
+                      <el-input v-model="ruleForm.verificationCode" clearable />
+                    </el-col>
+                    <el-col :span="6">
+                      <div
                         class="login-code"
                         v-html="imgUrl"
                         @click="getOnCode"
-                      ></div
-                    ></el-col>
+                      ></div>
+                    </el-col>
                   </el-row>
                 </el-form-item>
                 <el-form-item class="item_btn">
@@ -81,9 +81,10 @@
                     :disabled="isdisabled"
                     type="primary"
                     @click="submitForm(ruleFormRef)"
-                    ><span v-if="!showLoading">登 录</span>
-                    <span v-else>登 录 中...</span></el-button
                   >
+                    <span v-if="!showLoading">登 录</span>
+                    <span v-else>登 录 中...</span>
+                  </el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -110,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import login from "@/util/login";
+import login from "@/util/login"
 
 const {
   imgUrl,
@@ -121,7 +122,7 @@ const {
   showLoading,
   isdisabled,
   submitForm,
-} = login();
+} = login()
 </script>
 
 <style lang="scss" src="../assets/css/login.scss" scoped></style>
