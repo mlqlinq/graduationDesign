@@ -2,9 +2,9 @@
 import axios from "axios"
 import serverConfig from "./config"
 import qs from "qs"
-import { useAuthStore } from "@/stores/modules/userToken.ts"
+import { useAuthStore } from "@/stores/modules/userToken"
 import { storeToRefs } from "pinia"
-import router from "@/router/index.ts"
+import router from "@/router/index"
 const useAuth = useAuthStore()
 const { user: token } = storeToRefs(useAuth)
 // 创建axios 请求实例

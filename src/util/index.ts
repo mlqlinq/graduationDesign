@@ -154,18 +154,16 @@ export default () => {
     })
     const newArr = []
     newArr.push(result)
-    for (let i = 0; i < newArr.length; i++) {
-      breadcrumbList.value = newArr[i].meta.arr
+    for (let i = 0; i < newArr.length - 1; i++) {
+      if (newArr[i].meta) {
+        breadcrumbList.value = newArr[i].meta.arr
+      }
     }
   }
   // 监听路由的变化
-  watch(
-    route,
-    () => {
-      initBreadcrumbList()
-    },
-    { deep: true }
-  )
+  watch(route, () => {
+    initBreadcrumbList()
+  })
   getAllMenu()
 
   return {
