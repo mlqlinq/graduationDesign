@@ -1,4 +1,4 @@
-import serviceAxios from "../index"
+import serviceAxios from "@/http/index"
 
 // 获取图形验证码
 export const getCaptcha = () => {

@@ -1,4 +1,4 @@
-import serviceAxios from "../index"
+import serviceAxios from "@/http/index"
 
 // 获取菜单列表
 export const getMenu = () => {

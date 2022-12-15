@@ -11,8 +11,6 @@ export const useAuthStore = defineStore("userAuth", {
       user: {}, // 解析的token里面所包含的数据
     }
   },
-  // 也可以定义为
-  // state: () => ({ count: 0 })
   getters: {
     //通过getters对状态state进行获取
     getAuthenticated: (state) => state.isAuthenticated,

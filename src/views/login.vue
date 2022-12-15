@@ -63,7 +63,7 @@
                   prop="verificationCode"
                 >
                   <el-row :gutter="20">
-                    <el-col :span="13"></el-col>
+                    <el-col :span="13">
                       <el-input v-model="ruleForm.verificationCode" clearable />
                     </el-col>
                     <el-col :span="6">
