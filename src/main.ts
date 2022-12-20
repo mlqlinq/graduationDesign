@@ -18,6 +18,8 @@ import "element-plus/theme-chalk/el-message.css"
 import "virtual:svg-icons-register"
 import components from "./assets/icon/index"
 
+import "nprogress/nprogress.css" // 进度条样式
+
 //创建实例
 const app = createApp(App)
 

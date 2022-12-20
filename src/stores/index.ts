@@ -12,3 +12,4 @@ export function setupStore(app: App) {
 export * from "./modules/layout"
 export * from "./modules/userToken"
 export * from "./modules/menu"
+export * from "./modules/router"

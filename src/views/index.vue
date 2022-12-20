@@ -19,22 +19,21 @@
             />
             <span>首页</span>
           </el-menu-item>
-          <el-sub-menu
-            popper-class="ziMenu"
-            v-for="item in allMenu"
-            :key="item.menu_id"
-            :index="item.path"
-          >
-            <template #title>
-              <SvgIcon
-                :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"
-                :size="22"
-                :icon-name="item.meta.icon"
-              />
+          <template v-for="item in allMenu" :key="item.menu_id">
+            <el-sub-menu
+              popper-class="ziMenu"
+              v-if="item.children && item.children.length"
+              :index="item.path"
+            >
+              <template #title>
+                <SvgIcon
+                  :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"
+                  :size="22"
+                  :icon-name="item.meta.icon"
+                />
 
-              <span>{{ item.meta.title }}</span>
-            </template>
-            <el-menu-item-group>
+                <span>{{ item.meta.title }}</span>
+              </template>
               <el-menu-item
                 v-for="item2 in item.children"
                 :key="item2.menu_id"
@@ -48,8 +47,45 @@
                 />
                 {{ item2.meta.title }}
               </el-menu-item>
-            </el-menu-item-group>
-          </el-sub-menu>
+            </el-sub-menu>
+            <el-menu-item v-else>
+              <SvgIcon
+                :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"
+                :size="22"
+                :icon-name="item.meta.icon"
+              />
+
+              <span>{{ item.meta.title }}</span>
+            </el-menu-item>
+          </template>
+          <!-- <el-sub-menu
+            popper-class="ziMenu"
+            v-for="item in allMenu"
+            :key="item.menu_id"
+            :index="item.path"
+          >
+            <template #title>
+              <SvgIcon
+                :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"
+                :size="22"
+                :icon-name="item.meta.icon"
+              />
+              <span>{{ item.meta.title }}</span>
+            </template>
+            <el-menu-item
+              v-for="item2 in item.children"
+              :key="item2.menu_id"
+              :index="item2.path"
+              @click="saveNavSate(item2.path)"
+            >
+              <SvgIcon
+                class="menu_icon meni"
+                :size="22"
+                :icon-name="item2.meta.icon"
+              />
+              {{ item2.meta.title }}
+            </el-menu-item>
+          </el-sub-menu> -->
         </el-menu>
       </el-scrollbar>
     </el-aside>
@@ -70,7 +106,7 @@
           </el-icon>
         </span>
         <span class="heard_bread">
-          <el-breadcrumb separator="/">
+          <el-breadcrumb separator=">">
             <el-breadcrumb-item
               v-for="(item, index) in breadcrumbList"
               :key="index"

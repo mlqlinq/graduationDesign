@@ -18,7 +18,7 @@ watchEffect(() => {
 })
 </script>
 
-<style>
+<style lang="scss">
 html,
 body,
 #app {
@@ -28,5 +28,9 @@ body,
   padding: 0;
   min-width: 1366px;
   background-color: #dfe1e405;
+
+  #nprogress .bar {
+    background: rgb(32, 203, 126) !important; // 进度条自定义颜色
+  }
 }
 </style>

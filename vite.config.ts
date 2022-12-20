@@ -1,20 +1,28 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import { resolve } from "path";
+import { defineConfig, loadEnv } from "vite"
+import vue from "@vitejs/plugin-vue"
+import { resolve } from "path"
 
 // ElementPlus 按需导入--自动导入--vite配置
-import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
-import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+// 自动导入vue中hook reactive ref等
+import AutoImport from "unplugin-auto-import/vite"
+//自动导入ui-组件 比如说ant-design-vue  element-plus等
+import Components from "unplugin-vue-components/vite"
+//element
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 
 // 导入 svg 图标文件依赖
-import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
+
+const env = loadEnv(process.cwd(), "")
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    //element按需导入
     AutoImport({
+      //在ts文件中不用再导入ref，reactive等
+      imports: ["vue", "vue-router"],
       resolvers: [ElementPlusResolver()],
     }),
     Components({
@@ -50,4 +58,4 @@ export default defineConfig({
       },
     },
   },
-});
+})

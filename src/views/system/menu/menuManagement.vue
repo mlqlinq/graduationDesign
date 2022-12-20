@@ -1,6 +1,6 @@
 <template>
   <el-button
-    style="margin-left: 1%"
+    style="margin-left: 1%; margin-bottom: 10px"
     type="primary"
     icon="Plus"
     plain
@@ -34,7 +34,7 @@
       min-width="70px"
     />
     <el-table-column prop="path" label="路径" align="center" />
-    <el-table-column label="状态" align="center" min-width="90px">
+    <el-table-column label="状态" align="center" min-width="40px">
       <template #default="scope">
         <el-tag v-if="scope.row.status === '0'" type="success" size="large">
           正常
@@ -42,7 +42,7 @@
         <el-tag v-else class="mx-1" type="info" size="large">停用</el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="显示状态" align="center" min-width="90px">
+    <el-table-column label="显示状态" align="center" min-width="40px">
       <template #default="scope">
         <el-tag v-if="scope.row.alwaysShow === '0'" type="success" size="large">
           显示
@@ -51,11 +51,10 @@
       </template>
     </el-table-column>
     <el-table-column prop="updateTime" label="创建时间" align="center" />
-    <el-table-column align="center" label="操作" min-width="195px">
+    <el-table-column align="center" label="操作" min-width="100px">
       <template #default="scope">
         <el-tooltip
           v-if="scope.row.menuType !== 'C'"
-          effect="light"
           placement="bottom"
           content="添加"
         >
@@ -66,7 +65,7 @@
             @click="addMeun(scope.row)"
           />
         </el-tooltip>
-        <el-tooltip effect="light" placement="bottom" content="修改">
+        <el-tooltip placement="bottom" content="修改">
           <el-button
             type="primary"
             icon="Edit"
@@ -74,7 +73,7 @@
             @click="editMenu(scope.row)"
           />
         </el-tooltip>
-        <el-tooltip effect="light" placement="bottom" content="删除">
+        <el-tooltip placement="bottom" content="删除">
           <el-button
             type="danger"
             icon="Delete"
@@ -89,9 +88,11 @@
   <!-- 操作菜单  对话框 -->
   <el-dialog
     v-model="dialogMenuFormVisible"
+    destroy-on-close
+    v-model:visible="dialogMenuFormVisible"
     :title="diaTitle"
-    :destroy-on-close="true"
     :close-on-click-modal="false"
+    @close="handleClose(ruleFormRef)"
     style="width: 600px"
   >
     <el-form
@@ -111,6 +112,8 @@
           check-strictly
           highlight-current
           clearable
+          @visible-change="setmenuTree"
+          empty-text="加载中..."
           placeholder="请选择上级菜单"
           style="width: 100%"
         />
@@ -297,6 +300,7 @@ const {
   visibleIcons,
   ruleFormRef,
   MenuformRules,
+  setmenuTree,
   addMeun,
   editMenu,
   delMenu,
@@ -304,6 +308,7 @@ const {
   Cancel,
   visibleIconList,
   getIcon,
+  handleClose,
 } = useMenu()
 </script>
 <style lang="scss" scoped>

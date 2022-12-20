@@ -1,10 +1,10 @@
-import { onMounted, ref, watch } from "vue"
-import screenfull from "screenfull"
-import { getMenu } from "@/http/api/indexMenu"
-import { ElMessage } from "element-plus"
+// import { onMounted, ref, watch } from "vue"
 import { storeToRefs } from "pinia"
-import { useLayoutStore, useMenuStore } from "@/stores/index"
 import { useRoute, useRouter } from "vue-router"
+import screenfull from "screenfull"
+import { useLayoutStore, useMenuStore, useRouterStore } from "@/stores/index"
+// import { ElMessage, ElMessageBox } from "element-plus"
+import { getMenu } from "@/http/api/indexMenu"
 
 export default () => {
   // 控制菜单展开与收起
@@ -107,12 +107,41 @@ export default () => {
     screenfull.toggle()
   }
 
+  // 动态路由
+  const addrou = ref([])
+  const addRouterList = useRouterStore()
+  const { addrouters: routerList } = storeToRefs(addRouterList)
+
   // 请求后台获取菜单列表
   const getAllMenu = async () => {
     await getMenu()
       .then((res) => {
         menus.value = res.data
         allMenu.value = menus.value
+        if (allMenu.value) {
+          for (let i = 0; i < allMenu.value.length; i++) {
+            addrou.value.push(JSON.parse(JSON.stringify(allMenu.value[i])))
+            addrou.value[i].meta.noCache = 0 ? true : false
+            delete addrou.value[i].createTime
+            delete addrou.value[i].updateTime
+            delete addrou.value[i].menuType
+            delete addrou.value[i].menu_id
+            delete addrou.value[i].status
+            delete addrou.value[i].orderNum
+            if (addrou.value[i].children.length > 0) {
+              for (let j = 0; j < addrou.value[i].children.length; j++) {
+                addrou.value[i].children[j].meta.noCache = 0 ? true : false
+                delete addrou.value[i].children[j].createTime
+                delete addrou.value[i].children[j].updateTime
+                delete addrou.value[i].children[j].menuType
+                delete addrou.value[i].children[j].menu_id
+                delete addrou.value[i].children[j].status
+                delete addrou.value[i].children[j].orderNum
+              }
+            }
+          }
+        }
+        routerList.value = addrou.value
       })
       .catch((err) => {
         ElMessage.error(err)
@@ -138,6 +167,8 @@ export default () => {
           type: "success",
           message: "退出成功",
         })
+        // 清空pinia中的数据，让页面重新加载
+        window.location.reload()
         sessionStorage.clear()
       })
       .catch(() => {
@@ -155,15 +186,17 @@ export default () => {
     const newArr = []
     newArr.push(result)
     for (let i = 0; i < newArr.length - 1; i++) {
-      if (newArr[i].meta) {
-        breadcrumbList.value = newArr[i].meta.arr
-      }
+      breadcrumbList.value = newArr[i].meta.arr
     }
   }
   // 监听路由的变化
-  watch(route, () => {
-    initBreadcrumbList()
-  })
+  watch(
+    () => route.path,
+    () => {
+      initBreadcrumbList()
+    },
+    { deep: true, immediate: true }
+  )
   getAllMenu()
 
   return {
