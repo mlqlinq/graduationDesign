@@ -1,14 +1,8 @@
 import { storeToRefs } from "pinia"
 import { useMenuStore } from "@/stores/index"
-import { ref, onMounted, reactive } from "vue"
+// import { ref, onMounted, reactive } from "vue"
 import { getAllMenu } from "@/http/api/indexMenu.js"
-import {
-  ElMessage,
-  ElMessageBox,
-  type FormInstance,
-  type FormRules,
-} from "element-plus"
-import * as ElIcons from "@element-plus/icons-vue"
+import type { FormInstance, FormRules } from "element-plus"
 export default () => {
   // 获取 pinia 数据
   const Menus = useMenuStore()
@@ -30,10 +24,6 @@ export default () => {
 
   // 图标列表显示控制
   const visibleIcons = ref<boolean>(false)
-
-  onMounted(() => {
-    setmenuTree()
-  })
 
   // 表单ref属性绑定
   const ruleFormRef = ref<FormInstance>()
@@ -204,8 +194,9 @@ export default () => {
     dialogMenuFormVisible.value = false
   }
 
-  // 请求菜单 数据树状化
+  // 请求 树状菜单数据
   const setmenuTree = () => {
+    if (data.value.length !== 0) return
     getAllMenu()
       .then((res) => {
         const menu: any = { value: 0, label: "主类目" }
@@ -227,6 +218,12 @@ export default () => {
     Menuform.icon = icon
   }
 
+  // 弹窗关闭时重置表单
+  const handleClose = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.resetFields()
+  }
+
   return {
     menuList,
     diaTitle,
@@ -236,6 +233,7 @@ export default () => {
     visibleIcons,
     ruleFormRef,
     MenuformRules,
+    setmenuTree,
     addMeun,
     editMenu,
     delMenu,
@@ -243,5 +241,6 @@ export default () => {
     Cancel,
     visibleIconList,
     getIcon,
+    handleClose,
   }
 }

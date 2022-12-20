@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("userAuth", {
     return {
       //  isAuthenticated 判断用户是否登录，默认为false,即未登录，登录之后修改为true
       isAuthenticated: false,
-      user: {}, // 解析的token里面所包含的数据
+      user: "", // 解析的token里面所包含的数据
     }
   },
   getters: {
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("userAuth", {
       if (user) {
         this.user = user
       } else {
-        this.user = {}
+        this.user = ""
       }
     },
     persist: {

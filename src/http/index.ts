@@ -5,10 +5,13 @@ import qs from "qs"
 import { useAuthStore } from "@/stores/modules/userToken"
 import { storeToRefs } from "pinia"
 import router from "@/router/index"
+import NProgress from "nprogress" // 导入进度条
+
 const useAuth = useAuthStore()
 const { user: token } = storeToRefs(useAuth)
+
 // 创建axios 请求实例
-const serverAxios = axios.create({
+const serverAxios: any = axios.create({
   baseURL: serverConfig.baseURL, // 基础请求地址
   timeout: 10000, // 请求超时设置 10秒
   withCredentials: true, // 跨域请求是否携带cookie凭证
@@ -17,6 +20,8 @@ const serverAxios = axios.create({
 // 创建 请求 拦截
 serverAxios.interceptors.request.use(
   (config) => {
+    // 请求开始：显示进度条
+    NProgress.start()
     // 如果开启 token认证
     if (serverConfig.useTokenAuthorization) {
       if (token) {
@@ -46,10 +51,13 @@ serverAxios.interceptors.request.use(
 // 创建 响应 拦截
 serverAxios.interceptors.response.use(
   (res) => {
+    // 请求完毕：隐藏进度条
+    NProgress.done()
     // const data = res.data;
     // 处理自己的业务逻辑，比如判断 token 是否过期等等
     // 代码块
     // 获取更新的token
+
     return res.data
   },
   (error) => {
@@ -76,6 +84,12 @@ serverAxios.interceptors.response.use(
           break
         case 404:
           message = `请求地址出错: ${error.response.config.url}`
+          setTimeout(() => {
+            router.replace({
+              path: "/",
+            })
+            sessionStorage.clear()
+          }, 500)
           break
         case 408:
           message = "请求超时！"

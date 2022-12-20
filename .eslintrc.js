@@ -20,8 +20,8 @@ module.exports = {
     "vue/multi-word-component-names": [
       "error",
       {
-        ignores: ["index", "login"], // 需要忽略的组件名
+        ignores: ["index", "login", "401", "404"], // 需要忽略的组件名
       },
     ],
   },
-};
+}

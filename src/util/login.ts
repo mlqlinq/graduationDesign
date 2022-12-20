@@ -1,10 +1,9 @@
-import { onMounted, reactive, ref } from "vue"
-import { useRouter } from "vue-router"
+// import { onMounted, reactive, ref } from "vue"
+// import { useRouter } from "vue-router"
 import { useAuthStore } from "@/stores/modules/userToken"
 import { debounce } from "lodash"
 import { Base64 } from "js-base64"
-// import CryptoJS from "crypto-js";
-import { ElMessage, type FormInstance, type FormRules } from "element-plus"
+import type { FormInstance, FormRules } from "element-plus"
 import { getCaptcha, loginAsync } from "@/http/api/login"
 
 export default () => {
@@ -110,7 +109,6 @@ export default () => {
         newData.verificationCode = compileStr(
           newData.verificationCode.toLowerCase()
         )
-        // newData.password = CryptoJS.MD5(newData.password).toString();
 
         await loginAsync(newData)
           .then((res) => {

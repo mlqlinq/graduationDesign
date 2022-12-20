@@ -20,6 +20,7 @@
     "element-plus": "^2.2.25",
     "js-base64": "^3.7.3",
     "lodash": "^4.17.21",
+    "nprogress": "^0.2.0",
     "pinia": "^2.0.24",
     "pinia-plugin-persist": "^1.0.0",
     "qs": "^6.11.0",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
+    "@types/nprogress": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "@vitejs/plugin-vue": "^3.0.3",
