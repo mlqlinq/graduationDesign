@@ -1,5 +1,5 @@
 <template>
-    <div>校奖学金</div>
+    <div>个人中心</div>
 </template>
 
 <script setup lang="ts"></script>

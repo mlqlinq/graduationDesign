@@ -1,8 +1,8 @@
-import serviceAxios from "@/http/index"
+import serviceAxios from "@/http/index";
 
 export const getUserList = () => {
-  return serviceAxios({
-    url: "/api/getUserList",
-    method: "get",
-  })
-}
+    return serviceAxios({
+        url: "/api/getUserList",
+        method: "get",
+    });
+};
