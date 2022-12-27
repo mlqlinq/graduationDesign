@@ -1,5 +1,5 @@
 <template>
-  <div>区奖学金</div>
+    <div>区奖学金</div>
 </template>
 
 <script setup lang="ts"></script>

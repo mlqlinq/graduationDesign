@@ -1,15 +1,15 @@
 // store/index.ts
 
-import type { App } from "vue"
-import { createPinia } from "pinia"
+import type { App } from "vue";
+import { createPinia } from "pinia";
 
-const pinia = createPinia()
+const pinia = createPinia();
 
 export function setupStore(app: App) {
-  app.use(pinia)
+    app.use(pinia);
 }
 
-export * from "./modules/layout"
-export * from "./modules/userToken"
-export * from "./modules/menu"
-export * from "./modules/router"
+export * from "./modules/layout";
+export * from "./modules/userToken";
+export * from "./modules/menu";
+export * from "./modules/router";

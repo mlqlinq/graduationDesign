@@ -1,5 +1,5 @@
 {
-  "name": "myvue",
+  "name": "mygraduation",
   "version": "0.0.0",
   "scripts": {
     "serve": "vite",
@@ -10,8 +10,7 @@
     "build:pro": "vue-tsc --noEmit && vite build --mode pro",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",
@@ -32,6 +31,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/nprogress": "^0.2.0",
+    "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "@vitejs/plugin-vue": "^3.0.3",
