@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
+
 interface menuStructure {
     menu_id: number;
     parent_id?: number;
     menu_name: string;
+    component: string;
     path: string;
     status: string;
     orderNum: number;
@@ -15,6 +17,7 @@ interface menuStructure {
     };
     children?: menuStructure[];
 }
+
 export const useMenuStore = defineStore("menu", {
     state: () => {
         return {
@@ -22,7 +25,7 @@ export const useMenuStore = defineStore("menu", {
         };
     },
     getters: {
-        getMenu: state => state.menuAll,
+        getMenu: (state) => state.menuAll,
     },
     actions: {
         setMenu(menuAll) {

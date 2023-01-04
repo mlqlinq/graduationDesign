@@ -8,7 +8,7 @@ import NProgress from "nprogress"; // 导入进度条
 import { storeToRefs } from "pinia";
 
 const useAuths: any = useAuthStore();
-const { user: token } = storeToRefs(useAuths);
+const { token } = storeToRefs(useAuths);
 
 // 配置项 创建axios 请求实例
 const serverAxios: any = axios.create({
@@ -19,23 +19,19 @@ const serverAxios: any = axios.create({
 
 // 创建 请求 拦截
 serverAxios.interceptors.request.use(
-    config => {
+    (config) => {
         // 请求开始：显示进度条
         NProgress.start();
-        // 如果开启 token认证
-        console.log(token.value);
-
+        // 是否携带 token
         if (serverConfig.useTokenAuthorization) {
             if (token.value) {
                 config.headers.authorization = `Bearer ${token.value}`; // 请求头携带 token
             }
-            // config.headers.Authorization = sessionStorage.getItem("token");
         }
         // 设置请求头
         if (!config.headers["Content-type"]) {
             // 如果没有设置请求头
-            if (config.method === "post") {
-                // config.headers["Content-type"] = "application/x-www-form-urlencoded"; // post 请求
+            if (config.method === "post" || config.method === "put") {
                 config.data = qs.stringify(config.data); // 序列化,比如表单数据
             } else {
                 config.headers["Content-type"] = "application/json"; // 默认类型
@@ -43,28 +39,22 @@ serverAxios.interceptors.request.use(
         }
         return config;
     },
-    error => {
+    async (error) => {
         // 对请求错误做些什么
-        return Promise.reject(error);
+        return await Promise.reject(error);
     }
 );
 
 // 创建 响应 拦截
 serverAxios.interceptors.response.use(
-    res => {
+    (res) => {
         // 请求完毕：隐藏进度条
         NProgress.done();
-
-        // const data = res.data;
-        // 处理自己的业务逻辑，比如判断 token 是否过期等等
-        // 代码块
-        // 获取更新的token
-
         return res.data;
     },
-    error => {
+    async (error) => {
         let message = "";
-        if (error && error.response) {
+        if (error.response && error) {
             switch (error.response.status) {
                 case 302:
                     message = "接口重定向了！";
@@ -86,12 +76,12 @@ serverAxios.interceptors.response.use(
                     break;
                 case 404:
                     message = `请求地址出错: ${error.response.config.url}`;
-                    setTimeout(() => {
-                        router.replace({
-                            path: "/",
-                        });
-                        sessionStorage.clear();
-                    }, 500);
+                    // setTimeout(() => {
+                    //     router.replace({
+                    //         path: "/",
+                    //     });
+                    //     sessionStorage.clear();
+                    // }, 500);
                     break;
                 case 408:
                     message = "请求超时！";
@@ -122,8 +112,8 @@ serverAxios.interceptors.response.use(
                     break;
             }
         }
-
-        return Promise.reject(message);
+        NProgress.done();
+        return await Promise.reject(message);
     }
 );
 export default serverAxios;

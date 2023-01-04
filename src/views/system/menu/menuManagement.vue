@@ -1,74 +1,67 @@
 <template>
-    <el-button style="margin-left: 1%; margin-bottom: 10px" type="primary" icon="Plus" plain @click="addMeun($event)"> 新增 </el-button>
-    <el-table
-        v-loading="loading"
-        element-loading-text="加载中..."
-        border
-        :data="menuList"
-        style="width: 98%; margin-bottom: 20px; margin: 0 auto"
-        row-key="menu_id"
-        :header-cell-style="{ background: '#FAFAFA' }"
-    >
-        <el-table-column prop="meta.title" label="菜单名称" align="left" />
-        <el-table-column label="图标" align="center" min-width="70px">
-            <template #default="scope">
-                <SvgIcon style="color: #c0c4cc" :size="18" color="#5a5e66" :icon-name="scope.row.meta.icon" />
-            </template>
-        </el-table-column>
-        <el-table-column prop="orderNum" label="排序" align="center" sortable min-width="70px" />
-        <el-table-column prop="path" label="路径" align="center" />
-        <el-table-column label="状态" align="center" min-width="40px">
-            <template #default="scope">
-                <el-tag v-if="scope.row.status === '0'" type="success" size="large"> 正常 </el-tag>
-                <el-tag v-else class="mx-1" type="info" size="large">停用</el-tag>
-            </template>
-        </el-table-column>
-        <el-table-column label="显示状态" align="center" min-width="40px">
-            <template #default="scope">
-                <el-tag v-if="scope.row.alwaysShow === '0'" type="success" size="large"> 显示 </el-tag>
-                <el-tag v-else class="mx-1" type="info" size="large">隐藏</el-tag>
-            </template>
-        </el-table-column>
-        <el-table-column prop="updateTime" label="创建时间" align="center" />
-        <el-table-column align="center" label="操作" min-width="100px">
-            <template #default="scope">
-                <el-tooltip v-if="scope.row.menuType !== 'C'" placement="bottom" content="添加">
-                    <el-button type="success" icon="CirclePlus" circle @click="addMeun(scope.row)" />
-                </el-tooltip>
-                <el-tooltip placement="bottom" content="修改">
-                    <el-button type="primary" icon="Edit" circle @click="editMenu(scope.row)" />
-                </el-tooltip>
-                <el-tooltip placement="bottom" content="删除">
-                    <el-button type="danger" icon="Delete" circle @click="delMenu(scope.row)" />
-                </el-tooltip>
-            </template>
-        </el-table-column>
-    </el-table>
+    <el-card>
+        <el-button icon="Plus" plain style="margin-bottom: 10px" type="primary" @click="addMeun($event)"> 新增</el-button>
+        <el-table v-loading="loading" :data="menuList" :header-cell-style="{ background: '#f5f7fa' }" border element-loading-text="加载中..." row-key="menu_id">
+            <el-table-column align="left" label="菜单名称" prop="meta.title" />
+            <el-table-column align="center" label="图标" min-width="70px">
+                <template #default="scope">
+                    <SvgIcon v-if="el.indexOf(scope.row.meta.icon) !== -1" :icon-name="scope.row.meta.icon" :size="18" />
+                    <div v-else-if="scope.row.meta.icon === ''"></div>
+                    <el-icon v-else :size="20" color="#000">
+                        <component :is="scope.row.meta.icon"></component>
+                    </el-icon>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="排序" min-width="70px" prop="orderNum" sortable />
+            <el-table-column align="center" label="路由地址" prop="path" />
+            <el-table-column align="center" label="组件路径" prop="component" />
+            <el-table-column align="center" label="状态" min-width="40px">
+                <template #default="scope">
+                    <el-tag v-if="scope.row.status === '0'" size="large" type="success"> 正常</el-tag>
+                    <el-tag v-else class="mx-1" size="large" type="info">停用</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="显示状态" min-width="40px">
+                <template #default="scope">
+                    <el-tag v-if="scope.row.alwaysShow === '0'" size="large" type="success"> 显示</el-tag>
+                    <el-tag v-else class="mx-1" size="large" type="info">隐藏</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column align="center" label="创建时间" prop="updateTime" />
+            <el-table-column align="center" label="操作" min-width="100px">
+                <template #default="scope">
+                    <el-tooltip v-if="scope.row.menuType !== 'C'" content="添加" placement="bottom">
+                        <el-button circle icon="CirclePlus" type="success" @click="addMeun(scope.row)" />
+                    </el-tooltip>
+                    <el-tooltip content="修改" placement="bottom">
+                        <el-button circle icon="Edit" type="primary" @click="editMenu(scope.row)" />
+                    </el-tooltip>
+                    <el-tooltip content="删除" placement="bottom">
+                        <el-button circle icon="Delete" type="danger" @click.prevent="delMenu(scope.row.menu_id)" />
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-card>
 
     <!-- 操作菜单  对话框 -->
-    <el-dialog
-        v-model="dialogMenuFormVisible"
-        destroy-on-close
-        v-model:visible="dialogMenuFormVisible"
-        :title="diaTitle"
-        :close-on-click-modal="false"
-        @close="handleClose(ruleFormRef)"
-        style="width: 600px"
-    >
+    <el-dialog v-model="dialogMenuFormVisible" :close-on-click-modal="false" :title="diaTitle" style="width: 600px" @close="handleClose(ruleFormRef)">
         <el-form ref="ruleFormRef" :model="Menuform" :rules="MenuformRules" label-width="120px">
             <el-form-item label="上级菜单" prop="parentMenu">
                 <el-tree-select
                     v-model="Menuform.parentMenu"
+                    :current-node-key="Menuform.parentMenu"
                     :data="data"
-                    node-key="value"
-                    :default-expanded-keys="[0]"
-                    :current-node-key="0"
-                    filterable
+                    :default-checked-keys="[Menuform.parentMenu]"
+                    :prop="data"
+                    :render-after-expand="false"
                     check-strictly
-                    highlight-current
                     clearable
-                    @visible-change="setmenuTree"
+                    default-expand-all
                     empty-text="加载中..."
+                    filterable
+                    highlight-current
+                    node-key="value"
                     placeholder="请选择上级菜单"
                     style="width: 100%"
                 />
@@ -80,20 +73,21 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="菜单图标">
-                <el-popover placement="bottom-start" :visible="visibleIcons" trigger="click" :teleported="false">
+                <el-popover :teleported="false" :visible="visibleIcons" placement="bottom-start" trigger="click">
                     <template #reference>
-                        <el-input v-model="Menuform.icon" placeholder="点击选择图标" clearable @focus="visibleIconList" @blur="visibleIconList">
+                        <el-input v-model="Menuform.icon" clearable placeholder="点击选择图标" @blur="visibleIconList" @focus="visibleIconList">
                             <template #prefix>
                                 <el-icon v-if="Menuform.icon === ''" style="height: 32px; width: 16px">
                                     <search />
                                 </el-icon>
+                                <SvgIcon v-else-if="el.indexOf(Menuform.icon) !== -1" :icon-name="Menuform.icon" :size="18" />
                                 <div v-else style="width: 20px; height: 20px">
                                     <component :is="Menuform.icon" />
                                 </div>
                             </template>
                         </el-input>
                     </template>
-                    <div v-for="(item, index) in Object.keys(ElIcons)" :key="index" class="bs-wrapper__container__item">
+                    <div v-for="(item, index) in Object.keys(ElIcons)" :key="index" class="bs-wrapper__container__item" @click="getIcon(item)">
                         <div style="width: 24px; height: 24px" @click="getIcon(item)">
                             <component :is="item" />
                         </div>
@@ -106,22 +100,24 @@
             <el-row>
                 <el-col :span="12">
                     <el-form-item label="菜单名称" prop="menuName">
-                        <el-input maxlength="8" clearable placeholder="请输入菜单名称" v-model="Menuform.menuName"></el-input>
+                        <el-input v-model="Menuform.menuName" clearable maxlength="8" placeholder="请输入菜单名称"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="显示排序" prop="orderNum">
-                        <el-input-number v-model="Menuform.orderNum" :min="0" :max="20" controls-position="right" placeholder="请选择排序" />
+                        <el-input-number v-model="Menuform.orderNum" :max="20" :min="0" controls-position="right" placeholder="请选择排序" />
                     </el-form-item>
                 </el-col>
             </el-row>
             <el-form-item label="路由地址" prop="path">
-                <el-input clearable placeholder="请输入路由地址" v-model="Menuform.path"></el-input>
+                <el-input v-model="Menuform.path" clearable placeholder="请输入路由地址"></el-input>
             </el-form-item>
             <el-row class="menu_allow">
                 <el-col :span="1">
-                    <el-tooltip class="box-item" effect="dark" content="选择'隐藏'则路由将不会出现在侧边栏，但仍然可以访问" placement="top-end">
-                        <el-icon><QuestionFilled /></el-icon>
+                    <el-tooltip class="box-item" content="选择'隐藏'则路由将不会出现在侧边栏，但仍然可以访问" effect="dark" placement="top-end">
+                        <el-icon>
+                            <QuestionFilled />
+                        </el-icon>
                     </el-tooltip>
                 </el-col>
                 <el-col :span="11">
@@ -133,8 +129,10 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="1">
-                    <el-tooltip class="box-item" effect="dark" content="选择'停用'则路由将不会出现在侧边栏，也不能被访问" placement="top-start">
-                        <el-icon><QuestionFilled /></el-icon>
+                    <el-tooltip class="box-item" content="选择'停用'则路由将不会出现在侧边栏，也不能被访问" effect="dark" placement="top-start">
+                        <el-icon>
+                            <QuestionFilled />
+                        </el-icon>
                     </el-tooltip>
                 </el-col>
                 <el-col :span="11">
@@ -146,20 +144,24 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row class="menu_allow" v-if="Menuform.menuType === 'C'">
+            <el-row v-if="Menuform.menuType === 'C'" class="menu_allow">
                 <el-col :span="1">
-                    <el-tooltip class="box-item" effect="dark" content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top-end">
-                        <el-icon><QuestionFilled /></el-icon>
+                    <el-tooltip class="box-item" content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" effect="dark" placement="top-end">
+                        <el-icon>
+                            <QuestionFilled />
+                        </el-icon>
                     </el-tooltip>
                 </el-col>
                 <el-col :span="11">
                     <el-form-item class="menu_show" label="组件路径" prop="component">
-                        <el-input v-model="Menuform.component" style="width: 90%" placeholder="请输入组件路径" clearable></el-input>
+                        <el-input v-model="Menuform.component" clearable placeholder="请输入组件路径" style="width: 90%"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="1">
-                    <el-tooltip class="box-item" effect="dark" content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" placement="top-start">
-                        <el-icon><QuestionFilled /></el-icon>
+                    <el-tooltip class="box-item" content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" effect="dark" placement="top-start">
+                        <el-icon>
+                            <QuestionFilled />
+                        </el-icon>
                     </el-tooltip>
                 </el-col>
                 <el-col :span="11">
@@ -173,36 +175,28 @@
             </el-row>
 
             <el-form-item class="btns">
-                <el-button type="primary" @click="submitForm(ruleFormRef)"> 提交 </el-button>
-                <el-button @click="Cancel">取消</el-button>
+                <el-button type="primary" @click="submitForm(ruleFormRef)"> 提交</el-button>
+                <el-button @click="handleClose(ruleFormRef)">取消</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as ElIcons from "@element-plus/icons-vue";
 import useMenu from "@/util/system/menuManagement";
-const {
-    loading,
-    menuList,
-    diaTitle,
-    dialogMenuFormVisible,
-    data,
-    Menuform,
-    visibleIcons,
-    ruleFormRef,
-    MenuformRules,
-    setmenuTree,
-    addMeun,
-    editMenu,
-    delMenu,
-    submitForm,
-    Cancel,
-    visibleIconList,
-    getIcon,
-    handleClose,
-} = useMenu();
+// 获取所有自定义的svg图标的名称
+const files = import.meta.glob("../../../assets/icon/svg/*.svg");
+// 存储所有自定义的svg图标的名称
+const el: any = [];
+for (const key in files) {
+    if (Object.prototype.hasOwnProperty.call(files, key)) {
+        el.push(key.replace("../../../assets/icon/svg/", "").replace(".svg", ""));
+    }
+}
+
+const { loading, menuList, diaTitle, dialogMenuFormVisible, data, Menuform, visibleIcons, ruleFormRef, MenuformRules, addMeun, editMenu, delMenu, submitForm, visibleIconList, getIcon, handleClose } =
+    useMenu();
 </script>
 <style lang="scss" scoped>
 .btns {

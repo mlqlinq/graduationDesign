@@ -1,78 +1,114 @@
 <template>
     <el-container class="layout-container-demo">
-        <!-- 菜单区域 -->
-        <el-aside :width="isCollapse ? '64px' : '233px'">
-            <el-scrollbar>
-                <el-menu class="el-menu-vertical-demo" :collapse="isCollapse" unique-opened :router="true" :collapse-transition="false" :default-active="activePath">
-                    <el-menu-item index="/index" @click="saveNavSate('/index')">
-                        <SvgIcon :class="!isCollapse ? 'menu_icon' : ' menu_icon_full'" :size="22" icon-name="homePage" />
-                        <span>首页</span>
-                    </el-menu-item>
-                    <template v-for="item in allMenu" :key="item.menu_id">
-                        <el-sub-menu popper-class="ziMenu" v-if="item.children && item.children.length" :index="item.path">
-                            <template #title>
-                                <SvgIcon :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :size="22" :icon-name="item.meta.icon" />
-                                <span>{{ item.meta.title }}</span>
-                            </template>
-                            <el-menu-item v-for="item2 in item.children" :key="item2.menu_id" :index="item2.path" @click="saveNavSate(item2.path)">
-                                <SvgIcon class="menu_icon meni" :size="22" :icon-name="item2.meta.icon" />
-                                {{ item2.meta.title }}
-                            </el-menu-item>
-                        </el-sub-menu>
-                        <el-menu-item v-else>
-                            <SvgIcon :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :size="22" :icon-name="item.meta.icon" />
-
-                            <span>{{ item.meta.title }}</span>
-                        </el-menu-item>
-                    </template>
-                </el-menu>
-            </el-scrollbar>
-        </el-aside>
-
         <!-- 头部 -->
+        <el-header class="common-layout">
+            <span class="header_title" @click="goIndex">
+                <SvgIcon :size="30" icon-name="MyLogo" style="margin-right: 20px" />
+                <span class="cont">家庭经济困难学生奖助学金综合管理系统</span>
+            </span>
+            <span class="user_set">
+                <!-- 信息 -->
+                <span>
+                    <el-badge class="item" is-dot>
+                        <el-button class="share-button" icon="Bell" text />
+                    </el-badge>
+                </span>
+                <!-- 全屏按钮 -->
+                <span class="full_screen mag">
+                    <SvgIcon :icon-name="full ? 'FullScreen' : 'CancelFullScreen'" :size="25.8" @click="toggleScreen" />
+                </span>
+                <span class="Refresh">
+                    <el-icon size="22"><Refresh /></el-icon>
+                </span>
+                <!-- 用户 -->
+                <span class="full_user mag" @click="handleClick">
+                    <el-dropdown trigger="click">
+                        <span class="el-dropdown-link">
+                            <el-avatar :src="userData.avatar" icon="UserFilled"></el-avatar>
+                            <span class="usern"> {{ userData.username }}</span>
+                            <SvgIcon :class="fullSvg ? 'dropdown_svg' : 'dropdown_svgClick'" :size="18" icon-name="DrapDown" />
+                        </span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item icon="User" @click="personalCenter"> 个人中心 </el-dropdown-item>
+                                <el-dropdown-item icon="CircleClose" @click="loginOut"> 退出登录 </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </span>
+            </span>
+        </el-header>
         <el-container>
-            <el-header>
-                <!-- 展开和收起菜单 -->
-                <span class="collapse_menu">
-                    <el-icon size="24" color="#5a5e66" style="cursor: pointer" @click="openMenu">
-                        <Fold v-if="!isCollapse" />
-                        <Expand v-else />
-                    </el-icon>
-                </span>
-                <span class="heard_bread">
-                    <el-breadcrumb separator=">">
-                        <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
-                            {{ item }}
-                        </el-breadcrumb-item>
-                    </el-breadcrumb>
-                </span>
-                <!-- <span class="header_title">家庭经济困难学生奖助学金综合管理系统</span> -->
-                <span class="user_set">
-                    <!-- 全屏按钮 -->
-                    <span class="full_screen mag">
-                        <SvgIcon :size="27" color="#5a5e66" :icon-name="full ? 'fullScreen' : 'cancelFullScreen'" @click="toggleScreen" />
-                    </span>
-                    <!-- 用户 -->
-                    <span class="full_user mag">
-                        <el-dropdown trigger="click">
-                            <span class="el-dropdown-link">
-                                <el-avatar icon="UserFilled"></el-avatar>
-                                <SvgIcon style="color: #c0c4cc" :size="18" color="#5a5e66" icon-name="drapDown" />
-                            </span>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item @click="personalCenter"> 个人中心 </el-dropdown-item>
-                                    <el-dropdown-item @click="loginOut"> 退出登录 </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </span>
-                </span>
-            </el-header>
+            <!-- 菜单区域 -->
+            <el-aside :width="isCollapse ? '64px' : '233px'">
+                <el-scrollbar>
+                    <el-menu :collapse="isCollapse" :collapse-transition="false" :default-active="activePath" :router="true" class="el-menu-vertical-demo" unique-opened @select="handleMenu">
+                        <el-menu-item index="/index" @click="saveNavSate('/index')">
+                            <SvgIcon :class="!isCollapse ? 'menu_icon' : ' menu_icon_full'" :size="22" icon-name="HomePage" />
+                            <span>首页</span>
+                        </el-menu-item>
+                        <template v-for="item in allMenu" :key="item.menu_id">
+                            <el-sub-menu v-if="item.children && item.children.length" :index="item.path" popper-class="ziMenu">
+                                <template #title>
+                                    <SvgIcon v-if="el.indexOf(item.meta.icon) !== -1" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :icon-name="item.meta.icon" :size="22" />
+                                    <span v-else-if="item.meta.icon === ''" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"></span>
+                                    <el-icon v-else :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :size="22">
+                                        <component :is="item.meta.icon"></component>
+                                    </el-icon>
+                                    <span>{{ item.meta.title }}</span>
+                                </template>
+                                <el-menu-item v-for="item2 in item.children" :key="item2.menu_id" :index="item2.path" @click="saveNavSate(item2.path)">
+                                    <SvgIcon v-if="el.indexOf(item2.meta.icon) !== -1" :icon-name="item2.meta.icon" :size="22" class="menu_icon meni" />
+                                    <span v-else-if="item2.meta.icon === ''" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"></span>
+                                    <el-icon v-else :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :size="22">
+                                        <component :is="item2.meta.icon"></component>
+                                    </el-icon>
+                                    {{ item2.meta.title }}
+                                </el-menu-item>
+                            </el-sub-menu>
+                            <el-menu-item v-else>
+                                <SvgIcon v-if="el.indexOf(item.meta.icon) !== -1" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :icon-name="item.meta.icon" :size="22" />
+                                <span v-else-if="item.meta.icon === ''" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"></span>
+                                <el-icon v-else :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :size="22">
+                                    <component :is="item.meta.icon"></component>
+                                </el-icon>
+                                <span>{{ item.meta.title }}</span>
+                            </el-menu-item>
+                        </template>
+                    </el-menu>
+                </el-scrollbar>
+            </el-aside>
 
             <!-- 主题内容 -->
             <el-main>
-                <router-view />
+                <el-header>
+                    <!-- 展开和收起菜单 -->
+                    <span class="collapse_menu">
+                        <el-icon color="#b9b0b0" size="24" style="cursor: pointer" @click="openMenu">
+                            <Fold v-if="!isCollapse" />
+                            <Expand v-else />
+                        </el-icon>
+                    </span>
+                    <!-- 面包屑 -->
+                    <span class="heard_bread">
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
+                                {{ item }}
+                            </el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </span>
+                </el-header>
+                <tabs />
+
+                <!-- 横向菜单 标签 -->
+                <div style="padding: 16px">
+                    <router-view v-slot="{ Component, route }">
+                        <keep-alive>
+                            <component :is="Component" v-if="route && route.meta && route.meta.noCache" :key="viewKey" />
+                        </keep-alive>
+                        <component :is="Component" v-if="route && route.meta && !route.meta.noCache" :key="viewKey" />
+                    </router-view>
+                </div>
             </el-main>
         </el-container>
     </el-container>
@@ -80,40 +116,68 @@
 
 <script lang="ts" setup>
 import index from "@/util/index";
-const { isCollapse, full, openMenu, toggleScreen, allMenu, activePath, personalCenter, saveNavSate, loginOut, breadcrumbList } = index();
+
+const { isCollapse, full, userData, allMenu, activePath, fullSvg, breadcrumbList, viewKey, el, handleClick, loginOut, personalCenter, openMenu, toggleScreen, saveNavSate, goIndex, handleMenu } =
+    index();
 </script>
 
 <style lang="scss" scoped>
 .layout-container-demo {
     height: 100%;
 
-    .el-header {
+    .common-layout {
         height: 60px;
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
         flex-direction: row;
         justify-content: space-between;
-        background-color: rgb(171 171 171 / 59%);
+        background-color: #fff;
         color: #f9f0da !important;
         position: relative;
         padding-right: 8px;
 
-        .collapse_menu {
-            width: 2%;
-            display: inline-block;
-            text-align: left !important;
-        }
-
-        .heard_bread {
-            position: fixed;
-            margin-left: 40px;
-            color: #f9f0da;
-        }
-
         .header_title {
-            font-size: 25px;
-            display: inline-block;
+            color: #000;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            font-size: larger;
+            cursor: pointer;
+
+            // 下划线动画
+            .cont {
+                text-decoration: none;
+                color: #000;
+                position: relative;
+            }
+
+            .cont:hover {
+                color: var(--el-color-primary);
+            }
+
+            .cont::after {
+                content: "";
+                display: block;
+                /*开始时候下划线的宽度为100%*/
+                width: 100%;
+                height: 1px;
+                position: absolute;
+                bottom: -7px;
+                background: var(--el-color-primary-dark-2);
+                transition: all 0.3s ease-in-out;
+                /*通过transform的缩放scale来让初始时x轴为0*/
+                transform: scale3d(0, 1, 1);
+                /*将坐标原点移到元素的中间，以原点为中心进行缩放*/
+                transform-origin: 50% 0;
+            }
+
+            .cont:hover::after {
+                /*鼠标经过时还原到正常比例*/
+                transform: scale3d(1, 1, 1);
+            }
         }
 
         .mag {
@@ -123,25 +187,83 @@ const { isCollapse, full, openMenu, toggleScreen, allMenu, activePath, personalC
         .user_set {
             display: flex;
             align-items: center;
-        }
 
-        .full_screen {
-            cursor: pointer;
-        }
+            span {
+                margin: 0 5px;
+            }
 
-        .full_user {
-            cursor: pointer;
+            .el-badge {
+                margin-right: 7px;
+            }
 
-            .el-dropdown-link {
-                display: flex;
-                align-items: flex-end;
+            .el-button.is-text {
+                color: var(--el-button-text-color);
+                border: 0 solid transparent;
+                background-color: transparent;
+                font-size: 22px;
+                padding: 3px;
+
+                :deep(.el-icon) {
+                    color: chocolate !important;
+                }
+            }
+
+            .el-button.is-text:hover {
+                :deep(.el-icon) {
+                    color: var(--el-color-primary) !important;
+                }
+            }
+
+            .full_screen {
+                color: #b9b0b0;
+                cursor: pointer;
+            }
+
+            .full_screen:hover {
+                color: var(--el-color-primary) !important;
+            }
+
+            .Refresh {
+                cursor: pointer;
+                color: #b9b0b0;
+                width: 26px;
+                height: 25px;
+            }
+
+            .Refresh:hover {
+                color: var(--el-color-primary) !important;
+            }
+
+            .full_user {
+                cursor: pointer;
+
+                .el-dropdown-link {
+                    color: black;
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+
+                    .usern {
+                        font-size: 17px;
+                        width: auto;
+                        margin: 0 10px;
+                    }
+
+                    .dropdown_svg {
+                        transition: transform 0.4s;
+                    }
+
+                    .dropdown_svgClick {
+                        transition: transform 0.4s;
+                        transform: rotateZ(180deg);
+                    }
+                }
             }
         }
     }
 
     .el-aside {
         color: var(--el-text-color-primary);
-        // background: var(--el-color-primary-light-8);
         background: none;
         transition: all 1ms;
         -webkit-transition: width 0.5s;
@@ -168,12 +290,37 @@ const { isCollapse, full, openMenu, toggleScreen, allMenu, activePath, personalC
 
     .el-main {
         padding: 0;
-        margin-top: 10px;
-        height: calc(100vh - 70px); // 设置主体 main 高度
+        height: calc(100vh - 110px); // 设置主体 main 高度
+
+        .el-header {
+            height: 50px;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            flex-direction: row;
+            justify-content: space-between;
+            color: #fff !important;
+            background-color: #fff;
+            position: relative;
+            padding-right: 8px;
+            border-top: 1px solid #f6f6f6;
+
+            .collapse_menu {
+                width: 2%;
+                display: inline-block;
+                text-align: left !important;
+            }
+
+            .heard_bread {
+                position: fixed;
+                margin-left: 40px;
+            }
+        }
     }
 
     .el-menu {
-        border-right: none;
+        // border-right: none;
+        border-top: #000;
         height: 100%;
         transition: all 10ms;
 
@@ -184,7 +331,9 @@ const { isCollapse, full, openMenu, toggleScreen, allMenu, activePath, personalC
             width: var(--el-menu-icon-width);
             text-align: center;
         }
+
         .menu_icon_full {
+            position: fixed;
             vertical-align: middle;
             width: var(--el-menu-icon-width);
             text-align: center;

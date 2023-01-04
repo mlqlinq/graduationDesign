@@ -6,9 +6,11 @@
 .el-form {
     margin: 20px 0;
 }
+
 .el-select {
     width: 100%;
 }
+
 .item_btn :deep(.el-form-item__content) {
     margin-left: 0 !important;
     margin-top: 20px;
@@ -126,12 +128,14 @@ button:hover {
 .login_index button:hover {
     background: #fdc500;
 }
+
 .copyright {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-around;
     align-items: flex-end;
 }
+
 .copyright p {
     text-align: center;
     font-size: 17px;

@@ -1,13 +1,14 @@
 import { storeToRefs } from "pinia";
 import { useMenuStore } from "@/stores/index";
 // import { ref, onMounted, reactive } from "vue"
-import { getAllMenu } from "@/http/api/indexMenu.js";
+import { addMenu, delMenuw, editMenuw, getAllMenus } from "@/http/api/indexMenu.js";
 import type { FormInstance, FormRules } from "element-plus";
+
 export default () => {
     // 获取 pinia 数据
     const Menus = useMenuStore();
-
     const { menuAll: menuLists } = storeToRefs(Menus); // 解构
+
     // loading
     const loading = ref(true);
 
@@ -31,7 +32,7 @@ export default () => {
     }
 
     // 菜单列表
-    const data = ref<Array<menuTree>>([]);
+    const data = ref<menuTree[]>([]);
 
     // 图标列表显示控制
     const visibleIcons = ref<boolean>(false);
@@ -40,8 +41,9 @@ export default () => {
     const ruleFormRef = ref<FormInstance>();
 
     // 表单各属性绑定对象
-    const Menuform = reactive({
-        parentMenu: "", // 上级菜单
+    const Menuform = reactive<any>({
+        menuid: undefined,
+        parentMenu: 0, // 上级菜单
         menuType: "M", // 菜单类型
         icon: "", // 图标
         menuName: "", // 名称
@@ -109,6 +111,16 @@ export default () => {
                 message: "请输入路由地址",
                 trigger: "blur",
             },
+            {
+                validator(rule, value, callback, source, options) {
+                    const pattern2 = new RegExp("[A-Za-z]+");
+                    if (!pattern2.test(value.replaceAll("/", ""))) {
+                        callback(new Error("请输入正确格式！"));
+                    } else {
+                        callback();
+                    }
+                },
+            },
         ],
         alwaysShow: [
             {
@@ -130,6 +142,16 @@ export default () => {
                 message: "请输入组件路径",
                 trigger: "change",
             },
+            {
+                validator(rule, value, callback, source, options) {
+                    const pattern2 = new RegExp("[A-Za-z]+");
+                    if (!pattern2.test(value.replaceAll("/", ""))) {
+                        callback(new Error("请输入正确格式！"));
+                    } else {
+                        callback();
+                    }
+                },
+            },
         ],
         isCache: [
             {
@@ -141,36 +163,64 @@ export default () => {
     });
 
     // 添加按钮
-    const addMeun = value => {
+    const addMeun = (value: any) => {
         diaTitle.value = "添加菜单";
         dialogMenuFormVisible.value = true;
-        console.log(value);
+        setmenuTree();
     };
 
     // 编辑按钮
-    const editMenu = value => {
+    const editMenu = (value) => {
+        console.log("🚀 ~ file: menuManagement.ts:172 ~ editMenu ~ value", value);
         diaTitle.value = "修改菜单";
+        Menuform.menuid = value.menu_id;
+        Menuform.alwaysShow = value.alwaysShow;
+        Menuform.component = value.component;
+        Menuform.icon = value.meta.icon;
+        Menuform.isCache = value.meta.noCache;
+        Menuform.menuName = value.meta.title;
+        Menuform.menuType = value.menuType;
+        Menuform.orderNum = value.orderNum;
+        Menuform.parentMenu = value.menuType === "C" ? parseInt(value.parent_id) : 0;
+        Menuform.path = value.path;
+        Menuform.status = value.status;
         dialogMenuFormVisible.value = true;
-        console.log(value);
+        setmenuTree();
     };
+    // 注入重载页面事件
+    const reload: any = inject("reload");
 
     // 删除按钮
-    const delMenu = value => {
-        ElMessageBox.confirm("确定要删除该菜单吗?", "提醒--请注意！该操作不可逆！", {
+    const delMenu = (val: number) => {
+        ElMessageBox.confirm("确定要删除该菜单吗?", "请注意！该操作不可逆！", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning",
         })
-            .then(() => {
-                // eslint-disable-next-line no-undef
-                ElNotification({
-                    title: "提示",
-                    message: "删除成功",
-                    type: "success",
-                    duration: 2000,
-                });
+            .then(async () => {
+                await delMenuw(val)
+                    .then((res) => {
+                        ElNotification({
+                            title: "提示",
+                            message: res.msg,
+                            type: "success",
+                            duration: 1500,
+                        });
+                        // 重载页面
+                        setTimeout(() => {
+                            reload();
+                        }, 100);
+                    })
+                    .catch((err) => {
+                        ElNotification({
+                            title: "错误",
+                            message: err,
+                            type: "error",
+                            duration: 3000,
+                        });
+                    });
             })
-            .catch(() => {
+            .catch(async () => {
                 ElMessage({
                     type: "info",
                     message: "取消删除",
@@ -180,12 +230,58 @@ export default () => {
 
     // 提交按钮
     const submitForm = async (formEl: FormInstance | undefined) => {
-        if (!formEl) return;
-        await formEl.validate((valid, fields) => {
+        if (formEl == null) return;
+        await formEl.validate(async (valid, fields) => {
             if (valid) {
-                console.log("submit!", Menuform);
+                Menuform.path = Menuform.path.replaceAll("/", "");
+                if (diaTitle.value === "添加菜单") {
+                    await addMenu(Menuform)
+                        .then((res) => {
+                            ElNotification({
+                                title: "提示",
+                                message: res.msg,
+                                type: "success",
+                                duration: 1500,
+                            });
+                            dialogMenuFormVisible.value = false;
+                            // 重载页面
+                            setTimeout(() => {
+                                reload();
+                            }, 100);
+                        })
+                        .catch((err) => {
+                            ElNotification({
+                                title: "错误",
+                                message: err,
+                                type: "error",
+                                duration: 1500,
+                            });
+                        });
+                } else if (diaTitle.value === "修改菜单") {
+                    await editMenuw(Menuform)
+                        .then((res) => {
+                            ElNotification({
+                                title: "提示",
+                                message: res.msg,
+                                type: "success",
+                                duration: 1500,
+                            });
+                            dialogMenuFormVisible.value = false;
+                            // 重载页面
+                            setTimeout(() => {
+                                reload();
+                            }, 100);
+                        })
+                        .catch((err) => {
+                            ElNotification({
+                                title: "错误",
+                                message: err,
+                                type: "error",
+                                duration: 1500,
+                            });
+                        });
+                }
             } else {
-                // eslint-disable-next-line no-undef
                 ElNotification({
                     title: "提示",
                     message: "请全部填写！",
@@ -196,21 +292,16 @@ export default () => {
         });
     };
 
-    // 取消按钮
-    const Cancel = () => {
-        dialogMenuFormVisible.value = false;
-    };
-
     // 请求 树状菜单数据
     const setmenuTree = () => {
         if (data.value.length !== 0) return;
-        getAllMenu()
-            .then(res => {
+        getAllMenus()
+            .then((res) => {
                 const menu: any = { value: 0, label: "主类目" };
                 menu.children = JSON.parse(JSON.stringify(res.data));
                 data.value.push(menu);
             })
-            .catch(err => {
+            .catch((err) => {
                 ElMessage.error(err.mseesge);
             });
     };
@@ -221,13 +312,24 @@ export default () => {
     };
 
     // 点击获取设置的图标
-    const getIcon = icon => {
+    const getIcon = (icon) => {
         Menuform.icon = icon;
     };
 
     // 弹窗关闭时重置表单
     const handleClose = (formEl: FormInstance | undefined) => {
-        if (!formEl) return;
+        dialogMenuFormVisible.value = false;
+        if (formEl == null) return;
+        Menuform.alwaysShow = "0";
+        Menuform.component = "";
+        Menuform.icon = "";
+        Menuform.isCache = 0;
+        Menuform.menuName = "";
+        Menuform.menuType = "M";
+        Menuform.orderNum = undefined;
+        Menuform.parentMenu = undefined;
+        Menuform.path = "";
+        Menuform.status = "0";
         formEl.resetFields();
     };
 
@@ -246,7 +348,6 @@ export default () => {
         editMenu,
         delMenu,
         submitForm,
-        Cancel,
         visibleIconList,
         getIcon,
         handleClose,

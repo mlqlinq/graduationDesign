@@ -1,40 +1,49 @@
 // stores/counter.js  在pinia中，getters和state中不能使用相同的名字，但是vuex中可以使用相同的名字
 import { defineStore } from "pinia";
 
-//存储token 和 解析token 的用户
+// 存储token 和 解析token 的用户
 export const useAuthStore = defineStore("userAuth", {
     state: () => {
-        //管理俩个状态
+        // 管理俩个状态
         return {
             //  isAuthenticated 判断用户是否登录，默认为false,即未登录，登录之后修改为true
             isAuthenticated: false,
-            user: {}, // 解析的token里面所包含的数据
+            token: "", // 解析的token里面所包含的数据
+            userData: {},
         };
     },
     getters: {
-        //通过getters对状态state进行获取
-        getAuthenticated: state => state.isAuthenticated,
-        getUser: state => state.user,
+        // 通过getters对状态state进行获取
+        getAuthenticated: (state) => state.isAuthenticated,
+        getUser: (state) => state.token,
+        getuserData: (state) => state.userData,
     },
     actions: {
         setAuth(isAuth: boolean) {
-            //修改当前登录的状态
+            // 修改当前登录的状态
             if (isAuth) {
-                this.isAuthenticated = isAuth; //在pinia中this指代state
+                this.isAuthenticated = isAuth; // 在pinia中this指代state
             } else {
                 this.isAuthenticated = false;
             }
         },
-        setUser(user: any) {
-            //解析的用户
-            if (user) {
-                this.user = user;
+        setUser(token: any) {
+            if (token) {
+                this.token = token;
             } else {
-                this.user = {};
+                this.token = "";
             }
         },
-        persist: {
-            enabled: true, // 开启数据缓存
+        // 解析的用户
+        setUserData(userData) {
+            if (userData) {
+                this.userData = userData;
+            } else {
+                this.userData = {};
+            }
         },
+    },
+    persist: {
+        enabled: true, // 开启数据缓存
     },
 });

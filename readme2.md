@@ -19,8 +19,6 @@ npx prettier --write .
   },
 ```
 
-
-
 ```json
 {
   "bracketSameLine": false,

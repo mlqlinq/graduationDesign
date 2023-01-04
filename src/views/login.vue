@@ -7,7 +7,7 @@
                     <div class="main-hotair">
                         <div class="content-wthree">
                             <h2>用户登录</h2>
-                            <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm" size="large" label-position="left" status-icon>
+                            <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="demo-ruleForm" label-position="left" label-width="100px" size="large" status-icon>
                                 <el-form-item label="用户身份:" prop="userIdentity">
                                     <el-select v-model="ruleForm.userIdentity" placeholder="请选择">
                                         <el-option label="管理员" value="0" />
@@ -30,7 +30,7 @@
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码:" prop="password">
-                                    <el-input v-model="ruleForm.password" type="password" placeholder="请输入密码" show-password>
+                                    <el-input v-model="ruleForm.password" placeholder="请输入密码" show-password type="password">
                                         <template #prefix>
                                             <el-icon>
                                                 <Lock />
@@ -44,12 +44,12 @@
                                             <el-input v-model="ruleForm.verificationCode" clearable />
                                         </el-col>
                                         <el-col :span="6">
-                                            <div class="login-code" v-html="imgUrl" @click="getOnCode"></div>
+                                            <div class="login-code" @click="getOnCode" v-html="imgUrl"></div>
                                         </el-col>
                                     </el-row>
                                 </el-form-item>
                                 <el-form-item class="item_btn">
-                                    <el-button :loading="showLoading" :disabled="isdisabled" type="primary" @click="submitForm(ruleFormRef)">
+                                    <el-button :disabled="isdisabled" :loading="showLoading" type="primary" @click="submitForm(ruleFormRef)">
                                         <span v-if="!showLoading">登 录</span>
                                         <span v-else>登 录 中...</span>
                                     </el-button>
@@ -58,7 +58,7 @@
                         </div>
                         <div class="login_ind align-self">
                             <div class="left_grid_info">
-                                <img src="@/assets/images/1.png" alt="家庭经济困难学生奖助学金综合管理系统" class="img-fluid" />
+                                <img alt="家庭经济困难学生奖助学金综合管理系统" class="img-fluid" src="@/assets/images/1.png" />
                             </div>
                         </div>
                     </div>
@@ -74,10 +74,10 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import login from "@/util/login";
 
 const { imgUrl, getOnCode, ruleFormRef, ruleForm, rules, showLoading, isdisabled, submitForm } = login();
 </script>
 
-<style lang="scss" src="../assets/css/login.scss" scoped></style>
+<style lang="scss" scoped src="../assets/css/login.scss"></style>

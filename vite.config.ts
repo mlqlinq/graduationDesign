@@ -97,7 +97,7 @@ export default defineConfig(({ mode }) => {
                     target: loadEnv(mode, process.cwd()).VITE_BASE_API,
                     secure: false, // 如果是https接口，需要配置这个参数
                     changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
-                    rewrite: path => path.replace("/api", ""), // 请求接口的时候把 /api 截掉
+                    rewrite: (path) => path.replace("/api", ""), // 请求接口的时候把 /api 截掉
                 },
             },
         },
@@ -137,12 +137,12 @@ export default defineConfig(({ mode }) => {
             // js、css等文件打包到不同文件夹
             // https://rollupjs.org/guide/en/#outputoptions-object
             /* rollupOptions: {
-                    output: {
-                        chunkFileNames: "assets/js/[name]-[hash].js",
-                        entryFileNames: "assets/js/[name]-[hash].js",
-                        assetFileNames: "assets/[ext]/[name]-[hash].[ext]"
-                    }
-                } */
+              output: {
+                  chunkFileNames: "assets/js/[name]-[hash].js",
+                  entryFileNames: "assets/js/[name]-[hash].js",
+                  assetFileNames: "assets/[ext]/[name]-[hash].[ext]"
+              }
+          } */
         },
     };
 });
