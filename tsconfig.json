@@ -8,7 +8,7 @@
     "src/**/*.tsx",
     "*.d.ts",
     "src/**/*.d.ts",
-    "auto-imports.d.ts",
+    "auto-imports.d.ts"
   ],
   "exclude": [
     "node_modules",

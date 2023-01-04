@@ -10,45 +10,47 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 
 import { ElMessage } from "element-plus";
 import NProgress from "nprogress"; // 导入全局进度条
-import { storeToRefs } from "pinia";
 
 // 公共路由
-export const constantRoutes: Array<RouteRecordRaw> = [
+export const constantRoutes: RouteRecordRaw[] = [
     {
         path: "/",
         name: "login",
-        component: () => import("@/views/login.vue"),
+        component: async () => await import("@/views/login.vue"),
     },
     {
-        path: "/home",
+        path: "/home:",
         name: "home",
         redirect: "/index", // 重定向
-        component: () => import("@/views/index.vue"),
+        component: async () => await import("@/views/index.vue"),
         children: [
             {
                 path: "/index",
                 name: "index",
-                component: () => import("@/views/home/homeIndex.vue"),
-                meta: { arr: ["首页"] },
+                component: async () => await import("@/views/home/homeIndex.vue"),
+                meta: { title: "首页" },
             },
         ],
     },
     {
         path: "/404",
-        component: () => import("@/views/error/404.vue"),
+        name: "404",
+        component: async () => await import("@/views/error/404.vue"),
     },
     {
         path: "/401",
-        component: () => import("@/views/error/401.vue"),
+        name: "401",
+        component: async () => await import("@/views/error/401.vue"),
     },
 ];
 
 const router = createRouter({
+    scrollBehavior: () => ({ left: 0, top: 0 }),
     history: createWebHistory(),
     routes: constantRoutes,
 });
 
-//定义变量判断是否已经动态添加过，如果刷新后load永远为 0
+// 定义变量判断是否已经动态添加过，如果刷新后load永远为 0
 let load = 0;
 
 /**
@@ -58,7 +60,7 @@ let load = 0;
  * @param {Function} next 一定要调用该方法来 resolve 这个钩子。
  */
 router.beforeEach((to, from, next) => {
-    //每次切换页面时，调用进度条
+    // 每次切换页面时，调用进度条
     NProgress.start();
 
     // 获取token
@@ -77,11 +79,11 @@ router.beforeEach((to, from, next) => {
     if (!tokenStr) {
         ElMessage.error("登录已过期，请重新登录！");
         return next("/");
-    } else if (load === 0 && addrouters.length && to.name !== "login") {
+    } else if (load === 0 && addrouters.length > 0 && to.name !== "login") {
         // 非登录、有菜单数据、 没有进行添加（或者刷新了）
         addrouters.forEach((navigation: any) => {
             if (navigation.children) {
-                navigation.children.forEach(item => {
+                navigation.children.forEach((item) => {
                     router.addRoute("home", {
                         path: `${item.path}`,
                         meta: {
@@ -89,7 +91,7 @@ router.beforeEach((to, from, next) => {
                             noCache: item.meta.noCache,
                             title: item.meta.title,
                         },
-                        name: item.title,
+                        name: item.name,
                         component: modules[`../views/${item.component}.vue`],
                     });
                 });
@@ -98,7 +100,7 @@ router.beforeEach((to, from, next) => {
 
         router.addRoute({
             path: "/:pathMatch(.*)*", // 捕获所有路由或 404 Not found 路由
-            component: () => import("@/views/error/404.vue"),
+            component: async () => await import("@/views/error/404.vue"),
         });
 
         load++;
@@ -106,7 +108,7 @@ router.beforeEach((to, from, next) => {
         // 添加后跳转到应访问的地址
         return next({ path: to.path });
     }
-    // console.log(router.getRoutes(), "查看现有路由")
+    // console.log(router.getRoutes(), "查看现有路由");
     next();
 });
 

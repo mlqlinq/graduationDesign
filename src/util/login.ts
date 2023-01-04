@@ -1,5 +1,6 @@
 // import { onMounted, reactive, ref } from "vue"
 // import { useRouter } from "vue-router"
+import jwtDecode from "jwt-decode";
 import { useAuthStore } from "@/stores/modules/userToken";
 import { debounce } from "lodash";
 import { Base64 } from "js-base64";
@@ -92,19 +93,18 @@ export default () => {
 
     // 登录按钮
     const submitForm = async (formEl: FormInstance | undefined) => {
-        if (!formEl) return alert("验证失败!");
+        if (formEl == null) return alert("验证失败!");
         await formEl.validate(async (valid, fields) => {
             if (valid) {
                 showLoading.value = true;
                 isdisabled.value = true;
-
                 const loginData: any = {};
-                for (let key in ruleForm) {
-                    if (ruleForm.hasOwnProperty(key)) {
+                for (const key in ruleForm) {
+                    // if (ruleForm.hasOwnProperty(key)) {
+                    if (Object.prototype.hasOwnProperty.call(ruleForm, key)) {
                         loginData[key] = ruleForm[key];
                     }
                 }
-                // console.log(loginData);
 
                 loginData.verificationCode = compileStr(loginData.verificationCode.toLowerCase());
 
@@ -116,22 +116,29 @@ export default () => {
                             return ElMessage.error(res.message);
                         } else {
                             setTimeout(() => {
+                                router.push({ path: "home" });
                                 showLoading.value = false;
                                 isdisabled.value = false;
-                                router.push("/home");
-                            }, 2000);
+                            }, 1000);
 
                             sessionStorage.setItem("token", res.token);
 
-                            //存储token解析的内容 以及修改登录的状态
-                            store.setAuth(!!res.token); //由于decode是对象，所以对他取反再取反，双非就变成了布尔类型
+                            // 存储token解析的内容 以及修改登录的状态
+                            const decode: any = jwtDecode(res.token);
+                            store.setAuth(!(res.token === "")); // 由于decode是对象，所以对他取反再取反，双非就变成了布尔类型
                             store.setUser(res.token);
+                            store.setUserData(decode.userData);
                             return ElMessage.success(res.message);
                         }
                     })
                     .catch((error: any) => {
                         setTime();
-                        console.log(error);
+                        ElNotification({
+                            title: "错误",
+                            message: error,
+                            type: "error",
+                            duration: 4000,
+                        });
                     });
             } else {
                 console.log("error submit!", fields);
