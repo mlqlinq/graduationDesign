@@ -1,13 +1,7 @@
 <template>
-  <div>
-    国家励志奖学金
-  </div>
+	<div>国家励志奖学金</div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

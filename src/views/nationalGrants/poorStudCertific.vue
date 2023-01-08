@@ -1,5 +1,5 @@
 <template>
-    <div>贫困生认证</div>
+	<div>贫困生认证</div>
 </template>
 
 <script lang="ts" setup></script>
