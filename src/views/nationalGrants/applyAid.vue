@@ -1,5 +1,5 @@
 <template>
-    <div>申请助学金</div>
+	<div>申请助学金</div>
 </template>
 
 <script lang="ts" setup></script>

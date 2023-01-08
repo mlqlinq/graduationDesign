@@ -1,13 +1,7 @@
 <template>
-  <div>
-    奖学金申请审核
-  </div>
+	<div>奖学金申请审核</div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

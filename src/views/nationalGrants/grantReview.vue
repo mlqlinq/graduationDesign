@@ -1,13 +1,7 @@
 <template>
-  <div>
-    助学金审核
-  </div>
+	<div>助学金审核</div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

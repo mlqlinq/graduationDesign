@@ -6,7 +6,7 @@ import { createPinia } from "pinia";
 const pinia = createPinia();
 
 export function setupStore(app: App) {
-    app.use(pinia);
+	app.use(pinia);
 }
 
 export * from "./modules/layout";
