@@ -32,11 +32,16 @@ serverAxios.interceptors.request.use(
 		if (!config.headers["Content-type"]) {
 			// 如果没有设置请求头
 			if (config.method === "post" || config.method === "put") {
-				config.data = qs.stringify(config.data); // 序列化,比如表单数据
+				if (config.url === "/api/upload/uploads/file") {
+					config.headers["Content-type"] = "multipart/form-data";
+				} else {
+					config.data = qs.stringify(config.data); // 序列化,比如表单数据
+				}
 			} else {
 				config.headers["Content-type"] = "application/json"; // 默认类型
 			}
 		}
+
 		return config;
 	},
 	async (error) => {

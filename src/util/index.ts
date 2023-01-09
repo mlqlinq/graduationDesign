@@ -54,14 +54,6 @@ export default () => {
 		return route.path || Date.now();
 	});
 
-	// const routeName = computed(() => {
-	//     console.log(route);
-	//     return route.name;
-	// });
-	// const routeActiveMenu = computed(() => {
-	//     return route.meta?.activeMenu || "";
-	// });
-
 	// 动态路由
 	const addrou: any = ref([]);
 	const addRouterList = useRouterStore();
@@ -289,6 +281,7 @@ export default () => {
 		toggleScreen,
 		saveNavSate,
 		goIndex,
-		handleMenu
+		handleMenu,
+		reload
 	};
 };
