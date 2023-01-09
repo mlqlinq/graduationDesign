@@ -18,7 +18,7 @@
 	justify-content: space-around;
 	align-items: flex-end;
 	overflow-x: hidden;
-	position: absolute;
+	position: fixed;
 	bottom: 0;
 
 	p {

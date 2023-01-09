@@ -17,8 +17,9 @@
 				<span class="full_screen mag">
 					<SvgIcon :icon-name="full ? 'FullScreen' : 'CancelFullScreen'" :size="25.8" @click="toggleScreen" />
 				</span>
+				<!-- 刷新 -->
 				<span class="Refresh">
-					<el-icon size="22"><Refresh /></el-icon>
+					<el-icon size="22" @click="reload"><Refresh /></el-icon>
 				</span>
 				<!-- 用户 -->
 				<span class="full_user mag" @click="handleClick">
@@ -30,7 +31,7 @@
 						</span>
 						<template #dropdown>
 							<el-dropdown-menu>
-								<el-dropdown-item icon="User" @click="personalCenter"> 个人中心 </el-dropdown-item>
+								<el-dropdown-item icon="User" @click="personalCenter"> 个人信息 </el-dropdown-item>
 								<el-dropdown-item icon="CircleClose" @click="loginOut"> 退出登录 </el-dropdown-item>
 							</el-dropdown-menu>
 						</template>
@@ -101,8 +102,8 @@
 				<tabs />
 
 				<!-- 横向菜单 标签 -->
-				<div style="width: 100%; height: calc(100% - 100px)" v-if="refresh">
-					<router-view v-slot="{ Component, route }">
+				<div style="width: 100%; height: calc(100% - 140px) !important" v-if="refresh">
+					<router-view v-slot="{ Component, route }" style="height: 100%">
 						<keep-alive>
 							<Transition name="scale" mode="out-in" v-if="route && route.meta && route.meta.noCache">
 								<component :is="Component" v-if="route && route.meta && route.meta.noCache" :key="viewKey" />
@@ -125,7 +126,7 @@
 import index from "@/util/index";
 import Foot from "@/components/Footer/index.vue";
 
-const { isCollapse, full, userData, allMenu, activePath, fullSvg, breadcrumbList, viewKey, el, refresh, handleClick, loginOut, personalCenter, openMenu, toggleScreen, saveNavSate, goIndex, handleMenu } = index();
+const { isCollapse, full, userData, allMenu, activePath, fullSvg, breadcrumbList, viewKey, el, refresh, reload, handleClick, loginOut, personalCenter, openMenu, toggleScreen, saveNavSate, goIndex, handleMenu } = index();
 </script>
 
 <style lang="scss" scoped>
@@ -333,7 +334,7 @@ const { isCollapse, full, userData, allMenu, activePath, fullSvg, breadcrumbList
 			}
 
 			.heard_bread {
-				position: fixed;
+				position: absolute;
 				margin-left: 40px;
 			}
 		}

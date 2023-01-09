@@ -1,6 +1,7 @@
 {
 	"name": "mygraduation",
 	"version": "0.0.0",
+	"description": "家庭经济困难学生奖助学金综合管理系统",
 	"scripts": {
 		"dev": "vite",
 		"serve": "vite",
