@@ -22,7 +22,9 @@
 					<el-row>
 						<el-col :span="12">
 							<el-form-item label="出生日期：" prop="student_birthday">
-								<el-date-picker v-model="form.student_birthday" type="date" />
+								<el-config-provider :locale="zhCn">
+									<el-date-picker v-model="form.student_birthday" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+								</el-config-provider>
 							</el-form-item>
 						</el-col>
 						<el-col :span="12">
@@ -54,10 +56,9 @@
 				</el-col>
 				<el-col :span="8" class="my_avatar">
 					<el-form-item label="个人照：" class="uploader">
-						<el-upload class="avatar-uploader" :auto-upload="false" :show-file-list="false" accept=".jpg, .png, .JPG, .PNG, .jpeg, .JPEG" :on-change="handleChange">
-							<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" />
-							<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px">更换</el-button>
-						</el-upload>
+						<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
+						<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
+						<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -135,7 +136,9 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="入学年月：" prop="student_start_year">
-						<el-date-picker v-model="form.student_start_year" type="date" />
+						<el-config-provider :locale="zhCn">
+							<el-date-picker v-model="form.student_start_year" type="month" format="YYYY-MM" value-format="YYYY-MM" />
+						</el-config-provider>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
@@ -177,8 +180,10 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
-					<el-form-item label="毕业时间：" prop="graduation">
-						<el-date-picker v-model="form.graduation" type="date" />
+					<el-form-item label="毕业时间：" prop="student_finish_year">
+						<el-config-provider :locale="zhCn">
+							<el-date-picker v-model="form.student_finish_year" type="month" format="YYYY-MM" value-format="YYYY-MM" />
+						</el-config-provider>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -209,12 +214,19 @@
 			</el-row>
 		</el-form>
 	</div>
+	<AvatarCropper :dialogVisible="dialogVisibles" :url="form.imageUrl" @upRrl="getUrl" @parentChang="parentChang"></AvatarCropper>
 </template>
 
 <script setup lang="ts">
-import type { FormInstance, UploadProps, FormRules, UploadRawFile, UploadUserFile } from "element-plus";
-import { uploads } from "@/http/api/upload";
+import type { FormInstance, UploadProps, FormRules } from "element-plus";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/modules/userToken";
+import AvatarCropper from "@/components/VueCropper/index.vue";
 
+import zhCn from "element-plus/lib/locale/lang/zh-cn";
+
+const useAuths: any = useAuthStore();
+const { userData } = storeToRefs(useAuths);
 const formRef = ref<FormInstance>();
 
 const form = reactive({
@@ -241,7 +253,7 @@ const form = reactive({
 	learning_form: "",
 	grade: "",
 	mode_of_admission: "",
-	graduation: "",
+	student_finish_year: "",
 	e_mail: ""
 });
 
@@ -267,41 +279,41 @@ const formRules = reactive<FormRules>({
 	cultivation_method: [{ required: true, message: "请选择您的培养方式", trigger: "change" }],
 	learning_form: [{ required: true, message: "请选择您的学习形式", trigger: "change" }],
 	grade: [{ required: true, message: "请选择您的s所属年级", trigger: "change" }],
-	graduation: [{ required: true, message: "请选择您的毕业时间", trigger: "change" }],
+	student_finish_year: [{ required: true, message: "请选择您的毕业时间", trigger: "change" }],
 	mode_of_admission: [{ required: true, message: "请选择您的入学方式", trigger: "change" }]
 });
 
-const handleChange: UploadProps["onChange"] = (uploadFile: any, uploadFiles) => {
-	if (uploadFile.raw.size / 1024 / 1024 > 2) {
-		ElNotification({
-			title: "Error",
-			message: "文件大小不能超过2MB!",
-			type: "error"
-		});
-		return false;
-	}
-	uploadFil(uploadFile.raw);
+const dialogVisibles = ref(false);
+
+const getCropper = () => {
+	dialogVisibles.value = true;
 };
 
-const uploadFil = async (file: any) => {
-	const formdata = new FormData();
-	formdata.append("file", file);
-	await uploads(formdata)
-		.then((res) => {
-			form.imageUrl = res.url;
-			ElNotification({
-				title: "温馨提示",
-				message: res.msg,
-				type: "success"
-			});
-		})
-		.catch((err) => {
-			ElNotification({
-				title: "温馨提示",
-				message: err,
-				type: "error"
-			});
-		});
+const getUrl = (url) => {
+	if (url === "") return;
+	form.imageUrl = url;
+};
+
+const parentChang = (bool) => {
+	dialogVisibles.value = bool;
+};
+
+onMounted(() => {
+	getData();
+});
+
+const getData = () => {
+	for (const key in form) {
+		if (Object.prototype.hasOwnProperty.call(form, key)) {
+			for (const s in userData.value) {
+				if (Object.prototype.hasOwnProperty.call(userData.value, s)) {
+					if (key === s) {
+						form[key] = userData.value[s];
+					}
+				}
+			}
+		}
+	}
 };
 
 defineExpose({

@@ -23,14 +23,37 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/modules/userToken";
+
+const useAuths: any = useAuthStore();
+const { userData } = storeToRefs(useAuths);
+
 const bankform = reactive({
 	student_bank_account_name: "",
 	bank_of_deposit: "",
 	bank_card_no: ""
 });
 
+const getData = () => {
+	for (const key in bankform) {
+		if (Object.prototype.hasOwnProperty.call(bankform, key)) {
+			for (const s in userData.value) {
+				if (Object.prototype.hasOwnProperty.call(userData.value, s)) {
+					if (key === s) {
+						bankform[key] = userData.value[s];
+					}
+				}
+			}
+		}
+	}
+};
+
 defineExpose({
 	bankform
+});
+onMounted(() => {
+	getData();
 });
 </script>
 

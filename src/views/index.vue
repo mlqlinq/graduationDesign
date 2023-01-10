@@ -26,7 +26,8 @@
 					<el-dropdown trigger="click">
 						<span class="el-dropdown-link">
 							<el-avatar :src="userData.avatar" icon="UserFilled"></el-avatar>
-							<span class="usern"> {{ userData.username }}</span>
+							<span class="usern" v-if="userData.username"> {{ userData.username }}</span>
+							<span class="usern" v-if="userData.student_name"> {{ userData.student_name }}</span>
 							<SvgIcon :class="fullSvg ? 'dropdown_svg' : 'dropdown_svgClick'" :size="18" icon-name="DrapDown" />
 						</span>
 						<template #dropdown>

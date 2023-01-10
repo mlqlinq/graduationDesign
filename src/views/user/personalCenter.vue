@@ -1,5 +1,5 @@
 <template>
-	<div class="chenter">
+	<div class="chenter" v-loading="loading">
 		<el-form label-position="right" label-width="150px">
 			<div class="card-container">
 				<el-card>
@@ -42,9 +42,19 @@
 </template>
 
 <script lang="ts" setup>
+import _ from "lodash";
+import { modifyUser } from "@/http/api/user/edit";
 import PersonInform from "./from/personal.vue";
 import BankInform from "./from/bankInformation.vue";
 import familyInform from "./from/familyInformation.vue";
+
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/modules/userToken";
+
+const useAuths: any = useAuthStore();
+const { userData } = storeToRefs(useAuths);
+
+const loading = ref(true);
 
 const personS: any = ref(null);
 const bankS: any = ref(null);
@@ -52,16 +62,29 @@ const familyS: any = ref(null);
 
 const submitForm = async (p, b, f) => {
 	let formRuleValidates = [p.formRef.validate(), f.familyInformRef.validate()];
-	Promise.all(formRuleValidates)
-		.then((res) => {
+	await Promise.all(formRuleValidates)
+		.then(async (res) => {
 			if (res[0] && res[1]) {
-				console.log("chengg");
+				const data = _.merge(p.form, b.bankform, f.familyInform);
+				data.user_id = userData.value.user_id;
+				data.student_type = userData.value.student_type;
+				data.user_identity = userData.value.user_identity;
+				await modifyUser(data).then((result) => {
+					ElNotification({
+						title: "温馨提示",
+						message: result.msg,
+						type: "success"
+					});
+				});
 			}
 		})
 		.catch((error) => {
 			console.log(error);
 		});
 };
+onMounted(() => {
+	loading.value = false;
+});
 </script>
 
 <style lang="scss" scoped>
