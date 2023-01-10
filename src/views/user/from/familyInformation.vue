@@ -36,6 +36,11 @@
 
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/modules/userToken";
+
+const useAuths: any = useAuthStore();
+const { userData } = storeToRefs(useAuths);
 
 const familyInformRef = ref<FormInstance>();
 
@@ -52,9 +57,28 @@ const familyInformRules = reactive<FormRules>({
 	home_zip_code: [{ required: true, message: "请输入家庭邮编", trigger: "blur" }],
 	home_contact_number: [{ required: true, message: "请输入家庭联系电话", trigger: "blur" }]
 });
+
+const getData = () => {
+	for (const key in familyInform) {
+		if (Object.prototype.hasOwnProperty.call(familyInform, key)) {
+			for (const s in userData.value) {
+				if (Object.prototype.hasOwnProperty.call(userData.value, s)) {
+					if (key === s) {
+						familyInform[key] = userData.value[s];
+					}
+				}
+			}
+		}
+	}
+};
+
 defineExpose({
 	familyInform,
 	familyInformRef
+});
+
+onMounted(() => {
+	getData();
 });
 </script>
 

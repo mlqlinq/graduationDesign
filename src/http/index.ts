@@ -65,7 +65,12 @@ serverAxios.interceptors.response.use(
 					message = "接口重定向了！";
 					break;
 				case 400:
-					message = "参数不正确！";
+					if (error.message) {
+						message = error.message;
+						break;
+					} else {
+						message = "参数不正确！";
+					}
 					break;
 				case 401:
 					message = "您未登录，或者登录已经超时，请重新登录！";
@@ -118,6 +123,11 @@ serverAxios.interceptors.response.use(
 			}
 		}
 		NProgress.done();
+		ElNotification({
+			title: "温馨提示",
+			message,
+			type: "error"
+		});
 		return await Promise.reject(message);
 	}
 );
