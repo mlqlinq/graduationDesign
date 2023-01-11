@@ -30,9 +30,7 @@
 						<el-col :span="12">
 							<el-form-item label="民族：" prop="student_nation">
 								<el-select v-model="form.student_nation">
-									<el-option label="男" value="男" />
-									<el-option label="女" value="女" />
-									<el-option label="其他" value="其他" />
+									<el-option v-for="item in studentNationList" :key="item.id" :label="item.value" :value="item.value" />
 								</el-select>
 							</el-form-item>
 						</el-col>
@@ -41,9 +39,7 @@
 						<el-col :span="12">
 							<el-form-item label="身份证件类型：" prop="id_card_type">
 								<el-select v-model="form.id_card_type">
-									<el-option label="男" value="男" />
-									<el-option label="女" value="女" />
-									<el-option label="其他" value="其他" />
+									<el-option v-for="item in idCardTypeList" :key="item.id" :label="item.value" :value="item.value" />
 								</el-select>
 							</el-form-item>
 						</el-col>
@@ -76,9 +72,7 @@
 				<el-col :span="8">
 					<el-form-item label="院系名称：" prop="student_college">
 						<el-select v-model="form.student_college">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in collegeList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -92,18 +86,14 @@
 				<el-col :span="8">
 					<el-form-item label="专业名称：" prop="student_major">
 						<el-select v-model="form.student_major">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in majorList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
 					<el-form-item label="专业大类：" prop="major_categories">
 						<el-select v-model="form.major_categories">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in majorCategoriesList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -112,18 +102,14 @@
 				<el-col :span="8">
 					<el-form-item label="政治面貌：" prop="political_outlook">
 						<el-select v-model="form.political_outlook">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in politicalOutlookList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
 					<el-form-item label="学籍状态：" prop="student_status">
 						<el-select v-model="form.student_status">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in statusList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -144,18 +130,14 @@
 				<el-col :span="8">
 					<el-form-item label="学制：" prop="educational_system">
 						<el-select v-model="form.educational_system">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in educationalList" :key="item.id" :label="item.data" :value="item.data" />
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
 					<el-form-item label="培养层次：" prop="training_level">
 						<el-select v-model="form.training_level">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in trainingLevelList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -164,18 +146,14 @@
 				<el-col :span="8">
 					<el-form-item label="培养方式：" prop="cultivation_method">
 						<el-select v-model="form.cultivation_method">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in cultivationMethodList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
 					<el-form-item label="学习形式：" prop="learning_form">
 						<el-select v-model="form.learning_form">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in learningformList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -191,18 +169,14 @@
 				<el-col :span="8">
 					<el-form-item label="年级：" prop="grade">
 						<el-select v-model="form.grade">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in gradeList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
 					<el-form-item label="入学方式：" prop="mode_of_admission">
 						<el-select v-model="form.mode_of_admission">
-							<el-option label="男" value="男" />
-							<el-option label="女" value="女" />
-							<el-option label="其他" value="其他" />
+							<el-option v-for="item in modeAdmissionList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -218,10 +192,11 @@
 </template>
 
 <script setup lang="ts">
-import type { FormInstance, UploadProps, FormRules } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
+import { studentNationList, educationalList, idCardTypeList, majorList, majorCategoriesList, statusList, politicalOutlookList, trainingLevelList, cultivationMethodList, gradeList, learningformList, modeAdmissionList, collegeList } from "@/util/tool/JsonData";
 
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 

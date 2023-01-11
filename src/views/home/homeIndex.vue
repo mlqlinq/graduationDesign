@@ -14,7 +14,7 @@
 	margin: 0 auto;
 
 	.el-card {
-		height: calc(100% - 40px);
+		height: calc(100% - 10px);
 		border-radius: 10px;
 		:deep(.el-card__body) {
 			padding: 0;

@@ -118,6 +118,11 @@ const getCrop = () => {
 	// // 获取截图的 blob 数据
 	// //console.log(cropper.value);
 	cropper.value.getCropBlob(async (data) => {
+		ElNotification({
+			title: "温馨提示",
+			message: "正在上传，请稍后...",
+			type: "warning"
+		});
 		let formData = new FormData();
 		//第三个参数是规定以什么为后缀，接口是根据后缀来返回地址格式的
 		formData.append("file", data, "chris.jpg");

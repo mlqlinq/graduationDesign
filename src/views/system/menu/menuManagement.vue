@@ -2,7 +2,7 @@
 	<div class="menuM">
 		<el-card>
 			<el-button icon="Plus" plain style="margin-bottom: 10px" type="primary" @click="addMeun($event)"> 新增</el-button>
-			<el-table v-loading="loading" :data="menuList" :header-cell-style="{ background: '#f5f7fa' }" border element-loading-text="加载中..." row-key="menu_id">
+			<el-table v-loading="loading" :data="menuList" :header-cell-style="{ background: '#e4e8e9', borderColor: '#cfcfcf' }" border element-loading-text="加载中..." row-key="menu_id">
 				<el-table-column align="left" label="菜单名称" prop="meta.title" />
 				<el-table-column align="center" label="图标" min-width="70px">
 					<template #default="scope">

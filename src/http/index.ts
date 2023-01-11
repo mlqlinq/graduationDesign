@@ -55,11 +55,13 @@ serverAxios.interceptors.response.use(
 	(res) => {
 		// 请求完毕：隐藏进度条
 		NProgress.done();
-		return res.data;
+		if (res.status === 200) return res.data;
+		if (res.status !== 200) return Promise.reject(res.data);
 	},
-	async (error) => {
+	async (error: any) => {
 		let message = "";
 		if (error.response && error) {
+			console.log("🚀 ~ file: index.ts:63 ~ error", error);
 			switch (error.response.status) {
 				case 302:
 					message = "接口重定向了！";
@@ -121,13 +123,14 @@ serverAxios.interceptors.response.use(
 					message = "异常问题，请联系管理员！";
 					break;
 			}
+			ElNotification({
+				title: "温馨提示",
+				message: error.response?.data === "" ? message : error.response.data,
+				type: "error"
+			});
 		}
 		NProgress.done();
-		ElNotification({
-			title: "温馨提示",
-			message,
-			type: "error"
-		});
+
 		return await Promise.reject(message);
 	}
 );
