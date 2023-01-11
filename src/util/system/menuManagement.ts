@@ -173,7 +173,6 @@ export default () => {
 
 	// 编辑按钮
 	const editMenu = (value) => {
-		console.log("🚀 ~ file: menuManagement.ts:172 ~ editMenu ~ value", value);
 		diaTitle.value = "修改菜单";
 		Menuform.menuid = value.menu_id;
 		Menuform.alwaysShow = value.alwaysShow;

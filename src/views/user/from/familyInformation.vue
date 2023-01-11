@@ -5,8 +5,7 @@
 				<el-col :span="8">
 					<el-form-item label="户口性质：" prop="nature_of_household_registration">
 						<el-select v-model="familyInform.nature_of_household_registration" placeholder="Activity zone">
-							<el-option label="Zone one" value="shanghai" />
-							<el-option label="Zone two" value="beijing" />
+							<el-option v-for="item in householdList" :key="item.id" :label="item.value" :value="item.value" />
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -38,6 +37,7 @@
 import type { FormInstance, FormRules } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
+import { householdList } from "@/util/tool/JsonData";
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);

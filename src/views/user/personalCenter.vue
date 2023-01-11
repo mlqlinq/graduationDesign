@@ -47,6 +47,7 @@ import { modifyUser } from "@/http/api/user/edit";
 import PersonInform from "./from/personal.vue";
 import BankInform from "./from/bankInformation.vue";
 import familyInform from "./from/familyInformation.vue";
+import { getMyinformation } from "@/http/api/user/user";
 
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
@@ -59,6 +60,9 @@ const loading = ref(true);
 const personS: any = ref(null);
 const bankS: any = ref(null);
 const familyS: any = ref(null);
+
+// 注入重载页面事件
+const reloadRefresh: any = inject("reloadRefresh");
 
 const submitForm = async (p, b, f) => {
 	let formRuleValidates = [p.formRef.validate(), f.familyInformRef.validate()];
@@ -76,15 +80,36 @@ const submitForm = async (p, b, f) => {
 						type: "success"
 					});
 				});
+				useAuths.setUserData(data);
+				// getMyInformationData();
+				reloadRefresh();
 			}
 		})
 		.catch((error) => {
 			console.log(error);
 		});
 };
+
 onMounted(() => {
 	loading.value = false;
+	getMyInformationData();
 });
+
+const getMyInformationData = async () => {
+	const query = userData.value.id_card_number;
+	await getMyinformation({ query })
+		.then((res) => {
+			userData.value = res.data;
+			ElNotification({
+				title: "温馨提示",
+				message: res.msg,
+				type: "success"
+			});
+		})
+		.catch((err) => {
+			console.log("err", err);
+		});
+};
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
 	<div class="userM">
 		<el-card>
 			<el-button icon="Plus" plain style="margin-left: 1%; margin-bottom: 10px" type="primary" @click="addUser($event)"> 新增 </el-button>
-			<el-table v-loading="loading" :data="userData" :header-cell-style="{ background: '#f5f7fa' }" border element-loading-text="加载中..." empty-text="空" style="width: 98%; margin-bottom: 20px; margin: 0 auto">
+			<el-table v-loading="loading" :data="userData" :header-cell-style="{ background: '#e4e8e9', borderColor: '#cfcfcf' }" border element-loading-text="加载中..." empty-text="空" style="width: 98%; margin-bottom: 20px; margin: 0 auto">
 				<el-table-column align="center" label="ID" prop="user_id" />
 				<el-table-column align="center" label="用户类型">
 					<template #default="scope">
