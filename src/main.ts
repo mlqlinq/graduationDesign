@@ -15,7 +15,6 @@ import "nprogress/nprogress.css"; // 进度条样式
 import "./assets/main.scss";
 import "vue-cropper/dist/index.css";
 import VueCropper from "vue-cropper"; // 图片裁剪工具
-
 // 创建实例
 const app = createApp(App);
 

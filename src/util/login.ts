@@ -37,8 +37,10 @@ export default () => {
 	// 表单绑定项
 	const ruleForm = reactive({
 		userIdentity: "",
-		name: "admin",
-		password: "admin123",
+		// name: "admin",
+		// password: "admin123",
+		name: "460400255221149662",
+		password: "123456",
 		verificationCode: ""
 	});
 

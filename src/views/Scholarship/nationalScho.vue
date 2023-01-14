@@ -2,10 +2,10 @@
 	<div class="university">
 		<el-card class="BtnCard">
 			<div class="BtnCard_btns">
-				<el-button type="primary" plain>打印我的申请表</el-button>
+				<el-button type="primary" plain @click="printMyInfrom(printData)">下载我的申请表</el-button>
 				<el-button type="warning" plain @click="downLoad">下载申请表模板</el-button>
 				<el-upload class="upload" ref="upload" action="#" :on-change="upLoadMy" accept=".doc,.docx" :show-file-list="false" :auto-upload="false">
-					<el-button type="success" slot="trigger" plain ref="uploadBtn" @click="upLoadMy">上传我的申请表 </el-button>
+					<el-button type="success" slot="trigger" plain ref="uploadBtn">上传我的申请表 </el-button>
 				</el-upload>
 			</div>
 		</el-card>
@@ -44,6 +44,8 @@
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
 import { getNationalschosData, downloadNationalschosForm } from "@/http/api/Scholarship/nationalschos";
+import type { UploadProps } from "element-plus";
+import { exportWord } from "@/util/tool/exportWord";
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
@@ -54,9 +56,16 @@ const uploadBtn: any = ref(null);
 const taskTableRef: any = ref(null);
 const tableH = ref(650);
 
+let printData: any = reactive({});
+
 const getTableData = async () => {
-	const query = userData.value.id_card_number;
-	await getNationalschosData({ query })
+	const query: any = {};
+	if (userData.value.id_card_number) {
+		query.id_card_number = userData.value.id_card_number;
+	} else if (userData.value.username) {
+		query.id_card_number = userData.value.username;
+	}
+	await getNationalschosData(query)
 		.then((res) => {
 			ElNotification({
 				title: "提示",
@@ -83,13 +92,34 @@ onMounted(() => {
 	getTableData();
 });
 
+// 打印事件
+const printMyInfrom = (data) => {
+	if (JSON.stringify(data) == "{}")
+		return ElNotification({
+			title: "错误",
+			message: "请先选择要打印的表！",
+			type: "warning"
+		});
+	console.log("🚀 ~ file: nationalScho.vue:98 ~ printMyInfrom ~ data", data);
+
+	const config = {
+		file: "@/../public/1673446531610.docx", // 模板文件的地址
+		filename: "下载test文档", // 文件名称
+		fileType: "docx", // 文件类型
+		folder: "下载测试文档", // 批量下载压缩包的文件名
+		data: {} // 数据 (数组默认批量，对象默认单个下载）
+	};
+	config.data = data;
+	exportWord(config);
+};
+
 const downLoad = async () => {
 	await downloadNationalschosForm()
 		.then((res) => {
 			const link = document.createElement("a"); // 创建一个 a 标签用来模拟点击事件
 			link.style.display = "none";
 			link.href = res.url;
-			link.setAttribute("download", "区人民政府奖学金申请表.doc");
+			link.setAttribute("download", "国家奖学金申请表.doc");
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -110,21 +140,22 @@ const downLoad = async () => {
 		});
 };
 
-const upLoadMy = () => {
+const upLoadMy: UploadProps["onChange"] = (_uploadFile, _uploadFiles) => {
+	// readFile(_uploadFile.raw);
 	ElNotification({
 		title: "温馨提示",
 		message: "正在上传，请稍后...",
 		type: "warning"
 	});
 };
-// 主要方法
+
 // table选择项发生变化时会触发该事件
-const selectClick = (selection: any, row: any) => {
-	console.log("🚀 ~ file: universityScho.vue:119 ~ selectClick ~ row", row);
+const selectClick = (selection: any, _row: any) => {
 	if (selection.length > 1) {
 		let del_row = selection.shift();
 		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
 	}
+	printData = _row;
 };
 </script>
 

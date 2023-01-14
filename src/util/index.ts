@@ -254,7 +254,7 @@ export default () => {
 
 	// 监听路由的变化
 	watch(
-		() => [route.path, route.name, activePath.value],
+		() => [route.path, route.name, activePath.value, sessionStorage.getItem("activePath")],
 		() => {
 			initBreadcrumbList();
 		},

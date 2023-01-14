@@ -96,8 +96,14 @@ onMounted(() => {
 });
 
 const getMyInformationData = async () => {
-	const query = userData.value.id_card_number;
-	await getMyinformation({ query })
+	const query: any = {};
+	query.userIdentity = userData.value.userIdentity;
+	if (userData.value.id_card_number) {
+		query.id_card_number = userData.value.id_card_number;
+	} else if (userData.value.username) {
+		query.id_card_number = userData.value.username;
+	}
+	await getMyinformation(query)
 		.then((res) => {
 			userData.value = res.data;
 			ElNotification({
@@ -116,6 +122,7 @@ const getMyInformationData = async () => {
 .chenter {
 	height: 100%;
 	margin-bottom: 40px;
+
 	.el-form {
 		height: 100% !important;
 		padding: 0 10px;
