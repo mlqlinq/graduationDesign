@@ -2,7 +2,7 @@
 	<div class="university">
 		<el-card class="BtnCard">
 			<div class="BtnCard_btns">
-				<el-button type="primary" plain>打印我的申请表</el-button>
+				<el-button type="primary" plain>下载我的申请表</el-button>
 				<el-button type="warning" plain @click="downLoad">下载申请表模板</el-button>
 				<el-upload class="upload" ref="upload" action="#" :on-change="upLoadMy" accept=".doc,.docx" :show-file-list="false" :auto-upload="false">
 					<el-button type="success" slot="trigger" plain ref="uploadBtn" @click="upLoadMy">上传我的申请表 </el-button>
@@ -55,8 +55,13 @@ const taskTableRef: any = ref(null);
 const tableH = ref(650);
 
 const getTableData = async () => {
-	const query = userData.value.id_card_number;
-	await getDistrictschosData({ query })
+	const query: any = {};
+	if (userData.value.id_card_number) {
+		query.id_card_number = userData.value.id_card_number;
+	} else if (userData.value.username) {
+		query.id_card_number = userData.value.username;
+	}
+	await getDistrictschosData(query)
 		.then((res) => {
 			ElNotification({
 				title: "提示",

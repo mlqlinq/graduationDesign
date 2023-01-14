@@ -29,6 +29,12 @@ export const constantRoutes: RouteRecordRaw[] = [
 				name: "index",
 				component: async () => await import("@/views/home/homeIndex.vue"),
 				meta: { title: "首页" }
+			},
+			{
+				path: "/filePreview",
+				name: "filePreview",
+				component: async () => await import("@/views/system/filePreview/filePreview.vue"),
+				meta: { title: "文件预览", noCache: true }
 			}
 		]
 	},

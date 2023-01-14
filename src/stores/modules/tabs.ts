@@ -51,8 +51,8 @@ export const useTabsStore = defineStore("tabs", {
 		// 关闭路由
 		handleClose(index: number) {
 			this.tabs.splice(index, 1);
-			console.log(this.tabs);
-			console.log(this.tabs[this.tabs.length - 1].path);
+			// console.log(this.tabs);
+			// console.log(this.tabs[this.tabs.length - 1].path);
 
 			this.setStorage();
 		},

@@ -9,10 +9,12 @@
 							<h2>用户登录</h2>
 							<el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="demo-ruleForm" label-position="left" label-width="100px" size="large" status-icon>
 								<el-form-item label="用户身份:" prop="userIdentity">
-									<el-select v-model="ruleForm.userIdentity" placeholder="请选择">
-										<el-option label="管理员" value="0" />
-										<el-option label="教师" value="1" />
-										<el-option label="学生" value="2" />
+									<el-select v-model="ruleForm.userIdentity" placeholder="请选择" popper-class="userIdentity" clearable>
+										<el-option label="管理员登录" :value="0" />
+										<el-option label="高校登录" :value="1" />
+										<el-option label="书记登录" :value="2" />
+										<el-option label="导员登录" :value="3" />
+										<el-option label="学生登录" :value="4" />
 										<template #prefix>
 											<el-icon>
 												<HomeFilled />
