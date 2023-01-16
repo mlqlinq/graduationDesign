@@ -20,3 +20,10 @@ export const getAllnationalschosData = () => {
 		method: "get"
 	});
 };
+export const postSubmitNationalschos = (data) => {
+	return serviceAxios({
+		url: "/api/Scholarship/SubmitNationalschos",
+		method: "post",
+		data
+	});
+};

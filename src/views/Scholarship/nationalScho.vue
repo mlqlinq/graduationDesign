@@ -4,9 +4,7 @@
 			<div class="BtnCard_btns">
 				<el-button type="primary" plain @click="printMyInfrom(printData)">下载我的申请表</el-button>
 				<el-button type="warning" plain @click="downLoad">下载申请表模板</el-button>
-				<el-upload class="upload" ref="upload" action="#" :on-change="upLoadMy" accept=".doc,.docx" :show-file-list="false" :auto-upload="false">
-					<el-button type="success" slot="trigger" plain ref="uploadBtn">上传我的申请表 </el-button>
-				</el-upload>
+				<el-button type="success" slot="trigger" plain ref="uploadBtn" @click="upLoadMy">填写申请 </el-button>
 			</div>
 		</el-card>
 		<!-- 国家奖学金 -->
@@ -42,13 +40,18 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { useRouterStore } from "@/stores/modules/router";
 import { useAuthStore } from "@/stores/modules/userToken";
 import { getNationalschosData, downloadNationalschosForm } from "@/http/api/Scholarship/nationalschos";
-import type { UploadProps } from "element-plus";
+import Moment from "moment";
 import { exportWord } from "@/util/tool/exportWord";
+
+const router = useRouter();
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
+const store = useRouterStore();
 
 const NationalschosData = ref([]);
 
@@ -82,8 +85,7 @@ const getTableData = async () => {
 			ElNotification({
 				title: "错误",
 				message: err,
-				type: "error",
-				duration: 1500
+				type: "error"
 			});
 		});
 };
@@ -93,24 +95,53 @@ onMounted(() => {
 });
 
 // 打印事件
-const printMyInfrom = (data) => {
+const printMyInfrom = async (data) => {
 	if (JSON.stringify(data) == "{}")
 		return ElNotification({
-			title: "错误",
+			title: "提示~",
 			message: "请先选择要打印的表！",
 			type: "warning"
 		});
-	console.log("🚀 ~ file: nationalScho.vue:98 ~ printMyInfrom ~ data", data);
 
-	const config = {
-		file: "@/../public/1673446531610.docx", // 模板文件的地址
+	// 预览的配置及数据
+	const config: any = {
+		file: "@/../public/1673447720021.docx", // 模板文件的地址
 		filename: "下载test文档", // 文件名称
 		fileType: "docx", // 文件类型
 		folder: "下载测试文档", // 批量下载压缩包的文件名
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
+
+	// 将身份证号码拆分
+	const arr = [...data.id_card_number];
+	// 循环生成身份证号码长度的字母
+	const alphabet = Array.from(new Array(arr.length), (ele, index) => {
+		return String.fromCharCode(97 + index);
+	});
+	// 添加到要渲染的对象里  用于渲染
+	for (let i = 0; i < arr.length; i++) {
+		Object.defineProperty(data, alphabet[i], {
+			value: arr[i],
+			writable: true,
+			enumerable: true,
+			configurable: true
+		});
+	}
+
+	data.awards = JSON.parse(data.awards);
+	if (data.awards.length <= 2) {
+		data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
+		data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
+	}
+
 	config.data = data;
+
 	exportWord(config);
+	ElNotification({
+		title: "提示",
+		message: "下载成功",
+		type: "success"
+	});
 };
 
 const downLoad = async () => {
@@ -134,28 +165,31 @@ const downLoad = async () => {
 			ElNotification({
 				title: "错误",
 				message: err,
-				type: "error",
-				duration: 5500
+				type: "error"
 			});
 		});
 };
 
-const upLoadMy: UploadProps["onChange"] = (_uploadFile, _uploadFiles) => {
-	// readFile(_uploadFile.raw);
-	ElNotification({
-		title: "温馨提示",
-		message: "正在上传，请稍后...",
-		type: "warning"
-	});
+// 填写申请
+const upLoadMy = () => {
+	router.push("/fillInTheApplication");
+	sessionStorage.setItem("activePath", "/fillInTheApplication");
+	store.handleParams({ im: 3 });
 };
 
+// 主要方法
 // table选择项发生变化时会触发该事件
-const selectClick = (selection: any, _row: any) => {
+const selectClick = (selection: any, row: any) => {
+	console.log(row.is_comprehensive_survey == "0");
+
 	if (selection.length > 1) {
 		let del_row = selection.shift();
 		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
 	}
-	printData = _row;
+	row.whether = row.is_comprehensive_survey == "0" ? true : false;
+	row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
+	row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
+	printData = row;
 };
 </script>
 

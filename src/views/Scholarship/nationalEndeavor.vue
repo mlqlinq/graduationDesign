@@ -17,7 +17,7 @@
 				<el-table-column prop="school_name" label="高校名称" align="center " />
 				<el-table-column prop="college" label="院系" align="center " />
 				<el-table-column prop="student_major" label="专业" align="center " />
-				<el-table-column prop="student_class" label="班级" align="center " />
+				<el-table-column prop="class_name" label="班级" align="center " />
 				<el-table-column prop="student_no" label="学生证号" align="center " />
 				<el-table-column prop="student_sex" label="性别" align="center " />
 				<el-table-column prop="student_nation" label="民族" align="center " />
@@ -85,8 +85,7 @@ const getTableData = async () => {
 			ElNotification({
 				title: "错误",
 				message: err,
-				type: "error",
-				duration: 1500
+				type: "error"
 			});
 		});
 };
@@ -153,18 +152,22 @@ const downLoad = async () => {
 const upLoadMy = () => {
 	router.push("/fillInTheApplication");
 	sessionStorage.setItem("activePath", "/fillInTheApplication");
-	store.handleParams({ im: 1 });
+	store.handleParams({ im: 4 });
 };
 
 // 主要方法
 // table选择项发生变化时会触发该事件
 const selectClick = (selection: any, row: any) => {
+	console.log(row.is_comprehensive_survey == "0");
+	console.log("🚀 ~ file: nationalEndeavor.vue:163 ~ selectClick ~ row", row);
+
 	if (selection.length > 1) {
 		let del_row = selection.shift();
 		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
 	}
-	row.whether = row.is_comprehensive_survey === 0 ? true : false;
+	row.whether = row.is_comprehensive_survey == "0" ? true : false;
 	row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
+	row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
 	printData = row;
 };
 </script>
