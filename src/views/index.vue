@@ -15,29 +15,35 @@
 				</span>
 				<!-- 全屏按钮 -->
 				<span class="full_screen mag">
-					<SvgIcon :icon-name="full ? 'FullScreen' : 'CancelFullScreen'" :size="25.8" @click="toggleScreen" />
+					<el-tooltip content="全屏">
+						<SvgIcon :icon-name="full ? 'FullScreen' : 'CancelFullScreen'" :size="25.8" @click="toggleScreen" />
+					</el-tooltip>
 				</span>
 				<!-- 刷新 -->
 				<span class="Refresh">
-					<el-icon size="22" @click="reload"><Refresh /></el-icon>
+					<el-tooltip content="刷新">
+						<el-icon size="22" @click="reload"><Refresh /></el-icon>
+					</el-tooltip>
 				</span>
 				<!-- 用户 -->
 				<span class="full_user mag" @click="handleClick">
-					<el-dropdown trigger="click">
-						<span class="el-dropdown-link">
-							<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" fit="fill" icon="UserFilled"></el-avatar>
-							<el-avatar v-if="!userData.imageUrl" icon="UserFilled"></el-avatar>
-							<span class="usern" v-if="userData.username"> {{ userData.username }}</span>
-							<span class="usern" v-if="userData.student_name"> {{ userData.student_name }}</span>
-							<SvgIcon :class="fullSvg ? 'dropdown_svg' : 'dropdown_svgClick'" :size="18" icon-name="DrapDown" />
-						</span>
-						<template #dropdown>
-							<el-dropdown-menu>
-								<el-dropdown-item icon="User" @click="personalCenter"> 个人信息 </el-dropdown-item>
-								<el-dropdown-item icon="CircleClose" @click="loginOut"> 退出登录 </el-dropdown-item>
-							</el-dropdown-menu>
-						</template>
-					</el-dropdown>
+					<el-tooltip content="个人信息">
+						<el-dropdown trigger="click">
+							<span class="el-dropdown-link">
+								<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" fit="fill" icon="UserFilled"></el-avatar>
+								<el-avatar v-if="!userData.imageUrl" icon="UserFilled"></el-avatar>
+								<span class="usern" v-if="userData.username"> {{ userData.username }}</span>
+								<span class="usern" v-if="userData.student_name"> {{ userData.student_name }}</span>
+								<SvgIcon :class="fullSvg ? 'dropdown_svg' : 'dropdown_svgClick'" :size="18" icon-name="DrapDown" />
+							</span>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item icon="User" @click="personalCenter"> 个人信息 </el-dropdown-item>
+									<el-dropdown-item icon="CircleClose" @click="loginOut"> 退出登录 </el-dropdown-item>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
+					</el-tooltip>
 				</span>
 			</span>
 		</el-header>
