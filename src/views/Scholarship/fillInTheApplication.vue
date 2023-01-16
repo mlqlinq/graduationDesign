@@ -27,7 +27,10 @@
 							<el-row>
 								<el-col :span="12">
 									<el-form-item label="出生日期：" prop="student_birthday">
-										<el-config-provider :locale="zhCn">
+										<el-config-provider :locale="zhCn" v-if="userim === 3">
+											<el-date-picker v-model="form.student_birthday" type="date" format="YYYY年MM月" value-format="YYYY年MM月" />
+										</el-config-provider>
+										<el-config-provider :locale="zhCn" v-else>
 											<el-date-picker v-model="form.student_birthday" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
 										</el-config-provider>
 									</el-form-item>
@@ -75,7 +78,10 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item label="班级名称：" prop="class_name">
+							<el-form-item label="所在班级号：" v-if="userim == 2 || userim == 1">
+								<el-input v-model="form.student_class" />
+							</el-form-item>
+							<el-form-item label="班级名称：" prop="class_name" v-else>
 								<el-input v-model="form.class_name" />
 							</el-form-item>
 						</el-col>
@@ -89,9 +95,15 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item label="入学时间：" prop="student_start_year">
+							<el-form-item label="宿舍表现：" prop="dormitory_performance" v-if="userim == 1">
+								<el-select v-model="form.dormitory_performance">
+									<el-option label="良好" value="良好" />
+									<el-option label="优秀" value="优秀" />
+								</el-select>
+							</el-form-item>
+							<el-form-item label="入学时间：" prop="student_start_year" v-else>
 								<el-config-provider :locale="zhCn">
-									<el-date-picker v-model="form.student_start_year" type="month" format="YYYY-MM" value-format="YYYY-MM" />
+									<el-date-picker v-model="form.student_start_year" type="month" format="YYYY年MM月" value-format="YYYY年MM月" />
 								</el-config-provider>
 							</el-form-item>
 						</el-col>
@@ -101,29 +113,43 @@
 							</el-form-item>
 						</el-col>
 					</el-row>
+
 					<el-row>
 						<el-col :span="8">
-							<el-form-item label="入学年月：" prop="student_start_year">
-								<el-config-provider :locale="zhCn">
-									<el-date-picker v-model="form.student_start_year" type="month" format="YYYY-MM" value-format="YYYY-MM" />
-								</el-config-provider>
+							<el-form-item label="专业：" prop="student_major">
+								<el-input v-model="form.student_major" />
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item label="所在年级：" prop="grade">
-								<el-select v-model="form.grade">
-									<el-option v-for="item in gradeList" :key="item.id" :label="item.value" :value="item.value" />
-								</el-select>
+							<el-form-item label="学制：" prop="educational_system" v-if="userim === 2 || userim === 3">
+								<el-input v-model="form.educational_system" />
 							</el-form-item>
 						</el-col>
-						<el-col :span="8"></el-col>
+						<el-col :span="8">
+							<el-form-item label="所在年级：" prop="grade" v-if="userim === 2">
+								<el-input v-model="form.grade" />
+							</el-form-item>
+							<el-form-item label="担任职务：" v-if="userim == 1">
+								<el-input v-model="form.student_position" />
+							</el-form-item>
+						</el-col>
 					</el-row>
-					<el-form-item label="曾获何种奖励：">
+
+					<el-form-item label="曾获何种奖励：" v-if="userim !== 1 && userim !== 3">
 						<el-input v-model="form.awards" type="textarea" show-word-limit />
+					</el-form-item>
+					<el-form-item label="主要先进事迹：" v-if="userim == 1">
+						<el-input v-model="form.meritorious_deeds" type="textarea" show-word-limit />
+					</el-form-item>
+					<el-form-item label="专长、创新表现：" v-if="userim == 1">
+						<el-input v-model="form.awards" type="textarea" show-word-limit />
+					</el-form-item>
+					<el-form-item label="大学期间主要获奖情况：" v-if="userim == 3" style="width: 100%">
+						<edit-table :columns="column" :data="list" :blank="blank" @add="add" ref="table" :editableKeys="editableKeys" @onChange="onChange" @del="deleteAction" style="width: 100%" />
 					</el-form-item>
 				</el-card>
 			</div>
-			<div class="card-container">
+			<div class="card-container" v-if="userim !== 1 && userim !== 2 && userim !== 3">
 				<el-card>
 					<div slot="header" class="clear-fix">
 						<span>家庭经济情况</span>
@@ -181,7 +207,7 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="12">
-							<el-form-item label="必修课：" prop="required_quantity">
+							<el-form-item label="必修课：" prop="required_quantity" v-if="userim !== 1">
 								<el-input v-model="form.required_quantity" style="width: 50px !important" />
 								<span style="margin: 0 10px">/</span>
 								<el-form-item prop="number_of_passes">
@@ -189,15 +215,25 @@
 								</el-form-item>
 								<span>（必修课数 / 必修课及格数）</span>
 							</el-form-item>
+							<el-col :span="12" v-if="userim == 1">
+								<el-form-item label="综测排名：" prop="comprehensive_ranking">
+									<el-input v-model="form.comprehensive_ranking" style="width: 50px !important" />
+									<span style="margin: 0 10px">/</span>
+									<el-form-item prop="total_number_of_comprehensive">
+										<el-input v-model="form.total_number_of_comprehensive" style="width: 60px !important" />
+										<span>（名次 / 总人数）</span>
+									</el-form-item>
+								</el-form-item>
+							</el-col>
 						</el-col>
 					</el-row>
-					<el-row type="flex" prop="">
+					<el-row>
 						<el-col :span="8">
-							<el-form-item label="是否实行综合考评排名：" label-width="180px">
-								<el-switch v-model="form.is_comprehensive_survey" active-text="是" inactive-text="否" :active-value="0" :inactive-value="1" />
+							<el-form-item label="是否实行综合考评排名：" label-width="180px" v-if="userim !== 1">
+								<el-switch v-model="form.is_comprehensive_survey" active-text="是" inactive-text="否" active-value="0" inactive-value="1" />
 							</el-form-item>
 						</el-col>
-						<el-col :span="12" v-if="form.is_comprehensive_survey === 0">
+						<el-col :span="16" v-if="form.is_comprehensive_survey == '0' && userim !== 1">
 							<el-form-item label="综测排名：" prop="comprehensive_ranking">
 								<el-input v-model="form.comprehensive_ranking" style="width: 50px !important" />
 								<span style="margin: 0 10px">/</span>
@@ -208,7 +244,31 @@
 							</el-form-item>
 						</el-col>
 					</el-row>
-					<el-form-item label="申请理由：" prop="">
+					<el-row type="flex" v-if="userim == 1">
+						<el-col :span="8">
+							<el-form-item label="英语过级情况：" prop="english_level">
+								<el-input v-model="form.english_level" />
+							</el-form-item>
+						</el-col>
+						<el-col :span="8">
+							<el-form-item label="计算机过级情况：" prop="computer_level">
+								<el-input v-model="form.computer_level" />
+							</el-form-item>
+						</el-col>
+					</el-row>
+					<el-row type="flex" v-if="userim == 1">
+						<el-col :span="8">
+							<el-form-item label="学年成绩平均分：" prop="average">
+								<el-input v-model="form.average" />
+							</el-form-item>
+						</el-col>
+						<el-col :span="8">
+							<el-form-item label="学年成绩最低分：" prop="minimum_core">
+								<el-input v-model="form.minimum_core" />
+							</el-form-item>
+						</el-col>
+					</el-row>
+					<el-form-item label="申请理由：" prop="" v-if="userim !== 1">
 						<el-input v-model="form.reason_for_application" type="textarea" :show-word-limit="true" />
 					</el-form-item>
 				</el-card>
@@ -224,16 +284,28 @@
 </template>
 
 <script setup lang="ts">
-import type { FormInstance, FormRules } from "element-plus";
+import qs from "qs";
 import { storeToRefs } from "pinia";
-import { useAuthStore } from "@/stores/modules/userToken";
+import { useRouter } from "vue-router";
+import zhCn from "element-plus/lib/locale/lang/zh-cn";
+import { useAuthStore, useTabsStore, useRouterStore } from "@/stores/index";
+import type { FormInstance, FormRules } from "element-plus";
+import EditTable from "@/components/EditTable/index.vue";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, politicalOutlookList, gradeList, collegeList } from "@/util/tool/JsonData";
+import { postSubmitNationalendeavor } from "@/http/api/Scholarship/nationalEndeavor";
+import { postSubmitDistrictschos } from "@/http/api/Scholarship/districtschos";
+import { postSubmitUniversityScho } from "@/http/api/Scholarship/Scholarship";
+import { postSubmitNationalschos } from "@/http/api/Scholarship/nationalschos";
 
-import zhCn from "element-plus/lib/locale/lang/zh-cn";
-
+const router = useRouter();
+const storesTabs = useTabsStore();
+const store: any = useRouterStore();
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
+
+const userim = store.getRouterparams.im;
+
 const formRef = ref<FormInstance>();
 
 const form = reactive({
@@ -253,19 +325,29 @@ const form = reactive({
 	grade: "",
 	awards: "",
 	reason_for_application: "",
-	total_house_p: undefined,
+	total_house_p: "",
 	total_monthly_house: "",
 	per_capita_monthly: "",
 	source_of_income: "",
 	home_address: "",
 	postal_code: "",
 	scoreRanking: "",
-	total_class_size: undefined,
-	required_quantity: undefined,
-	number_of_passes: undefined,
-	is_comprehensive_survey: 0,
-	comprehensive_ranking: undefined,
-	total_number_of_comprehensive: undefined
+	total_class_size: "",
+	required_quantity: "",
+	number_of_passes: "",
+	is_comprehensive_survey: "0",
+	comprehensive_ranking: "",
+	total_number_of_comprehensive: "",
+	student_position: "",
+	meritorious_deeds: "",
+	student_major: "",
+	dormitory_performance: "",
+	english_level: "",
+	computer_level: "",
+	average: "",
+	minimum_core: "",
+	student_class: "",
+	educational_system: ""
 });
 
 const formRules = reactive<FormRules>({
@@ -282,7 +364,7 @@ const formRules = reactive<FormRules>({
 	political_outlook: [{ required: true, message: "请选择您的政治面貌", trigger: "change" }],
 	student_no: [{ required: true, message: "请输入您的学号", trigger: "blur" }],
 	student_start_year: [{ required: true, message: "请选择您的入学年月", trigger: "change" }],
-	grade: [{ required: true, message: "请选择您的所属年级", trigger: "change" }],
+	grade: [{ required: true, message: "请选择您的所属年级", trigger: "blur" }],
 	total_house_p: [{ required: true, message: "请输入您的家庭人口总数", trigger: "change" }],
 	total_monthly_house: [{ required: true, message: "请输入您的家庭月总收入", trigger: "change" }],
 	per_capita_monthly: [{ required: true, message: "请输入您的收入的来源", trigger: "change" }],
@@ -296,6 +378,49 @@ const formRules = reactive<FormRules>({
 	comprehensive_ranking: [{ required: true, message: "请填写完整", trigger: "change" }],
 	total_number_of_comprehensive: [{ required: true, message: "请填写完整", trigger: "change" }]
 });
+
+// 动态表格 设置
+const column = [
+	{ name: "dataTime", label: "日期", width: "auto", align: "center" },
+	{ name: "awardName", label: "奖项名称", width: "auto", align: "center" },
+	{ name: "awardingUnit", label: "颁奖单位", width: "auto", align: "center" }
+];
+
+const list = ref([{ dataTime: "", awardName: "", awardingUnit: "" }]);
+const editableKeys = ref([{ dataTime: "", awardName: "", awardingUnit: "" }]);
+const blank = ref({ dataTime: "", awardName: "", awardingUnit: "" });
+
+const add = (arr) => {
+	for (let item of arr) {
+		for (let attr in item) {
+			if (attr.includes("edit")) {
+				delete item[attr];
+			}
+		}
+	}
+	form.awards = JSON.stringify(arr); // 序列化
+};
+const onChange = (arr) => {
+	list.value = arr;
+	for (let item of arr) {
+		for (let attr in item) {
+			if (attr.includes("edit")) {
+				delete item[attr];
+			}
+		}
+	}
+	form.awards = JSON.stringify(arr); // 序列化
+};
+const deleteAction = (row) => {
+	for (let item of row) {
+		for (let attr in item) {
+			if (attr.includes("edit")) {
+				delete item[attr];
+			}
+		}
+	}
+	form.awards = JSON.stringify(row); // 序列化
+};
 
 const dialogVisibles = ref(false);
 
@@ -335,13 +460,91 @@ defineExpose({
 	formRef
 });
 
+const submit = async (data) => {
+	if (store.getRouterparams.im == 1) {
+		await postSubmitUniversityScho(data)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+				// 关闭当前页面
+				const index = storesTabs.getTansList.findIndex((item) => item.path === "/fillInTheApplication");
+				storesTabs.handleClose(index);
+				// 返回上一页面
+				router.go(-1);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	} else if (store.getRouterparams.im == 2) {
+		await postSubmitDistrictschos(data)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+				// 关闭当前页面
+				const index = storesTabs.getTansList.findIndex((item) => item.path === "/fillInTheApplication");
+				storesTabs.handleClose(index);
+
+				// 返回上一页面
+				router.go(-1);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	} else if (store.getRouterparams.im == 3) {
+		await postSubmitNationalschos(data)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+				// 关闭当前页面
+				const index = storesTabs.getTansList.findIndex((item) => item.path === "/fillInTheApplication");
+				storesTabs.handleClose(index);
+
+				// 返回上一页面
+				router.go(-1);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	} else if (store.getRouterparams.im == 4) {
+		await postSubmitNationalendeavor(data)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+				// 关闭当前页面
+				const index = storesTabs.getTansList.findIndex((item) => item.path === "/fillInTheApplication");
+				storesTabs.handleClose(index);
+
+				// 返回上一页面
+				router.go(-1);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+};
 const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
-	await formEl.validate((valid, fields) => {
+	await formEl.validate(async (valid, fields) => {
 		if (valid) {
-			console.log("submit!");
+			submit(form);
 		} else {
-			console.log("error submit!", fields);
+			ElNotification({
+				title: "温馨提示",
+				message: "请填写完整！",
+				type: "warning"
+			});
 		}
 	});
 };

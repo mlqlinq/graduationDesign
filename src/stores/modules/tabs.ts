@@ -29,6 +29,9 @@ export const useTabsStore = defineStore("tabs", {
 	state: (): IState => ({
 		tabs: JSON.parse(sessionStorage.getItem("tabs") as string) || [HOME_PAGE]
 	}),
+	getters: {
+		getTansList: (state) => state.tabs
+	},
 	actions: {
 		// 设置缓存
 		setStorage() {

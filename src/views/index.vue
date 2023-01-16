@@ -25,7 +25,7 @@
 				<span class="full_user mag" @click="handleClick">
 					<el-dropdown trigger="click">
 						<span class="el-dropdown-link">
-							<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" icon="UserFilled"></el-avatar>
+							<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" fit="fill" icon="UserFilled"></el-avatar>
 							<el-avatar v-if="!userData.imageUrl" icon="UserFilled"></el-avatar>
 							<span class="usern" v-if="userData.username"> {{ userData.username }}</span>
 							<span class="usern" v-if="userData.student_name"> {{ userData.student_name }}</span>

@@ -20,3 +20,10 @@ export const getAllUniversityScho = () => {
 		method: "get"
 	});
 };
+export const postSubmitUniversityScho = (data) => {
+	return serviceAxios({
+		url: "/api/Scholarship/SubmitUniversityScho",
+		method: "post",
+		data
+	});
+};

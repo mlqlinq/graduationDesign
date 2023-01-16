@@ -20,3 +20,10 @@ export const getAllDistrictschosData = () => {
 		method: "get"
 	});
 };
+export const postSubmitDistrictschos = (data) => {
+	return serviceAxios({
+		url: "/api/Scholarship/SubmitDistrictschos",
+		method: "post",
+		data
+	});
+};

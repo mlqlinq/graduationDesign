@@ -20,3 +20,10 @@ export const getAllnationalendeavorData = () => {
 		method: "get"
 	});
 };
+export const postSubmitNationalendeavor = (data) => {
+	return serviceAxios({
+		url: "/api/Scholarship/SubmitApplication",
+		method: "post",
+		data
+	});
+};

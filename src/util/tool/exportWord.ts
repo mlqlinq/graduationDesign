@@ -6,34 +6,33 @@ import JSZipUtils from "jszip-utils"; // 与jszip/pizzip一起使用，jszip-uti
 import ImageModule from "docxtemplater-image-module-free"; // 需要导出图片的话需要这个插件
 
 export const dataURLToBase64 = async (url: any) => {
-	// const urlData = await new Promise<void>((resolve, reject) => {
-	// 判断下传入的地址是不是已经是base64
-	const base64Regex = /^data:image\/(png|jpg|svg|svg\+xml);base64,/;
-	if (base64Regex.test(url)) {
-		return url;
-	}
+	const urlData = await new Promise<void>((resolve, reject) => {
+		// 判断下传入的地址是不是已经是base64
+		const base64Regex = /^data:image\/(png|jpg|svg|svg\+xml);base64,/;
+		if (base64Regex.test(url)) {
+			return url;
+		}
 
-	const Img = new Image();
-	let dataURL: any = "";
-	Img.setAttribute("crossOrigin", "Anonymous");
-	// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-	Img.src = url + "?v=" + Math.random();
-	Img.onload = () => {
-		// 要先确保图片完整获取到，这是个异步事件
-		const canvas: any = document.createElement("canvas"); // 创建canvas元素
-		const width = Img.width; // 确保canvas的尺寸和图片一样
-		const height = Img.height;
-		canvas.width = width;
-		canvas.height = height;
+		const Img = new Image();
+		let dataURL: any = "";
+		Img.setAttribute("crossOrigin", "Anonymous");
+		// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+		Img.src = url + "?v=" + Math.random();
+		Img.onload = () => {
+			// 要先确保图片完整获取到，这是个异步事件
+			const canvas: any = document.createElement("canvas"); // 创建canvas元素
+			const width = Img.width; // 确保canvas的尺寸和图片一样
+			const height = Img.height;
+			canvas.width = width;
+			canvas.height = height;
 
-		canvas.getContext("2d").drawImage(Img, 0, 0, width, height); // 将图片绘制到canvas中
-		dataURL = canvas.toDataURL("image/jpeg"); // 转换图片为dataURL
-		console.log("🚀 ~ file: exportWord.ts:31 ~ //urlData ~ dataURL", dataURL);
-		// 		resolve(dataURL);
-	};
-	// });
+			canvas.getContext("2d").drawImage(Img, 0, 0, width, height); // 将图片绘制到canvas中
+			dataURL = canvas.toDataURL("image/jpeg"); // 转换图片为dataURL
+			resolve(dataURL);
+		};
+	});
 
-	return dataURL;
+	return urlData;
 };
 export const blob: any = ref(null);
 
