@@ -126,10 +126,8 @@ export default () => {
 			}
 			ne.forEach((e) => {
 				if (e.children.length > 0) {
-					const ind = e.children.findIndex((item) => item.alwaysShow !== "0");
-					if (ind !== -1) {
-						e.children.splice(ind, 1);
-					}
+					// eslint-disable-next-line eqeqeq
+					e.children = e.children.filter((item) => item.alwaysShow == "0");
 				}
 			});
 		}
@@ -217,7 +215,7 @@ export default () => {
 	};
 
 	const handleMenu = (i: string) => {
-		console.log("i", i);
+		// console.log("i", i);
 	};
 
 	// 点击跳转至首页
