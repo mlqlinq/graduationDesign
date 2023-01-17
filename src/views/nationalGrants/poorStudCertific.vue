@@ -63,6 +63,7 @@ const getTableData = async () => {
 	} else if (userData.value.username) {
 		query.id_card_number = userData.value.username;
 	}
+	console.log("🚀 ~ file: poorStudCertific.vue:65 ~ getTableData ~ query", query);
 	await getMyPoorData(query)
 		.then((res) => {
 			ElNotification({
