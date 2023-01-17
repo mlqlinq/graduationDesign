@@ -3,8 +3,8 @@
 	"version": "0.0.0",
 	"description": "家庭经济困难学生奖助学金综合管理系统",
 	"scripts": {
-		"dev": "vite",
-		"serve": "vite",
+		"dev": "vite --mode development",
+		"serve": "vite --mode production",
 		"build:dev": "vue-tsc --noEmit && vite build --mode development",
 		"build:pro": "vue-tsc --noEmit && vite build --mode production",
 		"preview": "vite preview",

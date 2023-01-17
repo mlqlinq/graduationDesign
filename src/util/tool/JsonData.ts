@@ -388,3 +388,98 @@ export const collegeList = [
 	{ id: "6", value: "外国语言文学学院" },
 	{ id: "7", value: "商学院" }
 ];
+
+// 个人健康状况
+export const Myhealth = [
+	{ id: "0", value: "良好" },
+	{ id: "1", value: "—般（当地医保规定的慢性病病种)" },
+	{ id: "2", value: "身体残疾(残疾等级—、二级)" },
+	{ id: "3", value: "身体残疾(残疾等级三、四级)" },
+	{ id: "4", value: "严重(当地医保规定的大病保障病种)" }
+];
+
+// 称呼
+export const relativeAddress = [
+	{ id: "0", value: "父亲" },
+	{ id: "1", value: "母亲" },
+	{ id: "2", value: "祖父" },
+	{ id: "3", value: "祖母" },
+	{ id: "4", value: "兄" },
+	{ id: "5", value: "弟" },
+	{ id: "6", value: "姐" },
+	{ id: "7", value: "妹" },
+	{ id: "8", value: "其他" }
+];
+
+// 当前所处教育阶段
+export const relativeEducationStage = [
+	{ id: "0", value: "义务教育阶段" },
+	{ id: "1", value: "非义务教育阶段" },
+	{ id: "2", value: "非教育阶段" }
+];
+
+// 职业
+export const relativeOccupation = [
+	{ id: "0", value: "学生无业人员(无收入)" },
+	{ id: "1", value: "农村务农" },
+	{ id: "2", value: "劳力工人(技术含量较低)" },
+	{ id: "3", value: "技术性工人" },
+	{ id: "8", value: "退休" },
+	{ id: "9", value: "国家公职或在编人员(子女残疾)" },
+	{ id: "10", value: "国家公职或在编人员(困难职工)" },
+	{ id: "11", value: "国家公职或在编人员(无以上情况)" },
+	{ id: "12", value: "入伍或退役军人" },
+	{ id: "13", value: "其他" }
+];
+
+// 家庭人均年收入(标准)
+export const perCapitaAnnualIncomeOfHouseholds = [
+	{ id: "0", value: "小于等于当地最低生活保障标准" },
+	{ id: "1", value: "当地最低生活保障标准1.2倍以内" },
+	{ id: "2", value: "当地最低生活保障标准1.2-2倍以内" },
+	{ id: "3", value: "当地最低生活保障标准2.1-3倍以内" },
+	{ id: "4", value: "高于当地最低生活保障标准3倍以上" }
+];
+
+// 家庭遭受自然灾害累计损失情况
+export const cumulativeLossesOfHouseholdsSufferedFromNaturalDisasters = [
+	{ id: "0", value: "未遭受" },
+	{ id: "1", value: "损失0-10万元(含)" },
+	{ id: "2", value: "损失10-20万元(含)" },
+	{ id: "3", value: "损失20万元以上" }
+];
+
+// 家庭负债情况(不包括房贷、车贷及其他消费贷款)
+export const householdDebt = [
+	{ id: "0", value: "无负债" },
+	{ id: "1", value: "负债10万元(含)以下" },
+	{ id: "2", value: "负债10-30万元(含)" },
+	{ id: "3", value: "负债30万元以上" }
+];
+
+// 家庭有哪些大额支出
+export const largeHouseholdExpenditure = [
+	{ id: "0", value: "赡养老人生活费支出" },
+	{ id: "1", value: "赡养老人大额医药费(—年超过2000元)支出" },
+	{ id: "2", value: "抚养成年无劳动能力或长期患病子女费用支出" },
+	{ id: "3", value: "以上都没有" }
+];
+
+// 家庭其他收入来源
+export const otherSourcesOfHouseholdIncome = [
+	{ id: "0", value: "有共同生活的祖父母养老金收入" },
+	{ id: "1", value: "有住房、店铺、土地出租收入" },
+	{ id: "2", value: "政府救助" },
+	{ id: "3", value: "股权分红收益" },
+	{ id: "4", value: "定期社会捐赠(不含偶然捐赠)" },
+	{ id: "5", value: "无其它收入来源" }
+];
+
+// 学生家庭住房情况
+export const housingSituationOfStudentsFamilies = [
+	{ id: "0", value: "城市房改房或商品房1套" },
+	{ id: "1", value: "城市房改房或商品房2套及以上" },
+	{ id: "2", value: "农村住房" },
+	{ id: "3", value: "城市房改房或商品房和农村自建房均有" },
+	{ id: "4", value: "农村、城市均无自有住房" }
+];

@@ -12,7 +12,7 @@ import { renderAsync } from "docx-preview"; // 引入异步渲染方法
 import { useRouterStore } from "@/stores/modules/router";
 
 const store = useRouterStore();
-const config = store.getRouterparams;
+const config: any = store.getRouterparams;
 
 const container: any = ref(null);
 const filechange = (event) => {
