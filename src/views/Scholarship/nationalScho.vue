@@ -106,9 +106,9 @@ const printMyInfrom = async (data) => {
 	// 预览的配置及数据
 	const config: any = {
 		file: "@/../public/1673447720021.docx", // 模板文件的地址
-		filename: "下载test文档", // 文件名称
+		filename: "国家奖学金申请审批表", // 文件名称
 		fileType: "docx", // 文件类型
-		folder: "下载测试文档", // 批量下载压缩包的文件名
+		folder: "下载文档", // 批量下载压缩包的文件名
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
 

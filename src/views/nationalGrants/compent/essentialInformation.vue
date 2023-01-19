@@ -27,7 +27,7 @@
 							<el-col :span="12">
 								<el-form-item label="出生日期：" prop="student_birthday">
 									<el-config-provider :locale="zhCn">
-										<el-date-picker v-model="form.student_birthday" type="date" format="YYYY-MM" value-format="YYYY年MM月" />
+										<el-date-picker v-model="form.student_birthday" type="date" format="YYYY-MM" value-format="YYYY-MM" />
 									</el-config-provider>
 								</el-form-item>
 							</el-col>
@@ -168,9 +168,8 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
-import { useAuthStore, useTabsStore, useRouterStore } from "@/stores/index";
+import { useAuthStore } from "@/stores/index";
 import { genFileId } from "element-plus";
 import type { FormInstance, FormRules, UploadInstance, UploadProps, UploadRawFile, UploadUserFile } from "element-plus";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
@@ -180,18 +179,26 @@ const one = ref("");
 const two = ref("");
 const three = ref("");
 
+const imgurlList: any = ref([]);
+
 const upload = ref<UploadInstance>();
 
 const handleAvatarSuccess1: UploadProps["onSuccess"] = (response, uploadFile) => {
 	one.value = response.url;
+	imgurlList.value.push(response.url);
+	form.health_materials = JSON.stringify(imgurlList.value);
 };
 
 const handleAvatarSuccess2: UploadProps["onSuccess"] = (response, uploadFile) => {
 	two.value = response.url;
+	imgurlList.value.push(response.url);
+	form.health_materials = JSON.stringify(imgurlList.value);
 };
 
 const handleAvatarSuccess3: UploadProps["onSuccess"] = (response, uploadFile) => {
 	three.value = response.url;
+	imgurlList.value.push(response.url);
+	form.health_materials = JSON.stringify(imgurlList.value);
 };
 
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
@@ -211,12 +218,34 @@ const handleRemove: UploadProps["onRemove"] = (file: any, uploadFiles) => {
 	console.log(file, uploadFiles);
 	if (one.value === file.response.url) {
 		one.value = "";
+		imgurlList.value.splice(0, 1);
+		form.health_materials = JSON.stringify(imgurlList.value);
 	}
 	if (two.value === file.response.url) {
 		two.value = "";
+		if (imgurlList.value.length === 1) {
+			imgurlList.value.splice(0, 1);
+			form.health_materials = JSON.stringify(imgurlList.value);
+		} else if (imgurlList.value.length === 2) {
+			imgurlList.value.splice(1, 1);
+			form.health_materials = JSON.stringify(imgurlList.value);
+		} else if (imgurlList.value.length === 3) {
+			imgurlList.value.splice(1, 1);
+			form.health_materials = JSON.stringify(imgurlList.value);
+		}
 	}
 	if (three.value === file.response.url) {
 		three.value = "";
+		if (imgurlList.value.length === 1) {
+			imgurlList.value.splice(0, 1);
+			form.health_materials = JSON.stringify(imgurlList.value);
+		} else if (imgurlList.value.length === 2) {
+			imgurlList.value.splice(1, 1);
+			form.health_materials = JSON.stringify(imgurlList.value);
+		} else if (imgurlList.value.length === 3) {
+			imgurlList.value.splice(2, 1);
+			form.health_materials = JSON.stringify(imgurlList.value);
+		}
 	}
 };
 const beforeRemove: UploadProps["beforeRemove"] = (uploadFile, uploadFiles) => {

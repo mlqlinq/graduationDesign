@@ -56,6 +56,9 @@ const applyAidData = ref([]);
 const uploadBtn: any = ref(null);
 const taskTableRef: any = ref(null);
 
+// 注入重载页面事件
+const reloadRefresh: any = inject("reloadRefresh");
+
 const tableH = ref(650);
 let printData: any = reactive({});
 
@@ -106,19 +109,31 @@ const printMyInfrom = async (data) => {
 	// 预览的配置及数据
 	const config: any = {
 		file: "@/../public/1673876403537.docx", // 模板文件的地址
-		filename: "下载test文档", // 文件名称
+		filename: "国家助学金申请表", // 文件名称
 		fileType: "docx", // 文件类型
-		folder: "下载测试文档", // 批量下载压缩包的文件名
+		folder: "下载文档", // 批量下载压缩包的文件名
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
+
+	if (!Array.isArray(data.family_member_information)) {
+		data.family_member_information = JSON.parse(data.family_member_information);
+	}
+
+	if (!Array.isArray(data.source_of_income)) {
+		data.source_of_income = JSON.parse(data.source_of_income).join("，");
+	}
+
 	config.data = data;
 
 	exportWord(config);
+
 	ElNotification({
 		title: "提示",
 		message: "下载成功",
 		type: "success"
 	});
+
+	reloadRefresh();
 };
 
 // 填写申请
