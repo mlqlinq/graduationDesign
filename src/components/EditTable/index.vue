@@ -12,7 +12,7 @@
 							</template>
 							<template v-else-if="item.valueType === 'select'">
 								<el-select clearable :placeholder="`请选择`" v-model="scope.row[item.name]" v-if="scope.row.edit">
-									<el-option v-for="ite in item.options" :key="ite.value" :label="ite.label" :value="ite.value" />
+									<el-option v-for="ite in item.options" :key="ite.id" :label="ite.value" :value="ite.value" />
 								</el-select>
 
 								<span v-else>{{ filterOption(item, scope) }}</span>
@@ -41,7 +41,7 @@
 			</el-table-column>
 		</el-table>
 		<div style="margin-top: 15px">
-			<el-button style="width: 100%" @click="add">
+			<el-button plain type="primary" style="width: 100%" @click="add">
 				<el-icon style="margin-right: 4px"><plus /></el-icon> 添加一行数据
 			</el-button>
 		</div>
@@ -161,10 +161,15 @@ const add = () => {
 };
 
 const filterOption = (item, scope) => {
-	let obj = item.options.find((ite) => ite.value === scope.row[item.name]);
-	if (obj) {
-		return obj.label;
+	if ("options" in item || "row" in scope) {
+		let obj = item.options.find((ite) => {
+			return ite.value === scope.row[item.name];
+		});
+		if (obj) {
+			return obj.value;
+		}
 	}
+
 	return "--";
 };
 

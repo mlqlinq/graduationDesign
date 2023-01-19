@@ -7,3 +7,11 @@ export const getMyPoorData = (idCardNum) => {
 		params: idCardNum
 	});
 };
+
+export const submitMyPoorData = (data) => {
+	return serviceAxios({
+		url: "/api/nationalGrants/submitStudentPoorData",
+		method: "post",
+		data
+	});
+};

@@ -63,7 +63,6 @@ const getTableData = async () => {
 	} else if (userData.value.username) {
 		query.id_card_number = userData.value.username;
 	}
-	console.log("🚀 ~ file: poorStudCertific.vue:65 ~ getTableData ~ query", query);
 	await getMyPoorData(query)
 		.then((res) => {
 			ElNotification({
@@ -103,13 +102,14 @@ const printMyInfrom = async (data) => {
 
 	// 预览的配置及数据
 	const config: any = {
-		file: "@/../public/1673445157685.docx", // 模板文件的地址
-		filename: "下载test文档", // 文件名称
+		file: "@/../public/1673876460544.docx", // 模板文件的地址
+		filename: "家庭经济困难学生认定申请表", // 文件名称
 		fileType: "docx", // 文件类型
-		folder: "下载测试文档", // 批量下载压缩包的文件名
+		folder: "下载文档", // 批量下载压缩包的文件名
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
-	config.data = data;
+	const Datas = processData(data);
+	config.data = Datas;
 
 	exportWord(config);
 	ElNotification({
@@ -132,10 +132,42 @@ const selectClick = (selection: any, row: any) => {
 		let del_row = selection.shift();
 		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
 	}
-	row.whether = row.is_comprehensive_survey == "0" ? true : false;
-	row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
-	row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
 	printData = row;
+};
+
+/* 打印前处理数据 */
+const processData = (data) => {
+	if (!Array.isArray(data.family_member_information)) {
+		data.numberOfPeople = JSON.parse(data.family_member_information).length - data.family_member_information.split("非教育阶段").length;
+		data.family_member_information = JSON.parse(data.family_member_information);
+	} else {
+		data.numberOfPeople = data.family_member_information.length - JSON.stringify(data.family_member_information).split("非教育阶段").length;
+	}
+
+	data.poverty = data.poverty_relief_families === "是" ? true : false;
+	data.subsistence = data.subsistence_allowance === "是" ? true : false;
+	data.unstable = data.unstable_families === "是" ? true : false;
+	data.haveeliminated = data.have_not_eliminated_risks === "是" ? true : false;
+	data.riskeliminated = data.risk_not_eliminated_by_the_family === "是" ? true : false;
+	data.marginal = data.marginal_vulnerable_poor === "是" ? true : false;
+	data.difficultieshave = data.difficulties_have_been_eliminated === "是" ? true : false;
+	data.difficulties = data.difficulties_have_not_been === "是" ? true : false;
+	data.special = data.special_poverty_relief === "是" ? true : false;
+	data.martyr = data.martyr_children === "是" ? true : false;
+	data.orphan = data.orphan_or_not === "是" ? true : false;
+
+	data.employees = data.employees_with_difficulties === "是" ? true : false;
+	data.single = data.single_parent_family === "是" ? true : false;
+
+	data.preschool = data.preschool_government_funding === "是" ? true : false;
+	data.compulsory = data.compulsory_education_family === "是" ? true : false;
+	data.nationalaid = data.national_financial_aid === "是" ? true : false;
+	data.tuition = data.tuition_reduction === "是" ? true : false;
+	data.nationallastyear = data.national_financial_aid_last_year === "是" ? true : false;
+	data.national = data.national_student_loan === "是" ? true : false;
+	data.tuitionlastyear = data.tuition_reduction_last_year === "是" ? true : false;
+
+	return data;
 };
 </script>
 

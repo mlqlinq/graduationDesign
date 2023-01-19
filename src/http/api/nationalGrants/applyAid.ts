@@ -7,3 +7,10 @@ export const getMyapplyData = (idCardNum) => {
 		params: idCardNum
 	});
 };
+export const submitMyApplyData = (data) => {
+	return serviceAxios({
+		url: "/api/nationalGrants/submitStudentApplyData",
+		method: "post",
+		data
+	});
+};
