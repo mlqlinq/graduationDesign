@@ -15,3 +15,14 @@ const sge = () => {
 };
 
 sge();
+const collegeList = [
+	{ id: "0", value: "理工学院" },
+	{ id: "1", value: "体育与健康科学学院" },
+	{ id: "2", value: "管理学院" },
+	{ id: "3", value: "法学院" },
+	{ id: "4", value: "艺术与设计学院" },
+	{ id: "5", value: "文化与传媒学院" },
+	{ id: "6", value: "外国语言文学学院" },
+	{ id: "7", value: "商学院" }
+];
+console.log("🚀 ~ file: a.js:28 ~ collegeList", JSON.stringify(collegeList));

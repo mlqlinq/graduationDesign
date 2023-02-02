@@ -23,13 +23,21 @@
 				<el-table-column prop="student_nation" label="民族" align="center " />
 				<el-table-column label="审核状态" align="center " width="160px">
 					<template #default="scope">
-						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department === 0">院系审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department === 1">院系审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.class_opinion && JSON.parse(scope.row.class_opinion).resource === '0'">班级审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.class_opinion && JSON.parse(scope.row.class_opinion).resource === '1'">班级审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.class_opinion === ''">班级未审核</el-tag>
 
-						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion === 0">学校审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion === 1">学校审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.reason_for_recommendation && JSON.parse(scope.row.reason_for_recommendation).resource === '0'">班级审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.reason_for_recommendation && JSON.parse(scope.row.reason_for_recommendation).resource === '1'">班级审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.reason_for_recommendation === ''">班级未审核</el-tag>
 
-						<el-tag effect="plain" v-else>待审核</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '0'">院系审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '1'">院系审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.opinions_of_the_department === ''">院系未审核</el-tag>
+
+						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '0'">高校审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '1'">高校审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.school_opinion === ''">高校未审核</el-tag>
 					</template>
 				</el-table-column>
 				<!-- <el-table-column prop="address" label="操作记录" align="center " /> -->
@@ -129,10 +137,15 @@ const printMyInfrom = async (data) => {
 	}
 
 	data.awards = JSON.parse(data.awards);
+
 	if (data.awards.length <= 2) {
 		data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
 		data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
 	}
+
+	data.reason_for_recommendation = data.reason_for_recommendation === "" ? JSON.parse(data.reason_for_recommendation).desc : "";
+	data.opinions_of_the_department = data.opinions_of_the_department === "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+	data.school_opinion = data.school_opinion === "" ? JSON.parse(data.school_opinion).desc : "";
 
 	config.data = data;
 

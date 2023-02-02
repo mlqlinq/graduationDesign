@@ -7,3 +7,11 @@ export const modifyUser = (data) => {
 		data
 	});
 };
+
+export const modifyGuideUser = (data) => {
+	return serviceAxios({
+		url: "/api/user/information/editGuideInform",
+		method: "post",
+		data
+	});
+};

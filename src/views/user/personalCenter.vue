@@ -7,13 +7,12 @@
 						<span>基本信息</span>
 						<i class="float-right el-icon-arrow-down"></i>
 					</div>
-					<PersonInform ref="personS"></PersonInform>
+					<universityInformation v-if="userIm == '1'"></universityInformation>
+					<guideInformation ref="personS" v-if="userIm == '3'"></guideInformation>
+					<PersonInform ref="personS" v-if="userIm == '4'"></PersonInform>
 				</el-card>
 			</div>
-			<div class="static-content-item" v-show="false">
-				<el-divider direction="horizontal"></el-divider>
-			</div>
-			<div class="card-container">
+			<div class="card-container" v-if="userIm == '4'">
 				<el-card>
 					<div slot="header" class="clear-fix">
 						<span>银行卡信息</span>
@@ -22,10 +21,7 @@
 					<BankInform ref="bankS"></BankInform>
 				</el-card>
 			</div>
-			<div class="static-content-item" v-show="false">
-				<el-divider direction="horizontal"></el-divider>
-			</div>
-			<div class="card-container">
+			<div class="card-container" v-if="userIm == '4'">
 				<el-card>
 					<div slot="header" class="clear-fix">
 						<span>家庭信息</span>
@@ -34,7 +30,7 @@
 					<familyInform ref="familyS"></familyInform>
 				</el-card>
 			</div>
-			<div style="text-align: center">
+			<div style="text-align: center" v-if="userIm == '4'">
 				<el-button type="primary" @click="submitForm(personS, bankS, familyS)">保存<SvgIcon icon-name="preserVation" :size="19" style="margin-left: 5px; margin-right: -3px"></SvgIcon></el-button>
 			</div>
 		</el-form>
@@ -43,10 +39,12 @@
 
 <script lang="ts" setup>
 import _ from "lodash";
-import { modifyUser } from "@/http/api/user/edit";
+import { modifyUser, modifyGuideUser } from "@/http/api/user/edit";
 import PersonInform from "./from/personal.vue";
 import BankInform from "./from/bankInformation.vue";
 import familyInform from "./from/familyInformation.vue";
+import guideInformation from "./from/guideInformation.vue";
+import universityInformation from "./from/universityInformation.vue";
 import { getMyinformation } from "@/http/api/user/user";
 
 import { storeToRefs } from "pinia";
@@ -54,6 +52,8 @@ import { useAuthStore } from "@/stores/modules/userToken";
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
+
+const userIm = userData.value.userIdentity;
 
 const loading = ref(true);
 
@@ -65,29 +65,54 @@ const familyS: any = ref(null);
 const reloadRefresh: any = inject("reloadRefresh");
 
 const submitForm = async (p, b, f) => {
-	let formRuleValidates = [p.formRef.validate(), f.familyInformRef.validate()];
-	await Promise.all(formRuleValidates)
-		.then(async (res) => {
-			if (res[0] && res[1]) {
-				const data = _.merge(p.form, b.bankform, f.familyInform);
-				data.user_id = userData.value.user_id;
-				data.student_type = userData.value.student_type;
-				data.user_identity = userData.value.user_identity;
-				await modifyUser(data).then((result) => {
-					ElNotification({
-						title: "温馨提示",
-						message: result.msg,
-						type: "success"
+	if (b === null && f === null) {
+		const formRuleValidates = [p.formRef.validate()];
+		await Promise.all(formRuleValidates)
+			.then(async (res) => {
+				if (res[0]) {
+					const data = p.form;
+					data.userIdentity = userData.value.userIdentity;
+					console.log("🚀 ~ file: personalCenter.vue:73 ~ .then ~ data", data);
+					await modifyGuideUser(data).then((result) => {
+						ElNotification({
+							title: "温馨提示",
+							message: result.msg,
+							type: "success"
+						});
 					});
-				});
-				useAuths.setUserData(data);
-				// getMyInformationData();
-				reloadRefresh();
-			}
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+					useAuths.setUserData(data);
+					// getMyInformationData();
+					reloadRefresh();
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	} else {
+		const formRuleValidates = [p.formRef.validate(), f.familyInformRef.validate()];
+		await Promise.all(formRuleValidates)
+			.then(async (res) => {
+				if (res[0] && res[1]) {
+					const data = _.merge(p.form, b.bankform, f.familyInform);
+					data.user_id = userData.value.user_id;
+					data.student_type = userData.value.student_type;
+					data.user_identity = userData.value.userIdentity;
+					await modifyUser(data).then((result) => {
+						ElNotification({
+							title: "温馨提示",
+							message: result.msg,
+							type: "success"
+						});
+					});
+					useAuths.setUserData(data);
+					// getMyInformationData();
+					reloadRefresh();
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
 };
 
 onMounted(() => {
@@ -105,7 +130,10 @@ const getMyInformationData = async () => {
 	}
 	await getMyinformation(query)
 		.then((res) => {
-			userData.value = res.data;
+			console.log("🚀 ~ file: personalCenter.vue:108 ~ .then ~ res", res);
+			if (res.data) {
+				userData.value = res.data;
+			}
 			ElNotification({
 				title: "温馨提示",
 				message: res.msg,

@@ -39,8 +39,10 @@ export default () => {
 		userIdentity: "",
 		// name: "admin", // 管理员
 		// password: "admin123",
-		// name: "460400255221149662",  // 学生
-		name: "460400255221149657",
+		// name: "460400255221149662", // 学生
+		name: "460400255221149657", // 导员
+		// name: "460400255221149642", // 书记
+		// name: "13640", // 高校
 		password: "123456",
 		verificationCode: ""
 	});
@@ -58,14 +60,8 @@ export default () => {
 			{ required: true, message: "请输入账号!", trigger: "blur" }
 			// { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
 		],
-		password: [
-			{ required: true, message: "请输入密码!", trigger: "blur" }
-			// { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
-		],
-		verificationCode: [
-			{ required: true, message: "请输入验证码!", trigger: "blur" }
-			// { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
-		]
+		password: [{ required: true, message: "请输入密码!", trigger: "blur" }],
+		verificationCode: [{ required: true, message: "请输入验证码!", trigger: "blur" }]
 	});
 
 	// 按钮 loading事件
@@ -101,13 +97,13 @@ export default () => {
 			if (valid) {
 				showLoading.value = true;
 				isdisabled.value = true;
+
 				const loginData: any = {};
 				for (const key in ruleForm) {
-					// if (ruleForm.hasOwnProperty(key)) {
 					if (Object.prototype.hasOwnProperty.call(ruleForm, key)) {
 						loginData[key] = ruleForm[key];
 					}
-				}
+				} // for循环拷贝数据对象
 
 				loginData.verificationCode = compileStr(loginData.verificationCode.toLowerCase());
 
@@ -129,8 +125,8 @@ export default () => {
 							// 存储token解析的内容 以及修改登录的状态
 							const decode: any = jwtDecode(res.token);
 							store.setAuth(!(res.token === "")); // 由于decode是对象，所以对他取反再取反，双非就变成了布尔类型
-							store.setUser(res.token);
-							store.setUserData(decode.userData);
+							store.setUser(res.token); // 将 token 通过pinia进行持久化保存
+							store.setUserData(decode.userData); // 将 用户信息 通过pinia进行持久化保存
 							return ElMessage.success(res.message);
 						}
 					})

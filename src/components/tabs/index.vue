@@ -64,7 +64,7 @@ const reR = () => {
 	reload();
 };
 
-const route = useRoute();
+const route: any = useRoute();
 const router = useRouter();
 const store = useTabsStore();
 
@@ -100,8 +100,8 @@ watch(
 
 		if (route.meta.noCache) return;
 		// 防止浏览器后退/前进不变化
-		sessionStorage.setItem("activePath", route.fullPath);
-		tabsMenuValue.value = route.fullPath;
+		sessionStorage.setItem("activePath", "/" + route.name);
+		tabsMenuValue.value = "/" + route.name;
 	},
 	{ deep: true, immediate: true }
 );
@@ -212,6 +212,10 @@ watch(contentVisible, (val: boolean) => {
 		.el-tabs--card > .el-tabs__header .el-tabs__item {
 			color: #cccccc;
 			border: none;
+		}
+		.el-tabs--card > .el-tabs__header .el-tabs__item:hover {
+			color: var(--el-color-primary);
+			border-bottom: 2px solid var(--el-color-primary);
 		}
 		.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
 			color: var(--el-color-primary);

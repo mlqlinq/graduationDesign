@@ -273,7 +273,7 @@ export const idCardTypeList = [
 	{ id: "14", value: "大陆居民往来台湾通行证" }
 ];
 
-// 专业名称
+// 理工学院专业名称
 export const majorList = [
 	{ id: "0", value: "计算机科学与技术" },
 	{ id: "1", value: "信息系统与信息管理" },
@@ -285,8 +285,61 @@ export const majorList = [
 	{ id: "7", value: "人工智能" }
 ];
 
-// 专业大类
+// 体育与健康科学学院专业名称
+export const sportsMajorList = [{ id: "0", value: "社会体育指导与管理专业" }];
 
+// 理工学院专业名称
+export const administrationMajorList = [
+	{ id: "0", value: "财务管理" },
+	{ id: "1", value: "烹饪与营养教育" },
+	{ id: "2", value: "旅游管理" },
+	{ id: "3", value: "市场营销" },
+	{ id: "4", value: "物流管理" }
+];
+
+// 法学院专业名称
+export const lawSchoolMajorList = [{ id: "0", value: "法学" }];
+
+// 艺术与设计专业名称
+export const artAndDesignMajorList = [
+	{ id: "0", value: "视觉传达设计" },
+	{ id: "1", value: "数字媒体艺术" },
+	{ id: "2", value: "动画" },
+	{ id: "3", value: "环境设计" },
+	{ id: "4", value: "服装与服饰设计" },
+	{ id: "5", value: "产品设计" },
+	{ id: "6", value: "艺术教育" }
+];
+
+// 文化与传媒学院专业名称
+export const cultureAndMediaMajorList = [
+	{ id: "0", value: "汉语言文学" },
+	{ id: "1", value: "汉语国际教育" },
+	{ id: "2", value: "网络与新媒体" },
+	{ id: "3", value: "广播电视编导" },
+	{ id: "4", value: "播音与主持艺术" }
+];
+
+// 外国语言文学学院专业名称
+export const foreignLiteratureMajorList = [
+	{ id: "0", value: "英语" },
+	{ id: "1", value: "商务英语" },
+	{ id: "2", value: "越南语" },
+	{ id: "3", value: "泰语" },
+	{ id: "4", value: "印度尼西亚语" }
+];
+
+// 商学院专业名称
+export const businessSchoolMajorList = [
+	{ id: "0", value: "金融科技" },
+	{ id: "1", value: "金融工程" },
+	{ id: "2", value: "跨境电子商务" },
+	{ id: "3", value: "审计学" },
+	{ id: "4", value: "税收学" },
+	{ id: "5", value: "国际经济与贸易" }
+];
+
+// 专业大类
 export const majorCategoriesList = [
 	{ id: "0", value: "哲学" },
 	{ id: "1", value: "经济学" },
@@ -387,6 +440,20 @@ export const collegeList = [
 	{ id: "5", value: "文化与传媒学院" },
 	{ id: "6", value: "外国语言文学学院" },
 	{ id: "7", value: "商学院" }
+];
+
+// 各院校下的专业
+export const collegeListChildren = [
+	{ id: "0", value: "理工学院", label: "理工学院", children: majorList },
+	{ id: "1", value: "体育与健康科学学院", label: "体育与健康科学学院", children: sportsMajorList },
+	{ id: "2", value: "管理学院", label: "管理学院", children: administrationMajorList },
+	{ id: "3", value: "法学院", label: "法学院", children: lawSchoolMajorList },
+	{ id: "4", value: "艺术与设计学院", label: "艺术与设计学院", children: artAndDesignMajorList },
+	{ id: "5", value: "文化与传媒学院", labe: "文化与传媒学院", children: cultureAndMediaMajorList },
+	{ id: "6", value: "外国语言文学学院", label: "外国语言文学学院", children: foreignLiteratureMajorList },
+	{ id: "7", value: "商学院", label: "商学院", children: businessSchoolMajorList },
+	{ id: "8", value: "马克思主义学院", label: "马克思主义学院", children: [] },
+	{ id: "9", value: "创新创业学院", label: "创新创业学院", children: [] }
 ];
 
 // 个人健康状况

@@ -11,7 +11,7 @@
 		<el-card class="tableCard">
 			<el-table ref="taskTableRef" :data="universitySchoData" :header-cell-style="{ background: '#e4e8e9', borderColor: '#cfcfcf' }" border :height="tableH" style="width: 100%" @select="selectClick">
 				<el-table-column type="selection" width="55" align="center " />
-				<el-table-column prop="create_time" label="年度" align="center " sortable />
+				<el-table-column prop="create_time" label="申请时间" align="center " sortable />
 				<el-table-column prop="student_name" label="姓名" align="center " />
 				<el-table-column prop="id_card_number" label="身份证号" align="center " />
 				<el-table-column prop="school_name" label="高校名称" align="center " />
@@ -23,13 +23,21 @@
 				<el-table-column prop="student_nation" label="民族" align="center " />
 				<el-table-column label="审核状态" align="center " width="160px">
 					<template #default="scope">
-						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department === 0">院系审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department === 1">院系审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.class_opinion && JSON.parse(scope.row.class_opinion).resource === '0'">班级审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.class_opinion && JSON.parse(scope.row.class_opinion).resource === '1'">班级审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.class_opinion === ''">班级未审核</el-tag>
 
-						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion === 0">学校审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion === 1">学校审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.reason_for_recommendation && JSON.parse(scope.row.reason_for_recommendation).resource === '0'">班级审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.reason_for_recommendation && JSON.parse(scope.row.reason_for_recommendation).resource === '1'">班级审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.reason_for_recommendation === ''">班级未审核</el-tag>
 
-						<el-tag effect="plain" v-else>待审核</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '0'">院系审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '1'">院系审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.opinions_of_the_department === ''">院系未审核</el-tag>
+
+						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '0'">高校审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '1'">高校审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.school_opinion === ''">高校未审核</el-tag>
 					</template>
 				</el-table-column>
 				<!-- <el-table-column prop="address" label="操作记录" align="center " /> -->
@@ -107,6 +115,10 @@ const printMyInfrom = async (data) => {
 		folder: "下载文档", // 批量下载压缩包的文件名
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
+
+	data.class_opinion = data.class_opinion === "" ? JSON.parse(data.class_opinion).desc : "";
+	data.opinions_of_the_department = data.opinions_of_the_department === "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+	data.school_opinion = data.school_opinion === "" ? JSON.parse(data.school_opinion).desc : "";
 	config.data = data;
 
 	exportWord(config);

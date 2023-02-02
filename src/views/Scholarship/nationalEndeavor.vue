@@ -23,13 +23,13 @@
 				<el-table-column prop="student_nation" label="民族" align="center " />
 				<el-table-column label="审核状态" align="center " width="160px">
 					<template #default="scope">
-						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department === 0">院系审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department === 1">院系审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '0'">院系审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '1'">院系审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.opinions_of_the_department === ''">院系未审核</el-tag>
 
-						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion === 0">学校审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion === 1">学校审核不通过</el-tag>
-
-						<el-tag effect="plain" v-else>待审核</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '0'">高校审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '1'">高校审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.school_opinion === ''">高校未审核</el-tag>
 					</template>
 				</el-table-column>
 				<!-- <el-table-column prop="address" label="操作记录" align="center " /> -->
@@ -111,6 +111,10 @@ const printMyInfrom = async (data) => {
 		folder: "下载文档", // 批量下载压缩包的文件名
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
+
+	data.opinions_of_the_department = data.opinions_of_the_department !== "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+	data.school_opinion = data.school_opinion !== "" ? JSON.parse(data.school_opinion).desc : "";
+
 	config.data = data;
 
 	exportWord(config);
