@@ -12,7 +12,7 @@ export const useRouterStore = defineStore("router", {
 		return {
 			addrouters: [], // 路由菜单
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-			routerParams: {} as configuration | string // 路由参数
+			routerParams: {} as configuration | string | number // 路由参数
 		};
 	},
 	getters: {

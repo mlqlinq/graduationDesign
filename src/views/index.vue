@@ -48,16 +48,16 @@
 			</span>
 		</el-header>
 		<el-container>
-			<!-- 菜单区域 -->
+			<!-- 菜单区域 unique-opened -->
 			<el-aside :width="isCollapse ? '64px' : '233px'">
 				<el-scrollbar>
-					<el-menu :collapse="isCollapse" :collapse-transition="false" :default-active="activePath" :router="true" class="el-menu-vertical-demo" unique-opened @select="handleMenu">
+					<el-menu :collapse="isCollapse" :collapse-transition="false" :default-active="activePath" :router="true" class="el-menu-vertical-demo" @select="handleMenu">
 						<el-menu-item index="/index" @click="saveNavSate('/index')">
 							<SvgIcon :class="!isCollapse ? 'menu_icon' : ' menu_icon_full'" :size="22" icon-name="HomePage" />
 							<span>首页</span>
 						</el-menu-item>
 						<template v-for="item in allMenu" :key="item.menu_id">
-							<el-sub-menu v-if="item.children && item.children.length" :index="item.path" popper-class="ziMenu">
+							<el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path" popper-class="ziMenu">
 								<template #title>
 									<SvgIcon v-if="el.indexOf(item.meta.icon) !== -1" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :icon-name="item.meta.icon" :size="22" />
 									<span v-else-if="item.meta.icon === ''" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"></span>
@@ -75,7 +75,7 @@
 									{{ item2.meta.title }}
 								</el-menu-item>
 							</el-sub-menu>
-							<el-menu-item v-else>
+							<el-menu-item v-else :index="item.path">
 								<SvgIcon v-if="el.indexOf(item.meta.icon) !== -1" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :icon-name="item.meta.icon" :size="22" />
 								<span v-else-if="item.meta.icon === ''" :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'"></span>
 								<el-icon v-else :class="!isCollapse ? 'menu_icon' : 'menu_icon_full'" :size="22">

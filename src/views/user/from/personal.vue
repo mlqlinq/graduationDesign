@@ -5,7 +5,7 @@
 				<el-col :span="16">
 					<el-row>
 						<el-col :span="12">
-							<el-form-item label="学生姓名：" prop="student_name">
+							<el-form-item label="姓名：" prop="student_name">
 								<el-input v-model="form.student_name" />
 							</el-form-item>
 						</el-col>
@@ -37,15 +37,15 @@
 					</el-row>
 					<el-row>
 						<el-col :span="12">
+							<el-form-item label="身份证号：" prop="id_card_number">
+								<el-input v-model="form.id_card_number" />
+							</el-form-item>
+						</el-col>
+						<el-col :span="12">
 							<el-form-item label="身份证件类型：" prop="id_card_type">
 								<el-select v-model="form.id_card_type">
 									<el-option v-for="item in idCardTypeList" :key="item.id" :label="item.value" :value="item.value" />
 								</el-select>
-							</el-form-item>
-						</el-col>
-						<el-col :span="12">
-							<el-form-item label="身份证号：" prop="id_card_number">
-								<el-input v-model="form.id_card_number" />
 							</el-form-item>
 						</el-col>
 					</el-row>
@@ -202,6 +202,7 @@ import zhCn from "element-plus/lib/locale/lang/zh-cn";
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
+
 const formRef = ref<FormInstance>();
 
 const form = reactive({

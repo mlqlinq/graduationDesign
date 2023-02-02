@@ -89,6 +89,19 @@ router.beforeEach((to, from, next) => {
 		addrouters.forEach((navigation: any) => {
 			if (navigation.children) {
 				navigation.children.forEach((item) => {
+					if (item.path === "/fillInTheApplication") {
+						router.addRoute("home", {
+							path: `${item.path}/:Num?`,
+							meta: {
+								icon: item.meta.icon,
+								noCache: item.meta.noCache,
+								title: item.meta.title
+							},
+							name: item.name,
+							component: modules[`../views/${item.component}.vue`],
+							props: true
+						});
+					}
 					router.addRoute("home", {
 						path: `${item.path}`,
 						meta: {
@@ -111,9 +124,13 @@ router.beforeEach((to, from, next) => {
 		load++;
 
 		// 添加后跳转到应访问的地址
-		return next({ path: to.path });
+		return next({ path: to.fullPath, replace: true });
 	}
 	// console.log(router.getRoutes(), "查看现有路由");
+	// 增加以下代码，判断是否存在临时路由，存在则删除
+	if (router.hasRoute("TempRoute")) {
+		router.removeRoute("TempRoute");
+	}
 	next();
 });
 

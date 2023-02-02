@@ -1,6 +1,6 @@
 <template>
 	<div class="person">
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="130px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" :disabled="disabled" label-width="130px" label-position="right">
 			<div class="card-container">
 				<el-card>
 					<div slot="header" class="clear-fix">
@@ -120,8 +120,8 @@
 								<el-input v-model="form.student_major" />
 							</el-form-item>
 						</el-col>
-						<el-col :span="8">
-							<el-form-item label="学制：" prop="educational_system" v-if="userim === 2 || userim === 3">
+						<el-col :span="8" v-if="userim === 2 || userim === 3">
+							<el-form-item label="学制：" prop="educational_system">
 								<el-input v-model="form.educational_system" />
 							</el-form-item>
 						</el-col>
@@ -135,7 +135,7 @@
 						</el-col>
 					</el-row>
 
-					<el-form-item label="曾获何种奖励：" v-if="userim !== 1 && userim !== 3">
+					<el-form-item label="曾获何种奖励：" v-if="userim == 1 || userim == 2 || userim == 4">
 						<el-input v-model="form.awards" type="textarea" show-word-limit />
 					</el-form-item>
 					<el-form-item label="主要先进事迹：" v-if="userim == 1">
@@ -149,7 +149,7 @@
 					</el-form-item>
 				</el-card>
 			</div>
-			<div class="card-container" v-if="userim !== 1 && userim !== 2 && userim !== 3">
+			<div class="card-container" v-if="userim === 4">
 				<el-card>
 					<div slot="header" class="clear-fix">
 						<span>家庭经济情况</span>
@@ -206,7 +206,7 @@
 								<span>（名次 / 总人数）</span>
 							</el-form-item>
 						</el-col>
-						<el-col :span="12">
+						<el-col :span="16">
 							<el-form-item label="必修课：" prop="required_quantity" v-if="userim !== 1">
 								<el-input v-model="form.required_quantity" style="width: 50px !important" />
 								<span style="margin: 0 10px">/</span>
@@ -215,7 +215,7 @@
 								</el-form-item>
 								<span>（必修课数 / 必修课及格数）</span>
 							</el-form-item>
-							<el-col :span="12" v-if="userim == 1">
+							<el-col :span="16" v-if="userim == 1">
 								<el-form-item label="综测排名：" prop="comprehensive_ranking">
 									<el-input v-model="form.comprehensive_ranking" style="width: 50px !important" />
 									<span style="margin: 0 10px">/</span>
@@ -227,13 +227,13 @@
 							</el-col>
 						</el-col>
 					</el-row>
-					<el-row>
+					<el-row type="flex">
 						<el-col :span="8">
 							<el-form-item label="是否实行综合考评排名：" label-width="180px" v-if="userim !== 1">
 								<el-switch v-model="form.is_comprehensive_survey" active-text="是" inactive-text="否" active-value="0" inactive-value="1" />
 							</el-form-item>
 						</el-col>
-						<el-col :span="16" v-if="form.is_comprehensive_survey == '0' && userim !== 1">
+						<el-col :span="12" v-if="form.is_comprehensive_survey == '0' && userim !== 1">
 							<el-form-item label="综测排名：" prop="comprehensive_ranking">
 								<el-input v-model="form.comprehensive_ranking" style="width: 50px !important" />
 								<span style="margin: 0 10px">/</span>
@@ -243,6 +243,7 @@
 								</el-form-item>
 							</el-form-item>
 						</el-col>
+						<!-- <el-col :span="8"> </el-col> -->
 					</el-row>
 					<el-row type="flex" v-if="userim == 1">
 						<el-col :span="8">
@@ -273,19 +274,55 @@
 					</el-form-item>
 				</el-card>
 			</div>
-			<div class="btn">
-				<el-button type="primary" @click="submitForm(formRef)">
-					提交申请<el-icon style="margin-left: 5px" :size="18"><TopRight /></el-icon>
-				</el-button>
-			</div>
 		</el-form>
+		<div class="btn">
+			<el-button type="primary" @click="Visible = true" v-if="route.query.Num">
+				提交审核<el-icon style="margin-left: 5px" :size="18"><TopRight /></el-icon>
+			</el-button>
+			<el-button type="primary" @click="submitForm(formRef)" v-else>
+				提交申请<el-icon style="margin-left: 5px" :size="18"><TopRight /></el-icon>
+			</el-button>
+		</div>
+
+		<examineDia ref="toexamineDia" :visible="Visible" :news="news" @DaiVisi="DaiVisi" @postData="submitForReview" v-if="route.query.Num && Visible"></examineDia>
 		<AvatarCropper :dialogVisible="dialogVisibles" :url="form.imageUrl" @upRrl="getUrl" @parentChang="parentChang"></AvatarCropper>
 	</div>
 </template>
 
 <script setup lang="ts">
 import fillInTheApplication from "@/util/Scholarship/fillInTheApplication";
-const { zhCn, EditTable, AvatarCropper, studentNationList, politicalOutlookList, formRef, collegeList, userim, form, formRules, column, list, editableKeys, blank, add, onChange, deleteAction, dialogVisibles, getCropper, getUrl, parentChang, submitForm } = fillInTheApplication();
+import examineDia from "@/components/examineDialog/index.vue";
+const {
+	toexamineDia,
+	disabled,
+	route,
+	Visible,
+	news,
+	zhCn,
+	EditTable,
+	AvatarCropper,
+	DaiVisi,
+	studentNationList,
+	politicalOutlookList,
+	formRef,
+	collegeList,
+	userim,
+	form,
+	formRules,
+	column,
+	list,
+	editableKeys,
+	blank,
+	add,
+	onChange,
+	deleteAction,
+	dialogVisibles,
+	getCropper,
+	getUrl,
+	parentChang,
+	submitForm,
+	submitForReview
+} = fillInTheApplication();
 defineExpose({
 	form,
 	formRef
@@ -304,7 +341,7 @@ defineExpose({
 	padding: 0 20px;
 
 	.el-form {
-		height: 100% !important;
+		height: calc(100% - 40px) !important;
 		padding: 0 10px;
 		overflow: auto;
 
@@ -321,9 +358,12 @@ defineExpose({
 			}
 		}
 	}
+
 	.btn {
 		text-align: center;
+		margin-bottom: -500px;
 	}
+
 	.el-textarea :deep(.el-textarea__inner) {
 		min-height: 100px !important;
 	}

@@ -10,15 +10,32 @@ import { postSubmitNationalendeavor } from "@/http/api/Scholarship/nationalEndea
 import { postSubmitDistrictschos } from "@/http/api/Scholarship/districtschos";
 import { postSubmitUniversityScho } from "@/http/api/Scholarship/Scholarship";
 import { postSubmitNationalschos } from "@/http/api/Scholarship/nationalschos";
+import { getShipSutData } from "@/http/api/Scholarship/allship";
+import _ from "lodash";
+import postExamine from "@/util/Scholarship/toE";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const {
+	postUniverClassExamine,
+	postUniverDepartmentExamine,
+	postUniverSchoolExamine,
+	postNationalschosClassExamine,
+	postNationalschosDepartmentExamine,
+	postNationalschosSchoolExamine,
+	postDistrictschosDepartmentExamine,
+	postDistrictschosSchoolExamine,
+	postNationalendeavorDepartmentExamine,
+	postNationalendeavorSchoolExamine
+} = postExamine();
 
 export default () => {
 	const router = useRouter();
+	const route = useRoute();
 	const storesTabs = useTabsStore();
 	const store: any = useRouterStore();
 	const useAuths: any = useAuthStore();
 	const { userData } = storeToRefs(useAuths);
 
-	const userim = store.getRouterparams.im;
+	const userim = ref(store.getRouterparams.im);
 
 	const formRef = ref<FormInstance>();
 
@@ -158,13 +175,82 @@ export default () => {
 		getData();
 	});
 
-	const getData = () => {
-		for (const key in form) {
-			if (Object.prototype.hasOwnProperty.call(form, key)) {
-				for (const s in userData.value) {
-					if (Object.prototype.hasOwnProperty.call(userData.value, s)) {
-						if (key === s) {
-							form[key] = userData.value[s];
+	const studentDa: any = ref();
+
+	const getShipSutdentData = async (id) => {
+		await getShipSutData(id)
+			.then((result) => {
+				studentDa.value = result.data[0];
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const disabled = ref(false);
+
+	const toexamineDia: any = ref(null);
+	const Visible = ref<Boolean | undefined>(false);
+
+	const news = ref("");
+	if (route.query.Num === "1") {
+		if (userData.value.userIdentity === "1") {
+			news.value = "";
+		} else if (userData.value.userIdentity === "2") {
+			news.value = "评议为 特/一/二/三 等奖学金。";
+		} else if (userData.value.userIdentity === "3") {
+			news.value = "** 同学符合 特/一/二/三等 奖学金条件,表现优秀，推荐其参评20xx-20xx学年度 特/一/二/三等 奖学金。";
+		}
+	} else if (route.query.Num === "3") {
+		if (userData.value.userIdentity === "1") {
+			news.value = "经评审，并在校内公示  xx  个工作日，无异议，现报请批准该同学获得国家奖学金。";
+		} else if (userData.value.userIdentity === "2") {
+			news.value = "同意。";
+		} else if (userData.value.userIdentity === "3") {
+			news.value = "";
+		}
+	} else if (route.query.Num === "2") {
+		news.value = "同意。";
+	}
+
+	const getData = async () => {
+		if (router.currentRoute.value.meta.data) {
+			const data: any = _.cloneDeep(router.currentRoute.value.meta.data);
+			store.handleParams({ im: parseInt(data.type) });
+			userim.value = store.getRouterparams.im;
+			disabled.value = true;
+
+			await getShipSutdentData(data.id_card_number);
+
+			for (const key in form) {
+				if (Object.prototype.hasOwnProperty.call(form, key)) {
+					for (const s in studentDa.value) {
+						if (Object.prototype.hasOwnProperty.call(studentDa.value, s)) {
+							if (key === s) {
+								form[key] = studentDa.value[s];
+							}
+						}
+					}
+					for (const s in data) {
+						if (Object.prototype.hasOwnProperty.call(data, s)) {
+							if (key === s) {
+								form[key] = data[s];
+							}
+							if (s === "awards" && data[s] !== undefined && userim.value === 3) {
+								list.value = JSON.parse(data[s]);
+							}
+						}
+					}
+				}
+			}
+		} else {
+			for (const key in form) {
+				if (Object.prototype.hasOwnProperty.call(form, key)) {
+					for (const s in userData.value) {
+						if (Object.prototype.hasOwnProperty.call(userData.value, s)) {
+							if (key === s) {
+								form[key] = userData.value[s];
+							}
 						}
 					}
 				}
@@ -172,6 +258,50 @@ export default () => {
 		}
 	};
 
+	/** 提交审核 */
+	const submitForReview = () => {
+		const data: any = JSON.parse(JSON.stringify(toexamineDia.value.ruleForm));
+		const idNum = route.query.Num;
+
+		if (idNum === "1") {
+			if (userData.value.userIdentity === "1") {
+				postUniverSchoolExamine({ ...data, ...route.query });
+			} else if (userData.value.userIdentity === "2") {
+				postUniverDepartmentExamine({ ...data, ...route.query });
+			} else if (userData.value.userIdentity === "3") {
+				postUniverClassExamine({ ...data, ...route.query });
+			}
+		} else if (idNum === "3") {
+			if (userData.value.userIdentity === "1") {
+				postNationalschosSchoolExamine({ ...data, ...route.query });
+			} else if (userData.value.userIdentity === "2") {
+				postNationalschosDepartmentExamine({ ...data, ...route.query });
+			} else if (userData.value.userIdentity === "3") {
+				postNationalschosClassExamine({ ...data, ...route.query });
+			}
+		} else if (idNum === "2") {
+			if (userData.value.userIdentity === "1") {
+				postDistrictschosSchoolExamine({ ...data, ...route.query });
+			} else if (userData.value.userIdentity === "2") {
+				postDistrictschosDepartmentExamine({ ...data, ...route.query });
+			}
+		} else if (idNum === "4") {
+			if (userData.value.userIdentity === "1") {
+				postNationalendeavorSchoolExamine({ ...data, ...route.query });
+			} else if (userData.value.userIdentity === "2") {
+				postNationalendeavorDepartmentExamine({ ...data, ...route.query });
+			}
+		}
+
+		Visible.value = false;
+	};
+
+	/** 审核弹窗关闭 */
+	const DaiVisi = (val) => {
+		Visible.value = val;
+	};
+
+	/* 提交申请 */
 	const submit = async (data) => {
 		// eslint-disable-next-line eqeqeq
 		if (store.getRouterparams.im == 1) {
@@ -266,7 +396,13 @@ export default () => {
 	};
 
 	return {
+		disabled,
+		toexamineDia,
+		route,
 		zhCn,
+		news,
+		Visible,
+		DaiVisi,
 		EditTable,
 		AvatarCropper,
 		studentNationList,
@@ -287,6 +423,7 @@ export default () => {
 		getCropper,
 		getUrl,
 		parentChang,
-		submitForm
+		submitForm,
+		submitForReview
 	};
 };
