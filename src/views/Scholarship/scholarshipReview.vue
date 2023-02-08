@@ -347,7 +347,6 @@ const Cancel = () => {
 			position: absolute;
 			bottom: 5px;
 			right: 0;
-			z-index: 9999;
 		}
 	}
 }

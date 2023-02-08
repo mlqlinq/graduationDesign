@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="180px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" label-width="180px" label-position="right" :disabled="disabled">
 			<el-card>
 				<div slot="header" class="clear-fix">
 					<span>曾获国家教育资助信息</span>
@@ -87,6 +87,8 @@ const options = [
 
 const formRef = ref<FormInstance>();
 
+const disabled = ref(false);
+
 const form = reactive({
 	preschool_government_funding: "",
 	compulsory_education_family: "",
@@ -127,7 +129,8 @@ const getData = () => {
 
 defineExpose({
 	form,
-	formRef
+	formRef,
+	disabled
 });
 </script>
 

@@ -208,7 +208,7 @@ const formRef = ref<FormInstance>();
 const form = reactive({
 	student_name: "",
 	student_sex: "",
-	imageUrl: "http://www.mlqzclqq.xyz:8888/down/vnOq8jIgazEZ.gif",
+	imageUrl: "",
 	student_birthday: "",
 	student_nation: "",
 	id_card_type: "",

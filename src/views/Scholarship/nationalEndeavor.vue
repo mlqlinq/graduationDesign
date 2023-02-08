@@ -123,6 +123,8 @@ const printMyInfrom = async (data) => {
 		message: "下载成功",
 		type: "success"
 	});
+
+	getTableData();
 };
 
 const downLoad = async () => {

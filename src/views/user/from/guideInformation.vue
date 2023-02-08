@@ -65,8 +65,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
-					<el-form-item label="管理班级名称：" prop="class_name">
-						<el-input v-model="form.class_name" />
+					<el-form-item label="所属高校名称：" prop="school_name">
+						<el-input v-model="form.school_name" />
 					</el-form-item>
 				</el-col>
 				<el-col :span="8"> </el-col>
@@ -123,7 +123,8 @@ const form = reactive({
 	class_name: "",
 	political_outlook: "",
 	entry_time: "",
-	address: ""
+	address: "",
+	school_name: ""
 });
 
 const formRules = reactive<FormRules>({

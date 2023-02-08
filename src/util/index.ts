@@ -271,6 +271,7 @@ export default () => {
 		breadcrumbList,
 		viewKey,
 		el,
+		route,
 		refresh,
 		handleClick,
 		loginOut,

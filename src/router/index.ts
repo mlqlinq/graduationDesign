@@ -6,13 +6,18 @@
  * */
 import { useRouterStore } from "@/stores/modules/router";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
 import { ElMessage } from "element-plus";
 import NProgress from "nprogress"; // 导入全局进度条
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import Loading from "@/components/loading/index.vue";
+
 // 公共路由
-export const constantRoutes: RouteRecordRaw[] = [
+export const constantRoutes = [
+	// export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: "/",
 		name: "login",
@@ -89,7 +94,7 @@ router.beforeEach((to, from, next) => {
 		addrouters.forEach((navigation: any) => {
 			if (navigation.children) {
 				navigation.children.forEach((item) => {
-					if (item.path === "/fillInTheApplication") {
+					if (item.path === "/fillInTheApplication" || item.path === "/confirmationFilling") {
 						router.addRoute("home", {
 							path: `${item.path}/:Num?`,
 							meta: {
@@ -118,6 +123,7 @@ router.beforeEach((to, from, next) => {
 
 		router.addRoute({
 			path: "/:pathMatch(.*)*", // 捕获所有路由或 404 Not found 路由
+			name: "NotFound",
 			component: async () => await import("@/views/error/404.vue")
 		});
 
