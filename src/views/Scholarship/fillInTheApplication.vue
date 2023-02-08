@@ -135,7 +135,7 @@
 						</el-col>
 					</el-row>
 
-					<el-form-item label="曾获何种奖励：" v-if="userim == 1 || userim == 2 || userim == 4">
+					<el-form-item label="曾获何种奖励：" v-if="userim == 2 || userim == 4">
 						<el-input v-model="form.awards" type="textarea" show-word-limit />
 					</el-form-item>
 					<el-form-item label="主要先进事迹：" v-if="userim == 1">

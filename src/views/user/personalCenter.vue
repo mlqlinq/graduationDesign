@@ -72,7 +72,6 @@ const submitForm = async (p, b, f) => {
 				if (res[0]) {
 					const data = p.form;
 					data.userIdentity = userData.value.userIdentity;
-					console.log("🚀 ~ file: personalCenter.vue:73 ~ .then ~ data", data);
 					await modifyGuideUser(data).then((result) => {
 						ElNotification({
 							title: "温馨提示",
@@ -130,7 +129,6 @@ const getMyInformationData = async () => {
 	}
 	await getMyinformation(query)
 		.then((res) => {
-			console.log("🚀 ~ file: personalCenter.vue:108 ~ .then ~ res", res);
 			if (res.data) {
 				userData.value = res.data;
 			}

@@ -18,13 +18,17 @@
 				<el-table-column prop="student_nation" label="民族" align="center " />
 				<el-table-column label="审核状态" align="center " width="160px">
 					<template #default="scope">
-						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department === 0">院系审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department === 1">院系审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.reasons_for_democratic_review && JSON.parse(scope.row.reasons_for_democratic_review).resource === '0'">班级审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.reasons_for_democratic_review && JSON.parse(scope.row.reasons_for_democratic_review).resource === '1'">班级审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.reasons_for_democratic_review === ''">班级未审核</el-tag>
 
-						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion === 0">学校审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion === 1">学校审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '0'">院系审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '1'">院系审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.opinions_of_the_department === ''">院系未审核</el-tag>
 
-						<el-tag effect="plain" v-else>待审核</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.school_review_comments && JSON.parse(scope.row.school_review_comments).resource === '0'">高校审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_review_comments && JSON.parse(scope.row.school_review_comments).resource === '1'">高校审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.school_review_comments === ''">高校未审核</el-tag>
 					</template>
 				</el-table-column>
 				<!-- <el-table-column prop="address" label="操作记录" align="center " /> -->
@@ -117,6 +121,8 @@ const printMyInfrom = async (data) => {
 		message: "下载成功",
 		type: "success"
 	});
+
+	getTableData();
 };
 
 // 填写申请
@@ -166,6 +172,10 @@ const processData = (data) => {
 	data.nationallastyear = data.national_financial_aid_last_year === "是" ? true : false;
 	data.national = data.national_student_loan === "是" ? true : false;
 	data.tuitionlastyear = data.tuition_reduction_last_year === "是" ? true : false;
+
+	data.reasons_for_democratic_review = JSON.parse(data.reasons_for_democratic_review).resource === "0" ? JSON.parse(data.reasons_for_democratic_review).desc : "";
+	data.opinions_of_the_department = JSON.parse(data.opinions_of_the_department).resource === "0" ? JSON.parse(data.opinions_of_the_department).desc : "";
+	data.school_review_comments = JSON.parse(data.school_review_comments).resource === "0" ? JSON.parse(data.school_review_comments).desc : "";
 
 	return data;
 };

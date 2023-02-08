@@ -10,6 +10,8 @@ import {
 	nationalendeavorDepartmentExamine,
 	nationalendeavorSchoolExamine
 } from "@/http/api/Scholarship/allship";
+import { PoorStudCertificClassExamine, PoorStudCertificSchoolExamine, PoorStudCertificDepartmentExamine } from "@/http/api/nationalGrants/poorStudCertific";
+
 export default () => {
 	/** 校级 */
 	const postUniverClassExamine = async (params) => {
@@ -155,6 +157,50 @@ export default () => {
 			});
 	};
 
+	/** 贫困生审核 民主评议陈述理由 */
+	const postPoorStudCertificClassExamine = async (params) => {
+		await PoorStudCertificClassExamine(params)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	/** 贫困生审核 院系审核意见 */
+	const postPoorStudCertificDepartmentExamine = async (params) => {
+		await PoorStudCertificDepartmentExamine(params)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	/** 贫困生审核 学校审核意见 */
+	const postPoorStudCertificSchoolExamine = async (params) => {
+		await PoorStudCertificSchoolExamine(params)
+			.then((res) => {
+				ElNotification({
+					title: "温馨提示",
+					message: res.msg,
+					type: "success"
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 	return {
 		postUniverClassExamine,
 		postUniverDepartmentExamine,
@@ -165,6 +211,9 @@ export default () => {
 		postDistrictschosDepartmentExamine,
 		postDistrictschosSchoolExamine,
 		postNationalendeavorDepartmentExamine,
-		postNationalendeavorSchoolExamine
+		postNationalendeavorSchoolExamine,
+		postPoorStudCertificClassExamine,
+		postPoorStudCertificDepartmentExamine,
+		postPoorStudCertificSchoolExamine
 	};
 };

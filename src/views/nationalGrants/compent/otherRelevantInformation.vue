@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="200px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" label-width="200px" label-position="right" :disabled="disabled">
 			<el-card>
 				<div slot="header" class="clear-fix">
 					<span>其他相关信息</span>
@@ -108,7 +108,7 @@
 						<el-row>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料一：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess1" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="one1" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess1" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -118,7 +118,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料二：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess2" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="two2" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess2" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -128,7 +128,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料三：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess3" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="three3" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess3" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -147,7 +147,7 @@
 						<el-row>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料一：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess4" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="four4" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess4" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -157,7 +157,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料二：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess5" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="five5" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess5" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -167,7 +167,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料三：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess6" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="six6" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess6" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -186,7 +186,7 @@
 						<el-row>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料一：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess7" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="seven7" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess7" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -196,7 +196,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料二：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess8" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="eight8" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess8" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -206,7 +206,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料三：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess9" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="nine9" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess9" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -263,6 +263,8 @@ const form = reactive({
 	auxiliary_instruction_materials: "" // 辅助说明材料
 });
 
+const disabled = ref(false);
+
 const formRules = reactive<FormRules>({
 	annual_per_capita: [{ required: true, message: "请填写完整", trigger: "blur" }],
 	per_capita_annual_income: [{ required: true, message: "请选择", trigger: "change" }],
@@ -309,6 +311,16 @@ const six = ref("");
 const seven = ref("");
 const eight = ref("");
 const nine = ref("");
+
+const one1 = ref([]);
+const two2 = ref([]);
+const three3 = ref([]);
+const four4 = ref([]);
+const five5 = ref([]);
+const six6 = ref([]);
+const seven7 = ref([]);
+const eight8 = ref([]);
+const nine9 = ref([]);
 
 const imgurlList1: any = ref([]);
 const imgurlList2: any = ref([]);
@@ -488,7 +500,17 @@ const beforeRemove: UploadProps["beforeRemove"] = (uploadFile, uploadFiles) => {
 
 defineExpose({
 	form,
-	formRef
+	formRef,
+	disabled,
+	one1,
+	two2,
+	three3,
+	four4,
+	five5,
+	six6,
+	seven7,
+	eight8,
+	nine9
 });
 </script>
 

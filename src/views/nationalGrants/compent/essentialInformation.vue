@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="140px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" label-width="140px" label-position="right" :disabled="disabled">
 			<el-card>
 				<div slot="header" class="clear-fix">
 					<span>基本信息</span>
@@ -58,6 +58,7 @@
 						<el-form-item label="个人照：" class="uploader" prop="imageUrl">
 							<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
 							<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
+							<pn v-if="!form.imageUrl">无</pn>
 							<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button>
 						</el-form-item>
 					</el-col>
@@ -127,7 +128,7 @@
 						<el-row>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料一：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess1" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="one1" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess1" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -137,7 +138,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料二：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess2" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="two2" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess2" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -147,7 +148,7 @@
 							</el-col>
 							<el-col :span="8">
 								<el-form-item label="辅助说明材料三：">
-									<el-upload class="upload-demo" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess3" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+									<el-upload class="upload-demo" :file-list="three3" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess3" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
 										<el-button type="primary">添加材料</el-button>
 										<template #tip>
 											<div class="el-upload__tip">请上传图片</div>
@@ -174,10 +175,15 @@ import { genFileId } from "element-plus";
 import type { FormInstance, FormRules, UploadInstance, UploadProps, UploadRawFile, UploadUserFile } from "element-plus";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
 import { Myhealth } from "@/util/tool/JsonData";
+import _ from "lodash";
 
 const one = ref("");
 const two = ref("");
 const three = ref("");
+
+const one1 = ref([]);
+const two2 = ref([]);
+const three3 = ref([]);
 
 const imgurlList: any = ref([]);
 
@@ -298,10 +304,14 @@ const formRules = reactive<FormRules>({
 	class_name: [{ required: true, message: "请输入您的班级名称", trigger: "blur" }],
 	political_outlook: [{ required: true, message: "请选择您的政治面貌", trigger: "change" }],
 	student_no: [{ required: true, message: "请输入您的学号", trigger: "blur" }],
+	student_major: [{ required: true, message: "请输入您的专业", trigger: "blur" }],
 	student_start_year: [{ required: true, message: "请选择您的入学年月", trigger: "change" }],
 	health: [{ required: true, message: "请选择您的健康状况", trigger: "change" }],
-	grade: [{ required: true, message: "请选择您的所属年级", trigger: "blur" }]
+	grade: [{ required: true, message: "请选择您的所属年级", trigger: "blur" }],
+	current_grade: [{ required: true, message: "请输入您的班级", trigger: "blur" }]
 });
+
+const disabled = ref(false);
 
 const dialogVisibles = ref(false);
 
@@ -329,7 +339,12 @@ const getData = () => {
 
 defineExpose({
 	form,
-	formRef
+	formRef,
+	formRules,
+	disabled,
+	one1,
+	two2,
+	three3
 });
 </script>
 

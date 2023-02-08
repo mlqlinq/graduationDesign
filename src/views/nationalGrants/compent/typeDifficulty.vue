@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="250px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" label-width="250px" label-position="right" :disabled="disabled">
 			<el-card>
 				<div slot="header" class="clear-fix">
 					<span>困难类型</span>
@@ -140,6 +140,8 @@ const options = [
 
 const formRef = ref<FormInstance>();
 
+const disabled = ref(false);
+
 const form = reactive({
 	poverty_relief_families: "",
 	subsistence_allowance: "",
@@ -194,7 +196,8 @@ const getData = () => {
 
 defineExpose({
 	form,
-	formRef
+	formRef,
+	disabled
 });
 </script>
 

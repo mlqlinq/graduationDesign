@@ -31,7 +31,7 @@
 					</template>
 				</el-table-column>
 			</template>
-			<el-table-column prop="operator" label="操作" width="250px" fixed="right">
+			<el-table-column prop="operator" label="操作" width="250px" fixed="right" align="center">
 				<template #default="scope">
 					<el-button v-if="scope.row.edit" type="success" size="small" icon="CircleCheckFilled" @click="confirmEdit(scope.row)"> 保存 </el-button>
 					<el-button v-else type="primary" size="small" icon="Edit" @click="scope.row.edit = !scope.row.edit"> 编辑 </el-button>
