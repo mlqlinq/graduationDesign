@@ -300,6 +300,13 @@ const Examination = () => {
 
 /** 提交审核 */
 const submitForReview = () => {
+	if (DiaValue.value === "")
+		return ElNotification({
+			title: "提示~",
+			message: "请选择困难类型！",
+			type: "warning"
+		});
+
 	const data: any = JSON.parse(JSON.stringify(DiaruleForm));
 	const idNum = route.query.Num;
 

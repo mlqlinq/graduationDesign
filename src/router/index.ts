@@ -94,7 +94,7 @@ router.beforeEach((to, from, next) => {
 		addrouters.forEach((navigation: any) => {
 			if (navigation.children) {
 				navigation.children.forEach((item) => {
-					if (item.path === "/fillInTheApplication" || item.path === "/confirmationFilling") {
+					if (item.path === "/fillInTheApplication" || item.path === "/confirmationFilling" || item.path === "/financialAidFilling") {
 						router.addRoute("home", {
 							path: `${item.path}/:Num?`,
 							meta: {
@@ -131,6 +131,9 @@ router.beforeEach((to, from, next) => {
 
 		// 添加后跳转到应访问的地址
 		return next({ path: to.fullPath, replace: true });
+	}
+	if (to.matched.length === 0) {
+		router.push(to.path);
 	}
 	// console.log(router.getRoutes(), "查看现有路由");
 	// 增加以下代码，判断是否存在临时路由，存在则删除

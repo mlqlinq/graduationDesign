@@ -48,7 +48,7 @@ export default () => {
 
 	// 路由路径
 	const route: any = useRoute();
-	const breadcrumbList = ref([]);
+	const breadcrumbList: any = ref([]);
 
 	const viewKey = computed(() => {
 		return route.path || Date.now();
@@ -252,9 +252,25 @@ export default () => {
 
 	// 监听路由的变化
 	watch(
-		() => [route.path, route.name, activePath.value, sessionStorage.getItem("activePath")],
+		() => [route.path.value, route.name, activePath.value, sessionStorage.getItem("activePath")],
 		() => {
 			initBreadcrumbList();
+		},
+		{ deep: true }
+	);
+
+	/**
+	 * 防止动态改变 route.meta.title 时 ，面包屑不更新
+	 */
+	watch(
+		() => [route.path.value],
+		() => {
+			setTimeout(() => {
+				if (route.path === "/fillInTheApplication" || route.path === "/confirmationFilling" || route.path === "/financialAidFilling") {
+					breadcrumbList.value = [];
+					breadcrumbList.value.push(route.meta.title);
+				}
+			}, 250);
 		},
 		{ deep: true }
 	);

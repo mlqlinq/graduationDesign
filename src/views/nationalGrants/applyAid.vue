@@ -21,13 +21,17 @@
 				<el-table-column prop="application_level" label="申请等级" align="center " />
 				<el-table-column label="审核状态" align="center " width="160px">
 					<template #default="scope">
-						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department === 0">院系审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department === 1">院系审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.class_comments && JSON.parse(scope.row.class_comments).resource === '0'">班级审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.class_comments && JSON.parse(scope.row.class_comments).resource === '1'">班级审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.class_comments === ''">班级未审核</el-tag>
 
-						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion === 0">学校审核通过</el-tag>
-						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion === 1">学校审核不通过</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '0'">院系审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.opinions_of_the_department && JSON.parse(scope.row.opinions_of_the_department).resource === '1'">院系审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="'opinions_of_the_department' in scope.row && scope.row.opinions_of_the_department === ''">院系未审核</el-tag>
 
-						<el-tag effect="plain" v-else>待审核</el-tag>
+						<el-tag type="success" effect="plain" v-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '0'">高校审核通过</el-tag>
+						<el-tag type="warning" effect="plain" v-else-if="scope.row.school_opinion && JSON.parse(scope.row.school_opinion).resource === '1'">高校审核不通过</el-tag>
+						<el-tag type="info" effect="plain" v-else-if="scope.row.school_opinion === ''">高校未审核</el-tag>
 					</template>
 				</el-table-column>
 				<!-- <el-table-column prop="address" label="操作记录" align="center " /> -->
@@ -74,8 +78,7 @@ const getTableData = async () => {
 			ElNotification({
 				title: "提示",
 				message: res.msg,
-				type: "success",
-				duration: 3000
+				type: "success"
 			});
 			if (res.data) {
 				applyAidData.value = res.data;
@@ -123,17 +126,20 @@ const printMyInfrom = async (data) => {
 		data.source_of_income = JSON.parse(data.source_of_income).join("，");
 	}
 
+	data.class_comments = data.class_comments === "" ? "" : JSON.parse(data.class_comments).desc;
+	data.opinions_of_the_department = data.opinions_of_the_department === "" ? "" : JSON.parse(data.opinions_of_the_department).desc;
+	data.school_opinion = data.school_opinion === "" ? "" : JSON.parse(data.school_opinion).desc;
+
 	config.data = data;
 
 	exportWord(config);
 
-	ElNotification({
+	await ElNotification({
 		title: "提示",
 		message: "下载成功",
 		type: "success"
 	});
-
-	reloadRefresh();
+	getTableData();
 };
 
 // 填写申请
