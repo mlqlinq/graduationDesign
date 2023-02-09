@@ -30,10 +30,13 @@
 					<el-tooltip content="个人信息">
 						<el-dropdown trigger="click">
 							<span class="el-dropdown-link">
-								<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" fit="fill" icon="UserFilled"></el-avatar>
-								<el-avatar v-if="!userData.imageUrl" icon="UserFilled"></el-avatar>
 								<span class="usern" v-if="userData.username"> {{ userData.username }}</span>
 								<span class="usern" v-if="userData.student_name"> {{ userData.student_name }}</span>
+								<span class="usern" v-if="userData.guide_name"> {{ userData.guide_name }}</span>
+								<span class="usern" v-if="userData.secretary_name"> {{ userData.secretary_name }}</span>
+								<span class="usern" v-if="userData.universities_name"> {{ userData.universities_name }}</span>
+								<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" fit="fill" icon="UserFilled"></el-avatar>
+								<el-avatar v-if="!userData.imageUrl" icon="UserFilled"></el-avatar>
 								<SvgIcon :class="fullSvg ? 'dropdown_svg' : 'dropdown_svgClick'" :size="18" icon-name="DrapDown" />
 							</span>
 							<template #dropdown>
@@ -100,7 +103,7 @@
 					</span>
 					<!-- 面包屑 -->
 					<span class="heard_bread">
-						<el-breadcrumb separator="/">
+						<el-breadcrumb separator=">">
 							<el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">
 								{{ item }}
 							</el-breadcrumb-item>
@@ -270,6 +273,7 @@ const { isCollapse, full, userData, allMenu, activePath, fullSvg, breadcrumbList
 						font-size: 17px;
 						width: auto;
 						margin: 0 10px;
+						color: #999;
 					}
 
 					.dropdown_svg {

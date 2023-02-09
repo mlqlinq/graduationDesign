@@ -1,6 +1,6 @@
 <template>
 	<div class="person" v-loading="loading">
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="160px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" label-width="160px" label-position="right" :disabled="disabled">
 			<div class="card-container">
 				<el-card>
 					<div slot="header" class="clear-fix">
@@ -26,16 +26,21 @@
 							</el-row>
 							<el-row>
 								<el-col :span="12">
-									<el-form-item label="出生日期：" prop="student_birthday">
+									<el-form-item label="民族：" prop="student_nation">
+										<el-select v-model="form.student_nation">
+											<el-option v-for="item in studentNationList" :key="item.id" :label="item.value" :value="item.value" />
+										</el-select>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="出生日期：" prop="student_birthday" v-if="!route.query.Num">
 										<el-config-provider :locale="zhCn">
 											<el-date-picker v-model="form.student_birthday" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
 										</el-config-provider>
 									</el-form-item>
-								</el-col>
-								<el-col :span="12">
-									<el-form-item label="民族：" prop="student_nation">
-										<el-select v-model="form.student_nation">
-											<el-option v-for="item in studentNationList" :key="item.id" :label="item.value" :value="item.value" />
+									<el-form-item label="专业名称：" prop="student_major" v-if="route.query.Num">
+										<el-select v-model="form.student_major">
+											<el-option v-for="item in majorList" :key="item.id" :label="item.value" :value="item.value" />
 										</el-select>
 									</el-form-item>
 								</el-col>
@@ -57,6 +62,7 @@
 							<el-form-item label="个人照：" class="uploader">
 								<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
 								<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
+								<span v-if="!form.imageUrl">无</span>
 								<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button>
 							</el-form-item>
 						</el-col>
@@ -75,7 +81,7 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span="8">
-							<el-form-item label="专业名称：" prop="student_major">
+							<el-form-item label="专业名称：" prop="student_major" v-if="!route.query.Num">
 								<el-select v-model="form.student_major">
 									<el-option v-for="item in majorList" :key="item.id" :label="item.value" :value="item.value" />
 								</el-select>
@@ -178,6 +184,10 @@
 							<el-col :span="8"> </el-col>
 							<el-col :span="8"> </el-col>
 						</el-row>
+						<!-- 成员信息表 -->
+						<el-form-item label-width="0px" v-if="route.query.Num">
+							<edit-table :columns="column" :data="list" ref="table" style="width: 100%" />
+						</el-form-item>
 					</el-card>
 				</div>
 
@@ -194,10 +204,48 @@
 			</div>
 		</el-form>
 		<div class="btn">
-			<el-button type="primary" @click="submitForm(formRef)">
+			<el-button type="primary" @click="Diaisible = true" v-if="route.query.Num">
+				提交审核<el-icon style="margin-left: 5px" :size="18"><TopRight /></el-icon>
+			</el-button>
+			<el-button type="primary" @click="submitForm(formRef)" v-else>
 				提交申请<el-icon style="margin-left: 5px" :size="18"><TopRight /></el-icon>
 			</el-button>
 		</div>
+
+		<!-- 审核弹窗 -->
+		<el-dialog v-model="Diaisible" width="800px" center draggable :close-on-click-modal="false">
+			<div>
+				<el-form ref="ruleFormRef" :model="DiaRuleFormRef" label-width="200px" label-position="top" class="demo-ruleForm" status-icon>
+					<template #header>
+						<div class="my-header">
+							<h4>提交审核</h4>
+							<el-button icon="Search" circle />
+						</div>
+					</template>
+					<el-form-item label="是否同意：">
+						<el-radio-group v-model="DiaruleForm.resource">
+							<el-radio label="0" value="0">同意</el-radio>
+							<el-radio label="1" value="1">驳回</el-radio>
+						</el-radio-group>
+					</el-form-item>
+					<el-form-item label="审核意见（或推荐理由）：" v-if="userData.userIdentity === '2' && DiaruleForm.resource === '0'">
+						<el-input class="DiaInp" v-model="DiaruleForm.desc" />
+						<el-select v-model="DiaValue" placeholder="请选择" @change="DiasetVal">
+							<el-option v-for="item in typeOfDifficulty" :key="item.value" :label="item.label" :value="item.value" />
+						</el-select>
+					</el-form-item>
+					<el-form-item label="审核意见（或推荐理由）：" v-else-if="DiaruleForm.resource === '0'">
+						<el-input v-model="DiaruleForm.desc" type="textarea" />
+					</el-form-item>
+				</el-form>
+			</div>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="DaiVisi">取消</el-button>
+					<el-button type="primary" @click="submitForReview"> 提交 </el-button>
+				</span>
+			</template>
+		</el-dialog>
 		<AvatarCropper :dialogVisible="dialogVisibles" :url="form.imageUrl" @upRrl="getUrl" @parentChang="parentChang"></AvatarCropper>
 	</div>
 </template>
@@ -211,6 +259,8 @@ import { studentNationList, educationalList, majorList, politicalOutlookList, ho
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import { submitMyApplyData } from "@/http/api/nationalGrants/applyAid";
 import { useTabsStore } from "@/stores/index";
+import toE from "@/util/Scholarship/toE";
+const { postApplyAidClassExamine, postApplyAidDepartmentExamine, postApplyAidSchoolExamine } = toE();
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
@@ -219,6 +269,7 @@ const formRef = ref<FormInstance>();
 const storesTabs = useTabsStore();
 
 const router = useRouter();
+const route = useRoute();
 
 const loading = ref(true);
 
@@ -248,10 +299,10 @@ const form = reactive({
 	reason_for_application: "",
 	student_birthday: "",
 	educational_system: "",
-	imageUrl: "http://www.mlqzclqq.xyz:8888/down/vnOq8jIgazEZ.gif"
+	imageUrl: ""
 });
 
-const formRules = reactive<FormRules>({
+let formRules = reactive<FormRules>({
 	student_name: [{ required: true, message: "请输入您的姓名", trigger: "blur" }],
 	student_sex: [{ required: true, message: "请选择您的性别", trigger: "change" }],
 	student_birthday: [{ required: true, message: "请选择您的出生日期", trigger: "change" }],
@@ -275,7 +326,59 @@ const formRules = reactive<FormRules>({
 	home_address: [{ required: true, message: "请输入人均月收入", trigger: "blur" }]
 });
 
+// 动态表格 设置
+const column = [
+	{ name: "name", label: "姓名", width: "auto", align: "center" },
+	{ name: "parentIDNum", label: "家长身份证号", width: "auto", align: "center" },
+	{ name: "age", label: "年龄", width: "auto", align: "center" },
+	{ name: "call", label: "称呼", width: "auto", align: "center" },
+	{ name: "currentEducation", label: "当前所处教育阶段	", width: "auto", align: "center" },
+	{ name: "occupation", label: "职业", width: "auto", align: "center" },
+	{ name: "wSUnit", label: "工作（学习）单位", width: "auto", align: "center" },
+	{ name: "annualIncome", label: "年收入（元）", width: "auto", align: "center" },
+	{ name: "health", label: "健康状况", width: "auto", align: "center" },
+	{ name: "healthDescription", label: "健康情况描述", width: "auto", align: "center" }
+];
+
+const list = ref([{ name: "", parentIDNum: "", age: "", call: "", currentEducation: "", occupation: "", wSUnit: "", annualIncome: "", health: "", healthDescription: "" }]);
+
+const disabled = ref(false);
+
+const Diaisible = ref(false);
+
+const DiaRuleFormRef = ref<FormInstance>();
+const DiaruleForm = reactive({
+	resource: "0",
+	desc: "",
+	Alldesc: ""
+});
+
+if (userData.value.userIdentity === "1") {
+	DiaruleForm.desc = "经评审，并在校内公示5个工作日，无异议，现报请同意该同学获得国家助学金。";
+} else if (userData.value.userIdentity === "2") {
+	DiaruleForm.desc = "情况属实，同意该生审评";
+} else if (userData.value.userIdentity === "3") {
+	DiaruleForm.desc = "情况属实，该生确定是经济困难学生！";
+}
+
 const dialogVisibles = ref(false);
+
+const typeOfDifficulty = [
+	{
+		value: "一等助学金",
+		label: "一等助学金"
+	},
+	{
+		value: "二等助学金",
+		label: "二等助学金"
+	}
+];
+const DiaValue = ref("");
+
+const DiasetVal = (val) => {
+	DiaruleForm.desc = "情况属实，同意该生审评 ";
+	DiaruleForm.Alldesc = DiaruleForm.desc + val;
+};
 
 const getCropper = () => {
 	dialogVisibles.value = true;
@@ -292,7 +395,12 @@ const parentChang = (bool) => {
 
 onMounted(() => {
 	loading.value = false;
-	getData();
+	if ("data" in route.meta) {
+		disabled.value = true;
+		auditEcho();
+	} else {
+		getData();
+	}
 });
 
 const getData = () => {
@@ -333,6 +441,66 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		.catch((error) => {
 			console.log(error);
 		});
+};
+
+/**
+ * 数据回显
+ */
+const auditEcho = () => {
+	if ("data" in route.meta) {
+		formRules = {};
+		const data: any = route.meta.data;
+
+		for (const key in form) {
+			if (Object.prototype.hasOwnProperty.call(form, key)) {
+				for (const s in data) {
+					if (Object.prototype.hasOwnProperty.call(data, s)) {
+						if (key === s) {
+							form[key] = data[s];
+						}
+						key === "university_name" ? (form[key] = data.school_name) : "";
+						key === "student_college" ? (form[key] = data.college) : "";
+						key === "source_of_income" ? (form[key] = JSON.parse(data.source_of_income)) : "";
+						data.family_member_information === "" ? "" : (list.value = JSON.parse(data.family_member_information));
+					}
+				}
+			}
+		}
+	}
+};
+
+/**
+ * 提交审核
+ */
+const submitForReview = () => {
+	if (DiaValue.value === "")
+		return ElNotification({
+			title: "提示~",
+			message: "请选择助学金类型！",
+			type: "warning"
+		});
+
+	const data: any = JSON.parse(JSON.stringify(DiaruleForm));
+	const idNum = route.query.Num;
+
+	if (userData.value.userIdentity === "1") {
+		postApplyAidSchoolExamine({ ...data, ...route.query });
+	} else if (userData.value.userIdentity === "2") {
+		postApplyAidDepartmentExamine({ ...data, ...route.query });
+	} else if (userData.value.userIdentity === "3") {
+		postApplyAidClassExamine({ ...data, ...route.query });
+	}
+	// 关闭当前页面
+	const index = storesTabs.getTansList.findIndex((item) => item.path === "/confirmationFilling");
+	storesTabs.handleClose(index);
+	// 返回上一页面
+	router.go(-1);
+	Diaisible.value = false;
+};
+
+/** 审核弹窗关闭 */
+const DaiVisi = () => {
+	Diaisible.value = false;
 };
 </script>
 

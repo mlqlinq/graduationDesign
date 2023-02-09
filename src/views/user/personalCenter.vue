@@ -8,6 +8,7 @@
 						<i class="float-right el-icon-arrow-down"></i>
 					</div>
 					<universityInformation v-if="userIm == '1'"></universityInformation>
+					<secretaryInform ref="personS" v-if="userIm == '2'"></secretaryInform>
 					<guideInformation ref="personS" v-if="userIm == '3'"></guideInformation>
 					<PersonInform ref="personS" v-if="userIm == '4'"></PersonInform>
 				</el-card>
@@ -43,6 +44,7 @@ import { modifyUser, modifyGuideUser } from "@/http/api/user/edit";
 import PersonInform from "./from/personal.vue";
 import BankInform from "./from/bankInformation.vue";
 import familyInform from "./from/familyInformation.vue";
+import secretaryInform from "./from/secretaryInform.vue";
 import guideInformation from "./from/guideInformation.vue";
 import universityInformation from "./from/universityInformation.vue";
 import { getMyinformation } from "@/http/api/user/user";
