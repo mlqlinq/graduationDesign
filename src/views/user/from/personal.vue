@@ -1,6 +1,6 @@
 <template>
 	<div class="person">
-		<el-form ref="formRef" :model="form" :rules="formRules" label-width="130px" label-position="right">
+		<el-form ref="formRef" :model="form" :rules="formRules" label-width="130px" label-position="right" :disabled="disabled">
 			<el-row>
 				<el-col :span="16">
 					<el-row>
@@ -50,10 +50,10 @@
 						</el-col>
 					</el-row>
 				</el-col>
-				<el-col :span="8" class="my_avatar">
+				<el-col :span="8" class="my_avatar" v-if="form.imageUrl">
 					<el-form-item label="个人照：" class="uploader">
-						<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
-						<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
+						<el-image v-if="form.imageUrl" :src="form.imageUrl" :preview-src-list="srcList" class="avatar" style="width: 100px; height: 140px" />
+						<el-button v-if="form.imageUrl && !disabled" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
 						<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button>
 					</el-form-item>
 				</el-col>
@@ -197,11 +197,18 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, educationalList, idCardTypeList, majorList, majorCategoriesList, statusList, politicalOutlookList, trainingLevelList, cultivationMethodList, gradeList, learningformList, modeAdmissionList, collegeList } from "@/util/tool/JsonData";
-
+import { getStudentsPerData } from "@/http/api/user/user";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
+
+const props = defineProps<{
+	unId?: number;
+}>();
+const srcList: any = ref([]);
+
+const disabled = ref(false);
 
 const formRef = ref<FormInstance>();
 
@@ -275,10 +282,17 @@ const parentChang = (bool) => {
 };
 
 onMounted(() => {
-	getData();
+	if (props.unId !== undefined) {
+		getStudentsData(props.unId);
+		disabled.value = true;
+	} else {
+		getData();
+	}
 });
 
 const getData = () => {
+	console.log("普通用户");
+
 	for (const key in form) {
 		if (Object.prototype.hasOwnProperty.call(form, key)) {
 			for (const s in userData.value) {
@@ -290,6 +304,36 @@ const getData = () => {
 			}
 		}
 	}
+};
+
+// 管理员 抽屉
+const getStudentsData = async (id) => {
+	await getStudentsPerData(id)
+		.then((res) => {
+			if (res.data.length > 0) {
+				const data = res.data[0];
+				for (const key in form) {
+					if (Object.prototype.hasOwnProperty.call(form, key)) {
+						for (const s in data) {
+							if (Object.prototype.hasOwnProperty.call(data, s)) {
+								if (key === s) {
+									form[key] = data[s];
+								}
+								if (key === "imageUrl") {
+									srcList.value.push(data.imageUrl);
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		.catch((err) => {
+			ElNotification({
+				title: "网络请求错误",
+				message: err
+			});
+		});
 };
 
 defineExpose({

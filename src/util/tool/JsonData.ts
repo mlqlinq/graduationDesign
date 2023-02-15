@@ -439,7 +439,9 @@ export const collegeList = [
 	{ id: "4", value: "艺术与设计学院" },
 	{ id: "5", value: "文化与传媒学院" },
 	{ id: "6", value: "外国语言文学学院" },
-	{ id: "7", value: "商学院" }
+	{ id: "7", value: "商学院" },
+	{ id: "8", value: "马克思主义学院" },
+	{ id: "9", value: "创新创业学院" }
 ];
 
 // 各院校下的专业
