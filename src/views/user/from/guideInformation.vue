@@ -103,8 +103,13 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
-
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
+
+import { getGuidePerData } from "@/http/api/user/user";
+
+const props = defineProps<{
+	unId?: number;
+}>();
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
@@ -117,7 +122,7 @@ const form = reactive({
 	birthday: "",
 	guide_nation: "",
 	id_card_number: "",
-	imageUrl: "http://www.mlqzclqq.xyz:8888/down/vnOq8jIgazEZ.gif",
+	imageUrl: "",
 	telephone: "",
 	guide_college: "",
 	class_name: "",
@@ -158,7 +163,11 @@ const parentChang = (bool) => {
 };
 
 onMounted(() => {
-	getData();
+	if (props.unId) {
+		getGuideData(props.unId);
+	} else {
+		getData();
+	}
 });
 
 const getData = () => {
@@ -173,6 +182,33 @@ const getData = () => {
 			}
 		}
 	}
+};
+
+// 管理员 抽屉
+const getGuideData = async (id) => {
+	await getGuidePerData(id)
+		.then((res) => {
+			if (res.data.length > 0) {
+				const data = res.data[0];
+				for (const key in form) {
+					if (Object.prototype.hasOwnProperty.call(form, key)) {
+						for (const s in data) {
+							if (Object.prototype.hasOwnProperty.call(data, s)) {
+								if (key === s) {
+									form[key] = data[s];
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		.catch((err) => {
+			ElNotification({
+				title: "网络请求错误",
+				message: err
+			});
+		});
 };
 
 defineExpose({

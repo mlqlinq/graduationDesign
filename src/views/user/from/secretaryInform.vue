@@ -48,9 +48,9 @@
 						</el-col>
 					</el-row>
 				</el-col>
-				<el-col :span="8" class="my_avatar">
+				<el-col :span="8" class="my_avatar" v-if="form.imageUrl">
 					<el-form-item label="个人照：" class="uploader" prop="imageUrl">
-						<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
+						<el-image v-if="form.imageUrl" :src="form.imageUrl" :preview-src-list="srcList" class="avatar" style="width: 100px; height: 140px" />
 						<!-- <el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
 						<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button> -->
 					</el-form-item>
@@ -80,17 +80,11 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
-					<el-form-item label="政治面貌：" prop="political_outlook">
-						<el-select v-model="form.political_outlook">
-							<el-option v-for="item in politicalOutlookList" :key="item.id" :label="item.value" :value="item.value" />
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="8">
 					<el-form-item label="家庭住址：" prop="address">
 						<el-input v-model="form.address" />
 					</el-form-item>
 				</el-col>
+				<el-col :span="8"> </el-col>
 			</el-row>
 		</el-form>
 	</div>
@@ -103,8 +97,13 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
-
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
+import { getSecretaryPerData } from "@/http/api/user/user";
+
+const props = defineProps<{
+	unId?: number;
+}>();
+const srcList: any = ref([]);
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
@@ -117,11 +116,10 @@ const form = reactive({
 	secretary_birthday: "",
 	guide_nation: "",
 	id_card_number: "",
-	imageUrl: "http://www.mlqzclqq.xyz:8888/down/vnOq8jIgazEZ.gif",
+	imageUrl: "",
 	telephone: "",
 	secretary_college: "",
 	class_name: "",
-	political_outlook: "",
 	entry_time: "",
 	address: "",
 	universities: ""
@@ -139,7 +137,6 @@ const formRules = reactive<FormRules>({
 	secretary_college: [{ required: true, message: "请选择您的所属院系", trigger: "change" }],
 	class_name: [{ required: true, message: "请选择您的民族", trigger: "change" }],
 	entry_time: [{ required: true, message: "请选择您的入职时间", trigger: "change" }],
-	political_outlook: [{ required: true, message: "请选择您的政治面貌", trigger: "change" }],
 	address: [{ required: true, message: "请输入您的家庭地址", trigger: "blur" }]
 });
 
@@ -159,7 +156,11 @@ const parentChang = (bool) => {
 };
 
 onMounted(() => {
-	getData();
+	if (props.unId) {
+		getSecretaryData(props.unId);
+	} else {
+		getData();
+	}
 });
 
 const getData = () => {
@@ -174,6 +175,36 @@ const getData = () => {
 			}
 		}
 	}
+};
+
+// 管理员 抽屉
+const getSecretaryData = async (id) => {
+	await getSecretaryPerData(id)
+		.then((res) => {
+			if (res.data.length > 0) {
+				const data = res.data[0];
+				for (const key in form) {
+					if (Object.prototype.hasOwnProperty.call(form, key)) {
+						for (const s in data) {
+							if (Object.prototype.hasOwnProperty.call(data, s)) {
+								if (key === s) {
+									form[key] = data[s];
+								}
+								if (key === "imageUrl") {
+									srcList.value.push(data.imageUrl);
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		.catch((err) => {
+			ElNotification({
+				title: "网络请求错误",
+				message: err
+			});
+		});
 };
 
 defineExpose({

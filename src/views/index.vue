@@ -114,8 +114,7 @@
 
 				<!-- 横向菜单 标签 -->
 				<div style="position: relative; width: 100%; height: calc(100% - 140px) !important" v-if="refresh">
-					<Loading class="loading" v-if="!view && see"></Loading>
-					<router-view v-slot="{ Component, route }" style="height: 100%" ref="view">
+					<router-view v-slot="{ Component, route }" style="height: 100%">
 						<keep-alive>
 							<Transition name="scale" mode="out-in" v-if="route && route.meta && route.meta.noCache">
 								<component :is="Component" v-if="route && route.meta && route.meta.noCache" :key="viewKey" />
@@ -137,18 +136,23 @@
 <script lang="ts" setup>
 import index from "@/util/index";
 import Foot from "@/components/Footer/index.vue";
-import Loading from "@/components/loading/index.vue";
-const view: any = ref(null);
-const see = ref(true);
-onMounted(() => {
-	see.value = false;
-});
 const { isCollapse, full, userData, allMenu, activePath, fullSvg, breadcrumbList, viewKey, el, refresh, reload, handleClick, loginOut, personalCenter, openMenu, toggleScreen, saveNavSate, goIndex, handleMenu } = index();
 </script>
 
 <style lang="scss" scoped>
 .layout-container-demo {
 	height: 100%;
+
+	.el-container {
+		display: flex;
+		flex-direction: row;
+		flex: 1;
+		flex-basis: auto;
+		box-sizing: border-box;
+		min-width: 0;
+		height: 100%;
+		overflow: auto;
+	}
 
 	.common-layout {
 		height: 60px;
