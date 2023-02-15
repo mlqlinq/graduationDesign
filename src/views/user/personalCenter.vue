@@ -96,7 +96,6 @@ const submitForm = async (p, b, f) => {
 				if (res[0] && res[1]) {
 					const data = _.merge(p.form, b.bankform, f.familyInform);
 					data.user_id = userData.value.user_id;
-					data.student_type = userData.value.student_type;
 					data.user_identity = userData.value.userIdentity;
 					await modifyUser(data).then((result) => {
 						ElNotification({
@@ -123,12 +122,13 @@ onMounted(() => {
 
 const getMyInformationData = async () => {
 	const query: any = {};
-	query.userIdentity = userData.value.userIdentity;
+	query.userIdentity = userData.value.userIdentity | userData.value.user_identity;
 	if (userData.value.id_card_number) {
 		query.id_card_number = userData.value.id_card_number;
 	} else if (userData.value.username) {
 		query.id_card_number = userData.value.username;
 	}
+
 	await getMyinformation(query)
 		.then((res) => {
 			if (res.data) {
