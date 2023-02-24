@@ -175,14 +175,18 @@ onMounted(() => {
  * 表单回显
  */
 const Examination = () => {
-	if ("data" in route.meta) {
+	if ("data" in route.meta || sessionStorage.getItem("PreconData")) {
 		essefromRef.value.disabled = true;
 		typeDifficultyRef.value.disabled = true;
 		familyMInRef.value.disabled = true;
 		informationOnPRef.value.disabled = true;
 		otherRelInforRef.value.disabled = true;
 
-		const data: any = route.meta.data;
+		let data: any = route.meta.data;
+		data ? sessionStorage.setItem("PreconData", JSON.stringify(data)) : {};
+		if (!data) {
+			data = JSON.parse(sessionStorage.getItem("PreconData"));
+		}
 		for (let i in data) {
 			if (Object.prototype.hasOwnProperty.call(data, i)) {
 				for (const e in essefromRef.value.form) {
@@ -224,6 +228,8 @@ const Examination = () => {
 					if (Object.prototype.hasOwnProperty.call(otherRelInforRef.value.form, e)) {
 						if (i === e) {
 							otherRelInforRef.value.form[e] = data[i];
+							i === "large_expenditure" ? (otherRelInforRef.value.form[e] = JSON.parse(data.large_expenditure)) : "";
+							i === "household_income_source" ? (otherRelInforRef.value.form[e] = JSON.parse(data.household_income_source)) : "";
 						}
 					}
 				}

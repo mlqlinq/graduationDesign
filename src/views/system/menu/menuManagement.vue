@@ -209,6 +209,11 @@ const { loading, menuList, diaTitle, dialogMenuFormVisible, data, Menuform, visi
 		width: 100%;
 		height: calc(100% - 10px);
 		border-radius: 10px;
+
+		:deep(.el-card__body) {
+			height: 100%;
+			overflow: auto;
+		}
 	}
 }
 

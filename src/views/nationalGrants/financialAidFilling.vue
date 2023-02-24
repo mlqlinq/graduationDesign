@@ -196,7 +196,7 @@
 						<div slot="header" class="clear-fix">
 							<span>申请理由</span>
 						</div>
-						<el-form-item label="申请理由：" prop="reason_for_application">
+						<el-form-item label="" label-width="0" prop="reason_for_application">
 							<el-input v-model="form.reason_for_application" type="textarea" maxlength="200" />
 						</el-form-item>
 					</el-card>
@@ -395,7 +395,7 @@ const parentChang = (bool) => {
 
 onMounted(() => {
 	loading.value = false;
-	if ("data" in route.meta) {
+	if ("data" in route.meta || sessionStorage.getItem("PreData")) {
 		disabled.value = true;
 		auditEcho();
 	} else {
@@ -447,10 +447,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
  * 数据回显
  */
 const auditEcho = () => {
-	if ("data" in route.meta) {
+	if ("data" in route.meta || sessionStorage.getItem("PreData")) {
 		formRules = {};
-		const data: any = route.meta.data;
-
+		let data: any = route.meta.data;
+		data ? sessionStorage.setItem("PreData", JSON.stringify(data)) : {};
+		if (!data) {
+			data = JSON.parse(sessionStorage.getItem("PreData"));
+		}
 		for (const key in form) {
 			if (Object.prototype.hasOwnProperty.call(form, key)) {
 				for (const s in data) {

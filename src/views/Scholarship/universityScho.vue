@@ -116,9 +116,9 @@ const printMyInfrom = async (data) => {
 		data: {} // 数据 (数组默认批量，对象默认单个下载）
 	};
 
-	data.class_opinion = data.class_opinion === "" ? JSON.parse(data.class_opinion).desc : "";
-	data.opinions_of_the_department = data.opinions_of_the_department === "" ? JSON.parse(data.opinions_of_the_department).desc : "";
-	data.school_opinion = data.school_opinion === "" ? JSON.parse(data.school_opinion).desc : "";
+	data.class_opinion = data.class_opinion !== "" ? JSON.parse(data.class_opinion).desc : "";
+	data.opinions_of_the_department = data.opinions_of_the_department !== "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+	data.school_opinion = data.school_opinion !== "" ? JSON.parse(data.school_opinion).desc : "";
 	config.data = data;
 
 	exportWord(config);

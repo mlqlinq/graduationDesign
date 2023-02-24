@@ -66,15 +66,15 @@ button:hover {
 .login_ind {
 	flex-basis: 50%;
 	-webkit-flex-basis: 50%;
-	background: #98a1a9;
+	background: #b5c2ce;
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	-ms-background-size: cover;
 	padding: 40px;
-	border-top-right-radius: 8px;
-	border-bottom-right-radius: 8px;
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
 	align-items: center;
 	display: grid;
 }
@@ -85,9 +85,9 @@ button:hover {
 	box-sizing: border-box;
 	padding: 3em 3em;
 	background: #fff;
-	box-shadow: 2px 9px 49px -17px rgba(0, 0, 0, 0.1);
-	border-top-left-radius: 8px;
-	border-bottom-left-radius: 8px;
+	box-shadow: 8px 28px 76px 42px rgb(0 18 0 / 10%);
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
 }
 
 .login_index .main-hotair {
