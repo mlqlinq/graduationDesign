@@ -4,10 +4,10 @@
 		<el-card class="form">
 			<span>
 				<el-button type="primary" icon="CirclePlus" plain @click="addUniverInform">添加高校信息</el-button>
-				<el-button type="primary" icon="CirclePlus" plain @click="addSecretaryInform">添加书记信息</el-button>
+				<el-button type="info" icon="CirclePlus" plain @click="addSecretaryInform">添加书记信息</el-button>
 				<el-button type="success" icon="CirclePlus" plain @click="addGuideInform">添加导员信息</el-button>
 				<el-button type="warning" icon="CirclePlus" plain @click="addStudentInform">添加学生信息</el-button>
-				<!-- <el-button type="warning" icon="CirclePlus" plain>添加高校信息</el-button> -->
+				<el-button type="danger" icon="CirclePlus" plain @click="resetPassword">重置密码</el-button>
 			</span>
 			<el-form :model="form" :inline="true" label-width="90px" style="display: inline-block">
 				<el-form-item label="人员搜索：" v-if="props.seeSearch" style="margin: 0">
@@ -274,6 +274,11 @@ const subT = async () => {
 			console.log(err);
 		});
 };
+
+/**
+ * 重置密码
+ */
+const resetPassword = () => {};
 </script>
 
 <style lang="scss" scoped>

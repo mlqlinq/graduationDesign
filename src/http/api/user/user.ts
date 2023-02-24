@@ -61,3 +61,19 @@ export const submitInformation = (data) => {
 		data
 	});
 };
+
+export const submitGuideImg = (data) => {
+	return serviceAxios({
+		url: "/api/user/information/saveGuideImg",
+		method: "post",
+		data
+	});
+};
+
+export const submitSecretaryImg = (data) => {
+	return serviceAxios({
+		url: "/api/user/information/saveSecretaryImg",
+		method: "post",
+		data
+	});
+};

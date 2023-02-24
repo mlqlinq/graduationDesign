@@ -49,11 +49,13 @@
 					</el-row>
 				</el-col>
 				<el-col :span="8" class="my_avatar" v-if="form.imageUrl">
-					<el-form-item label="个人照：" class="uploader" prop="imageUrl">
-						<el-image v-if="form.imageUrl" :src="form.imageUrl" :preview-src-list="srcList" class="avatar" style="width: 100px; height: 140px" />
-						<!-- <el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
-						<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button> -->
-					</el-form-item>
+					<el-form :model="form" label-width="140px" label-position="right">
+						<el-form-item label="个人照：" class="uploader">
+							<el-image v-if="form.imageUrl" :src="form.imageUrl" :preview-src-list="srcList" class="avatar" style="width: 100px; height: 140px" />
+							<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
+							<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button>
+						</el-form-item>
+					</el-form>
 				</el-col>
 			</el-row>
 			<el-row>
@@ -98,7 +100,7 @@ import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
-import { getSecretaryPerData } from "@/http/api/user/user";
+import { getSecretaryPerData, submitSecretaryImg } from "@/http/api/user/user";
 
 const props = defineProps<{
 	unId?: number;
@@ -146,9 +148,20 @@ const getCropper = () => {
 	dialogVisibles.value = true;
 };
 
-const getUrl = (url) => {
+const getUrl = async (url) => {
 	if (url === "") return;
-	form.imageUrl = url;
+	await submitSecretaryImg({ imgUrl: url, secretaryId: userData.value.secretary_id })
+		.then((result) => {
+			ElNotification({
+				message: result.msg
+			});
+			form.imageUrl = url;
+		})
+		.catch((err) => {
+			ElNotification({
+				message: err
+			});
+		});
 };
 
 const parentChang = (bool) => {

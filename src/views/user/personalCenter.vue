@@ -1,5 +1,5 @@
 <template>
-	<div class="chenter" v-loading="loading">
+	<div class="chenter">
 		<el-form label-position="right" label-width="150px">
 			<div class="card-container">
 				<el-card>
@@ -57,15 +57,13 @@ const { userData } = storeToRefs(useAuths);
 
 const userIm = userData.value.userIdentity;
 
-const loading = ref(true);
-
 const personS: any = ref(null);
 const bankS: any = ref(null);
 const familyS: any = ref(null);
 
-// 注入重载页面事件
-const reloadRefresh: any = inject("reloadRefresh");
-
+/**
+ * 保存学生个人信息
+ */
 const submitForm = async (p, b, f) => {
 	if (b === null && f === null) {
 		const formRuleValidates = [p.formRef.validate()];
@@ -76,14 +74,10 @@ const submitForm = async (p, b, f) => {
 					data.userIdentity = userData.value.userIdentity;
 					await modifyGuideUser(data).then((result) => {
 						ElNotification({
-							title: "温馨提示",
-							message: result.msg,
-							type: "success"
+							message: result.msg
 						});
 					});
 					useAuths.setUserData(data);
-					// getMyInformationData();
-					reloadRefresh();
 				}
 			})
 			.catch((error) => {
@@ -99,14 +93,11 @@ const submitForm = async (p, b, f) => {
 					data.user_identity = userData.value.userIdentity;
 					await modifyUser(data).then((result) => {
 						ElNotification({
-							title: "温馨提示",
-							message: result.msg,
-							type: "success"
+							message: result.msg
 						});
 					});
 					useAuths.setUserData(data);
-					// getMyInformationData();
-					reloadRefresh();
+					getMyInformationData();
 				}
 			})
 			.catch((error) => {
@@ -116,7 +107,6 @@ const submitForm = async (p, b, f) => {
 };
 
 onMounted(() => {
-	loading.value = false;
 	getMyInformationData();
 });
 
@@ -135,9 +125,7 @@ const getMyInformationData = async () => {
 				userData.value = res.data;
 			}
 			ElNotification({
-				title: "温馨提示",
-				message: res.msg,
-				type: "success"
+				message: res.msg
 			});
 		})
 		.catch((err) => {

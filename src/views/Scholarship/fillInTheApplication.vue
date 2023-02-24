@@ -268,7 +268,16 @@
 								<el-input v-model="form.minimum_core" />
 							</el-form-item>
 						</el-col>
+						<el-col :span="8"> </el-col>
 					</el-row>
+					<el-form-item label="成绩单：">
+						<el-upload c ref="upload" :file-list="one1" show-file-list :action="upApi + upPath" :on-success="handleAvatarSuccess" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="1" :on-exceed="handleExceed">
+							<el-button type="primary">添加材料</el-button>
+							<template #tip>
+								<div class="el-upload__tip">请上传图片</div>
+							</template>
+						</el-upload>
+					</el-form-item>
 					<el-form-item label="申请理由：" prop="" v-if="userim !== 1">
 						<el-input v-model="form.reason_for_application" type="textarea" :show-word-limit="true" />
 					</el-form-item>
@@ -283,7 +292,9 @@
 				提交申请<el-icon style="margin-left: 5px" :size="18"><TopRight /></el-icon>
 			</el-button>
 		</div>
-
+		<el-dialog v-model="dialogVisible" destroy-on-close>
+			<img :src="dialogImageUrl" alt="查看" style="width: 100%; display: block; margin: 0 auto" />
+		</el-dialog>
 		<examineDia ref="toexamineDia" :visible="Visible" :news="news" @DaiVisi="DaiVisi" @postData="submitForReview" v-if="route.query.Num && Visible"></examineDia>
 		<AvatarCropper :dialogVisible="dialogVisibles" :url="form.imageUrl" @upRrl="getUrl" @parentChang="parentChang"></AvatarCropper>
 	</div>
@@ -292,16 +303,25 @@
 <script setup lang="ts">
 import fillInTheApplication from "@/util/Scholarship/fillInTheApplication";
 import examineDia from "@/components/examineDialog/index.vue";
+
 const {
-	toexamineDia,
 	disabled,
+	toexamineDia,
 	route,
-	Visible,
-	news,
+	upload,
+	one,
+	one1,
+	upApi,
+	upPath,
 	zhCn,
+	handleExceed,
+	dialogImageUrl,
+	dialogVisible,
+	news,
+	Visible,
+	DaiVisi,
 	EditTable,
 	AvatarCropper,
-	DaiVisi,
 	studentNationList,
 	politicalOutlookList,
 	formRef,
@@ -321,8 +341,13 @@ const {
 	getUrl,
 	parentChang,
 	submitForm,
-	submitForReview
+	submitForReview,
+	beforeRemove,
+	handleAvatarSuccess,
+	handlePreview,
+	handleRemove
 } = fillInTheApplication();
+
 defineExpose({
 	form,
 	formRef

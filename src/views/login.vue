@@ -5,9 +5,22 @@
 			<div class="container">
 				<div class="workinghny-form-grid">
 					<div class="main-hotair">
+						<div class="login_ind align-self">
+							<div class="left_grid_info">
+								<img alt="家庭经济困难学生奖助学金综合管理系统" class="img-fluid" src="@/assets/images/1.png" />
+								<div style="font-size: 12px">
+									<p style="color: aliceblue">测试号：密码默认123456</p>
+									<span style="color: aliceblue; margin-right: 20px">高校：13640</span>
+									<span style="color: aliceblue">书记：460400255221149642</span>
+									<br />
+									<span style="color: aliceblue; margin-right: 20px">导员：460400255221149657</span>
+									<span style="color: aliceblue">学生：460400255221149662</span>
+								</div>
+							</div>
+						</div>
 						<div class="content-wthree">
-							<h2>用户登录</h2>
-							<el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="demo-ruleForm" label-position="left" label-width="100px" size="large" status-icon>
+							<h2>登&nbsp;&nbsp;&nbsp;&nbsp;录</h2>
+							<el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="demo-ruleForm" label-position="left" label-width="100px" size="large">
 								<el-form-item label="用户身份:" prop="userIdentity">
 									<el-select v-model="ruleForm.userIdentity" placeholder="请选择" popper-class="userIdentity" clearable>
 										<el-option label="管理员登录" :value="0" />
@@ -57,11 +70,6 @@
 									</el-button>
 								</el-form-item>
 							</el-form>
-						</div>
-						<div class="login_ind align-self">
-							<div class="left_grid_info">
-								<img alt="家庭经济困难学生奖助学金综合管理系统" class="img-fluid" src="@/assets/images/1.png" />
-							</div>
 						</div>
 					</div>
 				</div>

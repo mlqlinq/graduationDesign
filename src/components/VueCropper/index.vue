@@ -6,11 +6,7 @@
 				<el-upload class="upload" ref="upload" action="#" :on-change="uploadData" accept="image/png, image/jpeg, image/jpg" :show-file-list="false" :auto-upload="false">
 					<el-button slot="trigger" type="primary" ref="uploadBtn"> 选择图片 </el-button>
 				</el-upload>
-				<!-- <el-upload v-if="props.url" class="avatar-uploader" :auto-upload="false" :show-file-list="false" accept=".jpg, .png, .JPG, .PNG, .jpeg, .JPEG">
-					<el-button v-if="props.url" type="primary" style="margin-left: 10px">更换</el-button>
-				</el-upload> -->
 			</div>
-			<!-- <img :src="options.img" alt="" /> -->
 			<!-- 已上传图片 -->
 			<div v-if="options.img" class="avatar-crop">
 				<vueCropper
@@ -86,7 +82,6 @@ const uploadData: UploadProps["onChange"] = (file: any, uploadFiles) => {
 	const isLt2M = file.raw.size / 1024 / 1024 > 2;
 	if (!isIMAGE) {
 		ElNotification({
-			title: "温馨提示",
 			message: "请选择 jpg、png 格式的图片",
 			type: "warning"
 		});
@@ -94,7 +89,6 @@ const uploadData: UploadProps["onChange"] = (file: any, uploadFiles) => {
 	}
 	if (isLt2M) {
 		ElNotification({
-			title: "温馨提示",
 			message: "图片大小不能超过 2MB",
 			type: "warning"
 		});
@@ -131,14 +125,12 @@ const getCrop = () => {
 			.then((res) => {
 				options.img = res.url;
 				ElNotification({
-					title: "温馨提示",
 					message: res.msg,
 					type: "success"
 				});
 			})
 			.catch((err) => {
 				ElNotification({
-					title: "温馨提示",
 					message: err,
 					type: "error"
 				});

@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import { useAuthStore, useTabsStore, useRouterStore } from "@/stores/index";
-import type { FormInstance, FormRules } from "element-plus";
+import { genFileId, type FormInstance, type FormRules, type UploadInstance, type UploadProps, type UploadRawFile } from "element-plus";
 import EditTable from "@/components/EditTable/index.vue";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
@@ -62,6 +62,7 @@ export default () => {
 		source_of_income: "",
 		home_address: "",
 		postal_code: "",
+		schoolReport: "",
 		scoreRanking: "",
 		total_class_size: "",
 		required_quantity: "",
@@ -214,13 +215,22 @@ export default () => {
 	}
 
 	const getData = async () => {
-		if (router.currentRoute.value.meta.data) {
-			const data: any = _.cloneDeep(router.currentRoute.value.meta.data);
+		if (router.currentRoute.value.meta.data || sessionStorage.getItem("PreScoData")) {
+			let data: any = _.cloneDeep(router.currentRoute.value.meta.data);
+
+			if (data) {
+				data = sessionStorage.setItem("PreScoData", JSON.stringify(data));
+			}
+			if (!data) {
+				data = JSON.parse(sessionStorage.getItem("PreScoData"));
+			}
+
 			store.handleParams({ im: parseInt(data.type) });
 			userim.value = store.getRouterparams.im;
 			disabled.value = true;
 
 			await getShipSutdentData(data.id_card_number);
+			let o = 0;
 
 			for (const key in form) {
 				if (Object.prototype.hasOwnProperty.call(form, key)) {
@@ -238,6 +248,10 @@ export default () => {
 							}
 							if (s === "awards" && data[s] !== undefined && userim.value === 3) {
 								list.value = JSON.parse(data[s]);
+							}
+							if (s === "schoolReport" && !Array.isArray(data[s]) && data[s] !== null && o === 0) {
+								one1.value.push({ name: "成绩单", response: { url: JSON.parse(data[s])[0] } });
+								o = 1;
 							}
 						}
 					}
@@ -394,12 +408,62 @@ export default () => {
 			}
 		});
 	};
+	// 成绩单
+	const dialogVisible = ref(false);
+	const dialogImageUrl = ref();
+	const one: any = ref("");
+	const one1: any = ref([]);
+	const upApi = import.meta.env.VITE_BASE_API;
+	const upPath = "/upload/uploads/file";
+
+	const upload = ref<UploadInstance>();
+
+	const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
+		one.value = response.url;
+		one1.value.push(response.url);
+		form.schoolReport = JSON.stringify(one1.value);
+	};
+
+	const handleExceed: UploadProps["onExceed"] = (files) => {
+		upload.value!.clearFiles();
+		const file = files[0] as UploadRawFile;
+		file.uid = genFileId();
+		upload.value!.handleStart(file);
+	};
+
+	// 图片预览
+	const handlePreview: UploadProps["onPreview"] = (uploadFile: any) => {
+		dialogImageUrl.value = uploadFile.response.url!;
+		dialogVisible.value = true;
+	};
+	const handleRemove: UploadProps["onRemove"] = (file: any, uploadFiles) => {
+		console.log(file, uploadFiles);
+		if (one.value === file.response.url) {
+			one.value = "";
+			one1.value.splice(0, 1);
+			form.schoolReport = JSON.stringify(one1.value);
+		}
+	};
+	const beforeRemove: UploadProps["beforeRemove"] = async (uploadFile, uploadFiles) => {
+		return await ElMessageBox.confirm(`确定要删除 ${uploadFile.name} ?`).then(
+			() => true,
+			() => false
+		);
+	};
 
 	return {
 		disabled,
 		toexamineDia,
 		route,
+		one,
+		upload,
+		one1,
+		upApi,
+		upPath,
 		zhCn,
+		handleExceed,
+		dialogImageUrl,
+		dialogVisible,
 		news,
 		Visible,
 		DaiVisi,
@@ -424,6 +488,10 @@ export default () => {
 		getUrl,
 		parentChang,
 		submitForm,
-		submitForReview
+		submitForReview,
+		beforeRemove,
+		handleAvatarSuccess,
+		handlePreview,
+		handleRemove
 	};
 };

@@ -49,11 +49,13 @@
 					</el-row>
 				</el-col>
 				<el-col :span="8" class="my_avatar">
-					<el-form-item label="个人照：" class="uploader" prop="imageUrl">
-						<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
-						<!-- <el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
-						<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button> -->
-					</el-form-item>
+					<el-form ref="formRef" :model="form" label-width="130px" label-position="right">
+						<el-form-item label="个人照：" class="uploader">
+							<img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" style="width: 100px; height: 140px" />
+							<el-button v-if="form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">更换</el-button>
+							<el-button v-if="!form.imageUrl" type="primary" style="margin-left: 10px" @click="getCropper">上传</el-button>
+						</el-form-item>
+					</el-form>
 				</el-col>
 			</el-row>
 			<el-row>
@@ -104,8 +106,7 @@ import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, politicalOutlookList, collegeList } from "@/util/tool/JsonData";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
-
-import { getGuidePerData } from "@/http/api/user/user";
+import { getGuidePerData, submitGuideImg } from "@/http/api/user/user";
 
 const props = defineProps<{
 	unId?: number;
@@ -153,9 +154,20 @@ const getCropper = () => {
 	dialogVisibles.value = true;
 };
 
-const getUrl = (url) => {
+const getUrl = async (url) => {
 	if (url === "") return;
-	form.imageUrl = url;
+	await submitGuideImg({ imgUrl: url, guideId: userData.value.guide_id })
+		.then((result) => {
+			ElNotification({
+				message: result.msg
+			});
+			form.imageUrl = url;
+		})
+		.catch((err) => {
+			ElNotification({
+				message: err
+			});
+		});
 };
 
 const parentChang = (bool) => {
@@ -241,6 +253,7 @@ defineExpose({
 			.el-form-item__content {
 				:deep(.avatar-uploader) {
 					background-color: #8c939d;
+
 					.el-upload {
 						border: 1px dashed var(--el-border-color);
 						border-radius: 6px;
