@@ -257,7 +257,7 @@ import { useAuthStore } from "@/stores/modules/userToken";
 import AvatarCropper from "@/components/VueCropper/index.vue";
 import { studentNationList, educationalList, majorList, politicalOutlookList, householdList, otherSourcesOfHouseholdIncome, collegeList } from "@/util/tool/JsonData";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
-import { submitMyApplyData } from "@/http/api/nationalGrants/applyAid";
+import { submitMyApplyData, submitMyVerification } from "@/http/api/nationalGrants/applyAid";
 import { useTabsStore } from "@/stores/index";
 import toE from "@/util/Scholarship/toE";
 const { postApplyAidClassExamine, postApplyAidDepartmentExamine, postApplyAidSchoolExamine } = toE();
@@ -399,9 +399,34 @@ onMounted(() => {
 		disabled.value = true;
 		auditEcho();
 	} else {
+		SsubmitMyVerification();
 		getData();
 	}
 });
+
+const SsubmitMyVerification = async () => {
+	await submitMyVerification({ id_card_number: userData.value.id_card_number }).then((res) => {
+		ElMessageBox.confirm(res.msg, "提醒", {
+			confirmButtonText: "确定",
+			cancelButtonText: "取消",
+			type: "warning"
+		})
+			.then(() => {
+				// 关闭当前页面
+				const index = storesTabs.getTansList.findIndex((item) => item.path === "/confirmationFilling");
+				storesTabs.handleClose(index);
+				// 返回上一页面
+				router.go(-1);
+			})
+			.catch(() => {
+				// 关闭当前页面
+				const index = storesTabs.getTansList.findIndex((item) => item.path === "/confirmationFilling");
+				storesTabs.handleClose(index);
+				// 返回上一页面
+				router.go(-1);
+			});
+	});
+};
 
 const getData = () => {
 	for (const key in form) {
@@ -431,7 +456,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 						type: "success"
 					});
 					// 关闭当前页面
-					const index = storesTabs.getTansList.findIndex((item) => item.path === "/financialAidFilling");
+					const index = storesTabs.getTansList.findIndex((item) => item.path === "/confirmationFilling");
 					storesTabs.handleClose(index);
 					// 返回上一页面
 					router.go(-1);
@@ -452,7 +477,7 @@ const auditEcho = () => {
 		let data: any = route.meta.data;
 		data ? sessionStorage.setItem("PreData", JSON.stringify(data)) : {};
 		if (!data) {
-			data = JSON.parse(sessionStorage.getItem("PreData"));
+			data = JSON.parse(sessionStorage.getItem("PreData") as string);
 		}
 		for (const key in form) {
 			if (Object.prototype.hasOwnProperty.call(form, key)) {

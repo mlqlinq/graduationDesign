@@ -14,6 +14,15 @@ export const submitMyApplyData = (data) => {
 		data
 	});
 };
+
+export const submitMyVerification = (data) => {
+	return serviceAxios({
+		url: "/api/nationalGrants/StudentVerification",
+		method: "post",
+		data
+	});
+};
+
 /**
  * 审核账号查询所有申请
  * @param idCardNum
