@@ -185,7 +185,7 @@ const Examination = () => {
 		let data: any = route.meta.data;
 		data ? sessionStorage.setItem("PreconData", JSON.stringify(data)) : {};
 		if (!data) {
-			data = JSON.parse(sessionStorage.getItem("PreconData"));
+			data = JSON.parse(sessionStorage.getItem("PreconData") as string);
 		}
 		for (let i in data) {
 			if (Object.prototype.hasOwnProperty.call(data, i)) {

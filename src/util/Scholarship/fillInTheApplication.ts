@@ -222,7 +222,7 @@ export default () => {
 				data = sessionStorage.setItem("PreScoData", JSON.stringify(data));
 			}
 			if (!data) {
-				data = JSON.parse(sessionStorage.getItem("PreScoData"));
+				data = JSON.parse(sessionStorage.getItem("PreScoData") as string);
 			}
 
 			store.handleParams({ im: parseInt(data.type) });

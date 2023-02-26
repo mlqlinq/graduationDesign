@@ -139,7 +139,7 @@ serverAxios.interceptors.response.use(
 			}
 			ElNotification({
 				title: "温馨提示",
-				message: error.response?.data === "" ? message : error.response.data,
+				message: error.response?.data === "" ? message : error.response.data.msg,
 				type: "error"
 			});
 		}

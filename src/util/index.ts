@@ -203,7 +203,7 @@ export default () => {
 					message: "退出成功"
 				});
 				// 清空pinia中的数据，让页面重新加载
-				// window.location.reload();
+				window.location.reload();
 				sessionStorage.clear();
 			})
 			.catch(() => {
