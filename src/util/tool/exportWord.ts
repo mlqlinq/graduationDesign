@@ -89,7 +89,6 @@ export const exportWord = (configData: { file: string; filename: string; fileTyp
 					// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 					word.file(`${item.filename ? item.filename : configData.filename + index}.${configData.fileType}`, out);
 				});
-				console.log("🚀 ~ file: exportWord.ts:84 ~ doc.resolveData ~ word", word);
 			});
 		});
 

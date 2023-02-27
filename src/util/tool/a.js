@@ -11,7 +11,6 @@ const sge = () => {
 		};
 		return newJson;
 	});
-	console.log("🚀 ~ file: a.js:12 ~ OldJson ~ OldJson", OldJson);
 };
 
 sge();
@@ -25,4 +24,3 @@ const collegeList = [
 	{ id: "6", value: "外国语言文学学院" },
 	{ id: "7", value: "商学院" }
 ];
-console.log("🚀 ~ file: a.js:28 ~ collegeList", JSON.stringify(collegeList));

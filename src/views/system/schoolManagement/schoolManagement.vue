@@ -158,7 +158,6 @@ const getUniverManData = async () => {
 			tableData.value = _.cloneDeep(treeData.value);
 		})
 		.catch((err) => {
-			console.log("🚀 ~ file: schoolManagement.vue:161 ~ getUniverManData ~ err", err);
 			ElNotification({
 				title: "错误",
 				message: err

@@ -17,6 +17,9 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 // 导入 svg 图标文件依赖
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
+import viteCDNPlugin from "vite-plugin-cdn-import";
+import viteImagemin from "vite-plugin-imagemin";
+
 // https://vitejs.dev/config/
 // 使用 defineConfig 工具函数，这样不用 jsdoc 注解也可以获取类型提示
 // export default ({ mode }) => defineConfig({
@@ -25,7 +28,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 	// 获取环境配置文件
 	const env = loadEnv(mode, process.cwd());
 	return {
-		base: env.VITE_BASE_API === "production" ? "/" : "/",
+		base: env.VITE_BASE_API === "production" ? "./" : "/",
 		plugins: [
 			vue(),
 			createHtmlPlugin({
@@ -87,8 +90,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 			}),
 			// * EsLint 报错信息显示在浏览器界面上
 			eslintPlugin(),
-			// * 是否生成包预览(分析依赖包大小,方便做优化处理)
-			env.VITE_REPORT && visualizer(),
+
 			// * gzip compress
 			env.VITE_BUILD_GZIP &&
 				viteCompression({
@@ -97,7 +99,46 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 					threshold: 10240,
 					algorithm: "gzip",
 					ext: ".gz"
-				})
+				}),
+			viteCDNPlugin({
+				// 需要 CDN 加速的模块
+				modules: [
+					{
+						name: "lodash",
+						var: "_",
+						path: `https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js`
+					}
+				]
+			}),
+			viteImagemin({
+				gifsicle: {
+					optimizationLevel: 7,
+					interlaced: false
+				},
+				optipng: {
+					optimizationLevel: 7
+				},
+				mozjpeg: {
+					quality: 20
+				},
+				pngquant: {
+					quality: [0.8, 0.9],
+					speed: 4
+				},
+				svgo: {
+					plugins: [
+						{
+							name: "removeViewBox"
+						},
+						{
+							name: "removeEmptyAttrs",
+							active: false
+						}
+					]
+				}
+			}),
+			// * 是否生成包预览(分析依赖包大小,方便做优化处理)
+			env.VITE_REPORT && visualizer()
 		],
 		// @ 的指向，这里设置为 src 目录
 		resolve: {
@@ -166,6 +207,12 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 			// https://rollupjs.org/guide/en/#outputoptions-object
 			rollupOptions: {
 				output: {
+					manualChunks: (id) => {
+						// 将 node_modules 中的代码单独打包成一个 JS 文件
+						if (id.includes("node_modules")) {
+							return "vendor";
+						}
+					},
 					chunkFileNames: "assets/js/[name]-[hash].js",
 					entryFileNames: "assets/js/[name]-[hash].js",
 					assetFileNames: "assets/[ext]/[name]-[hash].[ext]"

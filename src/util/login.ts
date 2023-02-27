@@ -2,7 +2,7 @@
 // import { useRouter } from "vue-router"
 import jwtDecode from "jwt-decode";
 import { useAuthStore } from "@/stores/modules/userToken";
-import { debounce } from "lodash";
+import _ from "lodash";
 import { Base64 } from "js-base64";
 import type { FormInstance, FormRules, MessageParamsWithType } from "element-plus";
 import { getCaptcha, loginAsync } from "@/http/api/login";
@@ -25,7 +25,7 @@ export default () => {
 	};
 
 	// 验证码防抖
-	const getOnCode = debounce(getCode, 700, {
+	const getOnCode = _.debounce(getCode, 700, {
 		leading: true,
 		trailing: false
 	});
@@ -145,7 +145,9 @@ export default () => {
 		});
 	};
 
-	getCode();
+	onMounted(() => {
+		getCode();
+	});
 
 	return {
 		imgUrl,
