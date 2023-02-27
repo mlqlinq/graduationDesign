@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<!-- 预览 docx文档 此功能已弃用 -->
 		<el-card>
 			<div ref="container" id="container"></div>
 		</el-card>

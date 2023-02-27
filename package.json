@@ -11,6 +11,9 @@
 		"build-only": "vite build",
 		"type-check": "vue-tsc --noEmit"
 	},
+	"resolutions": {
+		"bin-wrapper": "npm:bin-wrapper-china"
+	},
 	"dependencies": {
 		"@element-plus/icons-vue": "^2.0.10",
 		"axios": "^1.2.2",
@@ -63,9 +66,11 @@
 		"unplugin-auto-import": "^0.11.4",
 		"unplugin-vue-components": "^0.22.9",
 		"vite": "^3.2.5",
+		"vite-plugin-cdn-import": "^0.3.5",
 		"vite-plugin-compression": "^0.5.1",
 		"vite-plugin-eslint": "^1.8.1",
 		"vite-plugin-html": "^3.2.0",
+		"vite-plugin-imagemin": "^0.6.1",
 		"vue-tsc": "^0.40.7"
 	}
 }
