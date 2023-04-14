@@ -36,9 +36,10 @@ export const dataURLToBase64 = async (url: any) => {
 };
 export const blob: any = ref(null);
 
-export const exportWord = (configData: { file: string; filename: string; fileType: string; folder: string; data: {} }) => {
+export const exportWord = (configData: { file: string; filename: string; fileType: string; folder: string; data: any }) => {
 	// 批量下载生成压缩包
 	const Zip = new JSZip();
+	let word: any = Zip.folder(configData.folder);
 
 	if (Array.isArray(configData.data)) {
 		// eslint-disable-next-line array-callback-return
@@ -65,17 +66,27 @@ export const exportWord = (configData: { file: string; filename: string; fileTyp
 					});
 				};
 
+				// 图片宽高
 				opts.getSize = () => {
-					return [400, 200];
+					return [100, 140];
 				};
 
 				let imageModule = new ImageModule(opts);
+				// 解决数据里出现空值或未定义到的变量为 undifend
+				function nullGetter(part: DXT.Part) {
+					return "";
+				}
 				// 创建一个JSZip实例，内容为模板的内容
 				const zip = new PizZip(content);
 
 				// 创建并加载docxtemplater实例对象
-				let doc = new Docxtemplater().loadZip(zip).attachModule(imageModule).compile();
-				let word: any = Zip.folder(configData.folder);
+				let doc = new Docxtemplater()
+					.setOptions({
+						nullGetter
+					})
+					.loadZip(zip)
+					.attachModule(imageModule)
+					.compile();
 				// 设置模板变量的值，对象的键需要和模板上的变量名一致，值就是你要放在模板上的值
 				doc.setData({
 					...configData.data

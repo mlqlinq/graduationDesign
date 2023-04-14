@@ -7,6 +7,13 @@ export const downloadApplicationForm = () => {
 	});
 };
 
+export const downloadUniversityApplicationFormData = () => {
+	return serviceAxios({
+		url: "/api/Scholarship/downloadUniversityApplicationFormData",
+		method: "get"
+	});
+};
+
 export const getUniversityScho = (query: any) => {
 	return serviceAxios({
 		url: "/api/Scholarship/universityScho",

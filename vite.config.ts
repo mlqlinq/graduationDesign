@@ -17,7 +17,6 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 // 导入 svg 图标文件依赖
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
-import viteCDNPlugin from "vite-plugin-cdn-import";
 import viteImagemin from "vite-plugin-imagemin";
 
 // https://vitejs.dev/config/
@@ -100,20 +99,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 					algorithm: "gzip",
 					ext: ".gz"
 				}),
-			viteCDNPlugin({
-				// 需要 CDN 加速的模块
-				modules: [
-					{
-						name: "lodash",
-						var: "_",
-						path: `https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js`
-					}
-				]
-			}),
 			viteImagemin({
 				gifsicle: {
 					optimizationLevel: 7,
 					interlaced: false
+				},
+				jpegTran: {
+					progressive: true
 				},
 				optipng: {
 					optimizationLevel: 7

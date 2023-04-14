@@ -8,11 +8,11 @@
 			</span>
 			<span class="user_set">
 				<!-- 信息 -->
-				<span>
+				<!-- <span>
 					<el-badge class="item" is-dot>
 						<el-button class="share-button" icon="Bell" text />
 					</el-badge>
-				</span>
+				</span> -->
 				<!-- 全屏按钮 -->
 				<span class="full_screen mag">
 					<el-tooltip content="全屏">
@@ -35,7 +35,7 @@
 								<span class="usern" v-if="userData.guide_name"> {{ userData.guide_name }}</span>
 								<span class="usern" v-if="userData.secretary_name"> {{ userData.secretary_name }}</span>
 								<span class="usern" v-if="userData.universities_name"> {{ userData.universities_name }}</span>
-								<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" fit="fill" icon="UserFilled"></el-avatar>
+								<el-avatar :src="userData.imageUrl" v-if="userData.imageUrl" shape="square" fit="fill" :size="36" icon="UserFilled"></el-avatar>
 								<el-avatar v-if="!userData.imageUrl" icon="UserFilled"></el-avatar>
 								<SvgIcon :class="fullSvg ? 'dropdown_svg' : 'dropdown_svgClick'" :size="18" icon-name="DrapDown" />
 							</span>

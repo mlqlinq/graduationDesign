@@ -12,8 +12,8 @@ export default () => {
 	const imgUrl: any = ref();
 
 	// 获取图形验证码
-	const getCode = async (): Promise<void> => {
-		await getCaptcha()
+	const getCode = () => {
+		getCaptcha()
 			.then((res: { code: number; data: string }) => {
 				if (res?.code === 200) {
 					imgUrl.value = Base64.decode(res?.data);

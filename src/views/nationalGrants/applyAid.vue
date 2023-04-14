@@ -53,7 +53,6 @@ const router = useRouter();
 
 const useAuths: any = useAuthStore();
 const { userData } = storeToRefs(useAuths);
-const store = useRouterStore();
 
 const applyAidData = ref([]);
 
@@ -64,7 +63,7 @@ const taskTableRef: any = ref(null);
 const reloadRefresh: any = inject("reloadRefresh");
 
 const tableH = ref(650);
-let printData: any = reactive({});
+let printData: any = ref(null);
 
 const getTableData = async () => {
 	const query: any = {};
@@ -111,24 +110,12 @@ const printMyInfrom = async (data) => {
 
 	// 预览的配置及数据
 	const config: any = {
-		file: "@/../public/1673876403537.docx", // 模板文件的地址
+		file: "http://127.0.0.1:4090/uploads/download/1673876403537.docx", // 模板文件的地址
 		filename: "国家助学金申请表", // 文件名称
 		fileType: "docx", // 文件类型
 		folder: "下载文档", // 批量下载压缩包的文件名
-		data: {} // 数据 (数组默认批量，对象默认单个下载）
+		data: null // 数据 (数组默认批量，对象默认单个下载）
 	};
-
-	if (!Array.isArray(data.family_member_information)) {
-		data.family_member_information = JSON.parse(data.family_member_information);
-	}
-
-	if (!Array.isArray(data.source_of_income)) {
-		data.source_of_income = JSON.parse(data.source_of_income).join("，");
-	}
-
-	data.class_comments = data.class_comments === "" ? "" : JSON.parse(data.class_comments).desc;
-	data.opinions_of_the_department = data.opinions_of_the_department === "" ? "" : JSON.parse(data.opinions_of_the_department).desc;
-	data.school_opinion = data.school_opinion === "" ? "" : JSON.parse(data.school_opinion).desc;
 
 	config.data = data;
 
@@ -152,13 +139,49 @@ const upLoadMy = () => {
 // table选择项发生变化时会触发该事件
 const selectClick = (selection: any, row: any) => {
 	if (selection.length > 1) {
-		let del_row = selection.shift();
-		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+		// let del_row = selection.shift();
+		// taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+		printData.value = [];
+		for (let i = 0; i < selection.length; i++) {
+			const element = JSON.parse(JSON.stringify(selection[i]));
+			element.whether = element.is_comprehensive_survey == "0" ? true : false;
+			element.student_birthday = Moment(element.student_birthday).format("YYYY年MM月");
+			element.student_start_year = Moment(element.student_start_year).format("YYYY年MM月");
+
+			if (!Array.isArray(element.family_member_information)) {
+				element.family_member_information = JSON.parse(element.family_member_information);
+			}
+
+			if (!Array.isArray(element.source_of_income)) {
+				element.source_of_income = JSON.parse(element.source_of_income).join("，");
+			}
+
+			element.class_comments = element.class_comments !== "" ? (element.class_comments instanceof Object ? element.class_comments : JSON.parse(element.class_comments).desc) : "";
+			element.opinions_of_the_department = element.opinions_of_the_department !== "" ? (element.opinions_of_the_department instanceof Object ? element.opinions_of_the_department : JSON.parse(element.opinions_of_the_department).desc) : "";
+			element.school_opinion = element.school_opinion !== "" ? (element.school_opinion instanceof Object ? element.school_opinion : JSON.parse(element.school_opinion).desc) : "";
+			printData.value.push(element);
+		}
+	} else if (selection.length == 0) {
+		printData.value = null;
+	} else {
+		row = JSON.parse(JSON.stringify(row));
+		row.whether = row.is_comprehensive_survey == "0" ? true : false;
+		row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
+		row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
+
+		if (!Array.isArray(row.family_member_information)) {
+			row.family_member_information = JSON.parse(row.family_member_information);
+		}
+
+		if (!Array.isArray(row.source_of_income)) {
+			row.source_of_income = JSON.parse(row.source_of_income).join("，");
+		}
+
+		row.class_comments = row.class_comments !== "" ? (row.class_comments instanceof Object ? row.class_comments : JSON.parse(row.class_comments).desc) : "";
+		row.opinions_of_the_department = row.opinions_of_the_department !== "" ? (row.opinions_of_the_department instanceof Object ? row.opinions_of_the_department : JSON.parse(row.opinions_of_the_department).desc) : "";
+		row.school_opinion = row.school_opinion !== "" ? (row.school_opinion instanceof Object ? row.school_opinion : JSON.parse(row.school_opinion).desc) : "";
+		printData.value = row;
 	}
-	row.whether = row.is_comprehensive_survey == "0" ? true : false;
-	row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
-	row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
-	printData = row;
 };
 </script>
 
