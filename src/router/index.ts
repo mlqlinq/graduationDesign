@@ -7,17 +7,14 @@
 import { useRouterStore } from "@/stores/modules/router";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory, type RouteRecordRaw } from "vue-router";
 
-import { ElLoading, ElMessage } from "element-plus";
+import { ElMessage } from "element-plus";
 import NProgress from "nprogress"; // 导入全局进度条
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Loading from "@/components/loading/index.vue";
-
 // 公共路由
-export const constantRoutes = [
-	// export const constantRoutes: RouteRecordRaw[] = [
+// export const constantRoutes = [
+export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: "/",
 		name: "login",
@@ -57,18 +54,12 @@ export const constantRoutes = [
 
 const router = createRouter({
 	scrollBehavior: () => ({ left: 0, top: 0 }),
-	history: createWebHistory(),
+	history: createWebHashHistory(),
 	routes: constantRoutes
 });
 
 // 定义变量判断是否已经动态添加过，如果刷新后load永远为 0
 let load = 0;
-
-let loadingInstance = ElLoading.service({
-	lock: true,
-	text: "正在操作，请稍后...",
-	background: "rgba(0, 0, 0, 0.7)"
-});
 
 /**
  * 挂载路由导航守卫
@@ -79,11 +70,6 @@ let loadingInstance = ElLoading.service({
 router.beforeEach((to, from, next) => {
 	// 每次切换页面时，调用进度条
 	NProgress.start();
-	loadingInstance = ElLoading.service({
-		lock: true,
-		text: "正在跳转，请稍后...",
-		background: "rgba(0, 0, 0, 0.7)"
-	});
 
 	// 获取token
 	const tokenStr = sessionStorage.getItem("token");
@@ -157,7 +143,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
 	// 在即将进入新的页面组件前，关闭掉进度条
 	NProgress.done();
-	loadingInstance.close();
 });
 
 export default router;

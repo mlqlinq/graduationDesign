@@ -17,22 +17,12 @@ const serverAxios: any = axios.create({
 	// withCredentials: true, // 跨域请求是否携带cookie凭证
 });
 
-// let loadingInstance = ElLoading.service({
-// 	lock: true,
-// 	text: "正在操作，请稍后...",
-// 	background: "rgba(0, 0, 0, 0.7)"
-// });
-
 // 创建 请求 拦截
 serverAxios.interceptors.request.use(
 	(config) => {
 		// 请求开始：显示进度条
 		NProgress.start();
-		// loadingInstance = ElLoading.service({
-		// 	lock: true,
-		// 	text: "正在操作，请稍后...",
-		// 	background: "rgba(0, 0, 0, 0.7)"
-		// });
+		config.url = config.url.replace("/api", "");
 		// 是否携带 token
 		if (serverConfig.useTokenAuthorization) {
 			if (token.value) {
@@ -66,10 +56,7 @@ serverAxios.interceptors.response.use(
 	(res) => {
 		// 请求完毕：隐藏进度条
 		NProgress.done();
-		// nextTick(() => {
-		// 	// Loading should be closed asynchronously
-		// 	loadingInstance.close();
-		// });
+
 		if (res.status === 200) return res.data;
 		if (res.status !== 200) return Promise.reject(res.data);
 	},

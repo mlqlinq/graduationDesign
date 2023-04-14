@@ -26,7 +26,15 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="value" label="名称" align="center" />
-				<el-table-column prop="type" label="身份" align="center" />
+				<el-table-column prop="type" label="身份" align="center">
+					<template #default="scope">
+						<el-tag v-if="scope.row.type == '高校'" effect="dark">{{ scope.row.type }}</el-tag>
+						<el-tag v-if="scope.row.type == '院系'" class="ml-2" effect="dark" type="success">{{ scope.row.type }}</el-tag>
+						<el-tag v-if="scope.row.type == '书记'" class="ml-2" effect="dark" type="info">{{ scope.row.type }}</el-tag>
+						<el-tag v-if="scope.row.type == '导员'" class="ml-2" effect="dark" type="warning">{{ scope.row.type }}</el-tag>
+						<el-tag v-if="scope.row.type == '学生'" class="ml-2" effect="dark" type="danger">{{ scope.row.type }}</el-tag>
+					</template>
+				</el-table-column>
 				<el-table-column label="操作" align="center" fixed="right">
 					<template #default="scope">
 						<el-tooltip content="查看信息" placement="bottom" v-if="scope.row.type !== '院系'">
@@ -88,6 +96,7 @@ import StudentInform from "@/views/user/from/personal.vue";
 import { ElCard, ElTable, ElTableColumn, genFileId, type UploadInstance, type UploadProps, type UploadRawFile } from "element-plus";
 import { submitInformation } from "@/http/api/user/user";
 import _ from "lodash";
+import { decrypt } from "@/util/tool/crypto";
 
 interface Tree {
 	id: string;
@@ -107,7 +116,7 @@ const GuideData = ref();
 const StudentData = ref();
 const DialogVisible = ref(false);
 const previewDialogVisible = ref(false);
-const DiaTable = ref([]);
+const DiaTable: any = ref([]);
 const tablecod = ref([]);
 const idNum = ref(""); // 身份id
 const tableRowData = ref();
@@ -252,9 +261,9 @@ const beforeUpload: UploadProps["beforeUpload"] = (rawFile) => {
 };
 
 const handleSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
-	DiaTable.value = response.data;
+	DiaTable.value = JSON.parse(decrypt(response.data));
 	tablecod.value = response.tablecod;
-	Diatotal.value = response.data.length;
+	Diatotal.value = JSON.parse(decrypt(response.data)).length;
 	previewDialogVisible.value = true;
 	ElNotification({
 		message: response.msg

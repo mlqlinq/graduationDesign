@@ -67,7 +67,7 @@ const uploadBtn: any = ref(null);
 const taskTableRef: any = ref(null);
 const tableH = ref(650);
 
-let printData: any = reactive({});
+let printData: any = ref(null);
 
 const getTableData = async () => {
 	const query: any = {};
@@ -104,59 +104,110 @@ onMounted(() => {
 
 // 打印事件
 const printMyInfrom = async (data) => {
-	if (JSON.stringify(data) == "{}")
+	if (!data)
 		return ElNotification({
 			title: "提示~",
 			message: "请先选择要打印的表！",
 			type: "warning"
 		});
 
-	// 预览的配置及数据
-	const config: any = {
-		file: "@/../public/1673447720021.docx", // 模板文件的地址
-		filename: "国家奖学金申请审批表", // 文件名称
-		fileType: "docx", // 文件类型
-		folder: "下载文档", // 批量下载压缩包的文件名
-		data: {} // 数据 (数组默认批量，对象默认单个下载）
-	};
+	if (Array.isArray(data)) {
+		// 预览的配置及数据
+		const config: any = {
+			file: "http://127.0.0.1:4090/uploads/download/1673447720021.docx", // 模板文件的地址
+			filename: "国家奖学金申请审批表", // 文件名称
+			fileType: "docx", // 文件类型
+			folder: "下载文档", // 批量下载压缩包的文件名
+			data: null // 数据 (数组默认批量，对象默认单个下载）
+		};
+		for (let i = 0; i < data.length; i++) {
+			const element = data[i];
 
-	// 将身份证号码拆分
-	const arr = [...data.id_card_number];
-	// 循环生成身份证号码长度的字母
-	const alphabet = Array.from(new Array(arr.length), (ele, index) => {
-		return String.fromCharCode(97 + index);
-	});
-	// 添加到要渲染的对象里  用于渲染
-	for (let i = 0; i < arr.length; i++) {
-		Object.defineProperty(data, alphabet[i], {
-			value: arr[i],
-			writable: true,
-			enumerable: true,
-			configurable: true
+			// 将身份证号码拆分
+			const arr = [...element.id_card_number];
+			// 循环生成身份证号码长度的字母
+			const alphabet = Array.from(new Array(arr.length), (ele, index) => {
+				return String.fromCharCode(97 + index);
+			});
+			// 添加到要渲染的对象里  用于渲染
+			for (let i = 0; i < arr.length; i++) {
+				Object.defineProperty(element, alphabet[i], {
+					value: arr[i],
+					writable: true,
+					enumerable: true,
+					configurable: true
+				});
+			}
+
+			element.awards = JSON.parse(element.awards);
+
+			if (element.awards.length <= 2) {
+				element.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
+				element.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
+			}
+		}
+
+		// data.reason_for_recommendation = data.reason_for_recommendation === "" ? JSON.parse(data.reason_for_recommendation).desc : "";
+		// data.opinions_of_the_department = data.opinions_of_the_department === "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+		// data.school_opinion = data.school_opinion === "" ? JSON.parse(data.school_opinion).desc : "";
+
+		config.data = data;
+
+		exportWord(config);
+		ElNotification({
+			title: "提示",
+			message: "下载成功",
+			type: "success"
 		});
+
+		getTableData();
+	} else {
+		// 预览的配置及数据
+		const config: any = {
+			file: "@/../public/1673447720021.docx", // 模板文件的地址
+			filename: "国家奖学金申请审批表", // 文件名称
+			fileType: "docx", // 文件类型
+			folder: "下载文档", // 批量下载压缩包的文件名
+			data: {} // 数据 (数组默认批量，对象默认单个下载）
+		};
+		// 将身份证号码拆分
+		const arr = [...data.id_card_number];
+		// 循环生成身份证号码长度的字母
+		const alphabet = Array.from(new Array(arr.length), (ele, index) => {
+			return String.fromCharCode(97 + index);
+		});
+		// 添加到要渲染的对象里  用于渲染
+		for (let i = 0; i < arr.length; i++) {
+			Object.defineProperty(data, alphabet[i], {
+				value: arr[i],
+				writable: true,
+				enumerable: true,
+				configurable: true
+			});
+		}
+
+		data.awards = JSON.parse(data.awards);
+
+		if (data.awards.length <= 2) {
+			data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
+			data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
+		}
+
+		// data.reason_for_recommendation = data.reason_for_recommendation === "" ? JSON.parse(data.reason_for_recommendation).desc : "";
+		// data.opinions_of_the_department = data.opinions_of_the_department === "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+		// data.school_opinion = data.school_opinion === "" ? JSON.parse(data.school_opinion).desc : "";
+
+		config.data = data;
+
+		exportWord(config);
+		ElNotification({
+			title: "提示",
+			message: "下载成功",
+			type: "success"
+		});
+
+		getTableData();
 	}
-
-	data.awards = JSON.parse(data.awards);
-
-	if (data.awards.length <= 2) {
-		data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
-		data.awards.push({ dataTime: "", awardName: "", awardingUnit: "" });
-	}
-
-	data.reason_for_recommendation = data.reason_for_recommendation === "" ? JSON.parse(data.reason_for_recommendation).desc : "";
-	data.opinions_of_the_department = data.opinions_of_the_department === "" ? JSON.parse(data.opinions_of_the_department).desc : "";
-	data.school_opinion = data.school_opinion === "" ? JSON.parse(data.school_opinion).desc : "";
-
-	config.data = data;
-
-	exportWord(config);
-	ElNotification({
-		title: "提示",
-		message: "下载成功",
-		type: "success"
-	});
-
-	getTableData();
 };
 
 const downLoad = async () => {
@@ -195,16 +246,34 @@ const upLoadMy = () => {
 // 主要方法
 // table选择项发生变化时会触发该事件
 const selectClick = (selection: any, row: any) => {
-	console.log(row.is_comprehensive_survey == "0");
-
 	if (selection.length > 1) {
-		let del_row = selection.shift();
-		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+		// let del_row = selection.shift();
+		// taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+		printData.value = [];
+		for (let i = 0; i < selection.length; i++) {
+			const element = JSON.parse(JSON.stringify(selection[i]));
+			element.whether = element.is_comprehensive_survey == "0" ? true : false;
+			element.student_birthday = Moment(element.student_birthday).format("YYYY年MM月");
+			element.student_start_year = Moment(element.student_start_year).format("YYYY年MM月");
+
+			element.reason_for_recommendation = element.reason_for_recommendation !== "" ? (element.reason_for_recommendation instanceof Object ? element.reason_for_recommendation : JSON.parse(element.reason_for_recommendation).desc) : "";
+			element.opinions_of_the_department = element.opinions_of_the_department !== "" ? (element.opinions_of_the_department instanceof Object ? element.opinions_of_the_department : JSON.parse(element.opinions_of_the_department).desc) : "";
+			element.school_opinion = element.school_opinion !== "" ? (element.school_opinion instanceof Object ? element.school_opinion : JSON.parse(element.school_opinion).desc) : "";
+			printData.value.push(element);
+		}
+	} else if (selection.length == 0) {
+		printData.value = null;
+	} else {
+		row = JSON.parse(JSON.stringify(row));
+		row.whether = row.is_comprehensive_survey == "0" ? true : false;
+		row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
+		row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
+
+		row.reason_for_recommendation = row.reason_for_recommendation !== "" ? (row.reason_for_recommendation instanceof Object ? row.reason_for_recommendation : JSON.parse(row.reason_for_recommendation).desc) : "";
+		row.opinions_of_the_department = row.opinions_of_the_department !== "" ? (row.opinions_of_the_department instanceof Object ? row.opinions_of_the_department : JSON.parse(row.opinions_of_the_department).desc) : "";
+		row.school_opinion = row.school_opinion !== "" ? (row.school_opinion instanceof Object ? row.school_opinion : JSON.parse(row.school_opinion).desc) : "";
+		printData.value = row;
 	}
-	row.whether = row.is_comprehensive_survey == "0" ? true : false;
-	row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
-	row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
-	printData = row;
 };
 </script>
 

@@ -66,7 +66,7 @@ const uploadBtn: any = ref(null);
 const taskTableRef: any = ref(null);
 
 const tableH = ref(650);
-let printData: any = reactive({});
+let printData: any = ref(null);
 
 const getTableData = async () => {
 	const query: any = {};
@@ -100,37 +100,95 @@ onMounted(() => {
 
 // 打印事件
 const printMyInfrom = async (data) => {
-	if (JSON.stringify(data) == "{}")
+	if (!data)
 		return ElNotification({
 			title: "提示~",
 			message: "请先选择要打印的表！",
 			type: "warning"
 		});
+	if (Array.isArray(data)) {
+		// 预览的配置及数据
+		let config: any = {
+			file: "@/../public/1673440587046.docx", // 模板文件的地址
+			filename: "优秀学生奖学金审批表", // 文件名称
+			fileType: "docx", // 文件类型
+			folder: "下载文档", // 批量下载压缩包的文件名
+			data: null // 数据 (数组默认批量，对象默认单个下载）
+		};
+		// for (let i = 0; i < data.length; i++) {
+		// 	const element = data[i];
 
-	// 预览的配置及数据
-	const config: any = {
-		file: "@/../public/1673440587046.docx", // 模板文件的地址
-		filename: "优秀学生奖学金审批表", // 文件名称
-		fileType: "docx", // 文件类型
-		folder: "下载文档", // 批量下载压缩包的文件名
-		data: {} // 数据 (数组默认批量，对象默认单个下载）
-	};
+		// 	element.class_opinion = element.class_opinion !== "" ? JSON.parse(element.class_opinion).desc : "";
+		// 	element.opinions_of_the_department = element.opinions_of_the_department !== "" ? JSON.parse(element.opinions_of_the_department).desc : "";
+		// 	element.school_opinion = element.school_opinion !== "" ? JSON.parse(element.school_opinion).desc : "";
+		// }
+		config.data = data;
 
-	data.class_opinion = data.class_opinion !== "" ? JSON.parse(data.class_opinion).desc : "";
-	data.opinions_of_the_department = data.opinions_of_the_department !== "" ? JSON.parse(data.opinions_of_the_department).desc : "";
-	data.school_opinion = data.school_opinion !== "" ? JSON.parse(data.school_opinion).desc : "";
-	config.data = data;
+		await exportWord(config);
+		ElNotification({
+			title: "提示",
+			message: "下载成功",
+			type: "success"
+		});
 
-	exportWord(config);
-	ElNotification({
-		title: "提示",
-		message: "下载成功",
-		type: "success"
-	});
+		getTableData();
+	} else {
+		// 预览的配置及数据
+		const config: any = {
+			file: "http://127.0.0.1:4090/uploads/download/1673440587046.docx", // 模板文件的地址
+			filename: "优秀学生奖学金审批表", // 文件名称
+			fileType: "docx", // 文件类型
+			folder: "下载文档", // 批量下载压缩包的文件名
+			data: {} // 数据 (数组默认批量，对象默认单个下载）
+		};
 
-	getTableData();
+		// data.class_opinion = data.class_opinion !== "" ? JSON.parse(data.class_opinion).desc : "";
+		// data.opinions_of_the_department = data.opinions_of_the_department !== "" ? JSON.parse(data.opinions_of_the_department).desc : "";
+		// data.school_opinion = data.school_opinion !== "" ? JSON.parse(data.school_opinion).desc : "";
+		config.data = data;
+
+		exportWord(config);
+		ElNotification({
+			title: "提示",
+			message: "下载成功",
+			type: "success"
+		});
+
+		getTableData();
+	}
 };
 
+// 主要方法
+// table选择项发生变化时会触发该事件
+const selectClick = (selection: any, row: any) => {
+	if (selection.length > 1) {
+		// let del_row = selection.shift();
+		// taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+		printData.value = [];
+		for (let i = 0; i < selection.length; i++) {
+			const element = JSON.parse(JSON.stringify(selection[i]));
+			element.whether = element.is_comprehensive_survey == "0" ? true : false;
+			element.student_birthday = Moment(element.student_birthday).format("YYYY年MM月");
+			element.student_start_year = Moment(element.student_start_year).format("YYYY年MM月");
+			element.class_opinion = element.class_opinion !== "" ? (element.class_opinion instanceof Object ? element.class_opinion : JSON.parse(element.class_opinion).desc) : "";
+			element.opinions_of_the_department = element.opinions_of_the_department !== "" ? (element.opinions_of_the_department instanceof Object ? element.opinions_of_the_department : JSON.parse(element.opinions_of_the_department).desc) : "";
+			element.school_opinion = element.school_opinion !== "" ? (element.school_opinion instanceof Object ? element.school_opinion : JSON.parse(element.school_opinion).desc) : "";
+			printData.value.push(element);
+		}
+	} else if (selection.length == 0) {
+		printData.value = null;
+	} else {
+		row = JSON.parse(JSON.stringify(row));
+		row.whether = row.is_comprehensive_survey == "0" ? true : false;
+		row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
+		row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
+		row.class_opinion = row.class_opinion !== "" ? (row.class_opinion instanceof Object ? row.class_opinion : JSON.parse(row.class_opinion).desc) : "";
+		row.opinions_of_the_department = row.opinions_of_the_department !== "" ? (row.opinions_of_the_department instanceof Object ? row.opinions_of_the_department : JSON.parse(row.opinions_of_the_department).desc) : "";
+		row.school_opinion = row.school_opinion !== "" ? (row.school_opinion instanceof Object ? row.school_opinion : JSON.parse(row.school_opinion).desc) : "";
+		printData.value = row;
+	}
+	console.log(printData.value);
+};
 const downLoad = async () => {
 	await downloadApplicationForm()
 		.then((res) => {
@@ -163,21 +221,6 @@ const upLoadMy = () => {
 	router.push("/fillInTheApplication");
 	sessionStorage.setItem("activePath", "/fillInTheApplication");
 	store.handleParams({ im: 1 });
-};
-
-// 主要方法
-// table选择项发生变化时会触发该事件
-const selectClick = (selection: any, row: any) => {
-	console.log(row.is_comprehensive_survey == "0");
-
-	if (selection.length > 1) {
-		let del_row = selection.shift();
-		taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
-	}
-	row.whether = row.is_comprehensive_survey == "0" ? true : false;
-	row.student_birthday = Moment(row.student_birthday).format("YYYY年MM月");
-	row.student_start_year = Moment(row.student_start_year).format("YYYY年MM月");
-	printData = row;
 };
 </script>
 
